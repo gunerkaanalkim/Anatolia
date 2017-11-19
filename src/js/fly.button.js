@@ -5,6 +5,10 @@
 
 (function ($) {
     $.fn.flyButton = function (options) {
+        if (options == null || typeof options == "undefined") {
+            throw "Class attribute in options must be declare."
+        }
+
         var clazz = options.class;
         var style = options.style;
         var text = options.text;
@@ -14,6 +18,7 @@
 
         //Buttons's bootstrap class
         this.addClass(clazz);
+        this[0].setAttribute("style", style);
 
         //Spinner
         if (spin != null || spin != "") {
