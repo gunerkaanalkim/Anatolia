@@ -1,4 +1,5 @@
 $(document).ready(function () {
-    var button = new Button();
-    button.usage();
+    new Button().usage();
+
+    new Textbox().usage();
 });
