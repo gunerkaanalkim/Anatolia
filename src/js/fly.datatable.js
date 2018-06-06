@@ -245,8 +245,6 @@
                     var handlerFunction = handlers[j];
 
                     cmdButton.bind(handlerName, handlerFunction);
-
-                    //console.log(handlerName + " -> " + handlerFunction);
                 }
             }
 
