@@ -6,4 +6,6 @@ $(document).ready(function () {
     new ButtonGroup().usage();
 
     new Carousel().usage();
+
+    new DataViewer().usage();
 });
