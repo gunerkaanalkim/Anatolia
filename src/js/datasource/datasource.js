@@ -1,7 +1,7 @@
 /**
  * Created by gunerkaanalkim on 14/04/16.
  */
-var FlyDataSource = (function () {
+var DataSource = (function () {
     function FlyDataSource(options) {
         this.type = options.type;
         this.url = options.url;
