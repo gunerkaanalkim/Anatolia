@@ -1,10 +1,7 @@
-/**
- * Created by gunerkaanalkim on 23/01/2017.
- */
-"use strict";
-
 (function ($) {
-    $.fn.flyDetailViewer = function (options) {
+    "use strict";
+
+    $.fn.dataViewer = function (options) {
         this.html("");
 
         var clazz = options.class;
@@ -74,8 +71,5 @@
                 tbody
             )
         );
-
-
     };
-
 })(jQuery);
