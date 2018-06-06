@@ -1,9 +1,6 @@
-/**
- * Created by gunerkaanalkim on 13/04/16.
- */
-"use strict";
-
 (function ($) {
+    "use strict";
+
     var globalOptions;
     var globalElement;
     var columnSize;
