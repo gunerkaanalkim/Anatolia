@@ -1,10 +1,7 @@
-/**
- * Created by gunerkaanalkim on 13/01/2017.
- */
-"use strict";
-
 (function ($) {
-    $.fn.flyButton = function (options) {
+    "use strict";
+
+    $.fn.button = function (options) {
         if (options == null || typeof options == "undefined") {
             throw "Class attribute in options must be declare."
         }

@@ -4,7 +4,7 @@ var Button = (function () {
     }
 
     Button.prototype.usage = function () {
-        $("#defaultButtonCustom").flyButton({
+        $("#defaultButtonCustom").button({
             class: "btn btn-default",
             text: "Default",
             style: "padding: 2px;",
@@ -22,31 +22,31 @@ var Button = (function () {
             }
         });
 
-        $("#primaryButtonCustom").flyButton({
+        $("#primaryButtonCustom").button({
             class: "btn btn-primary",
             text: "Primary",
             style: "padding: 4px;"
         });
 
-        $("#infoButtonCustom").flyButton({
+        $("#infoButtonCustom").button({
             class: "btn btn-info",
             text: "Info",
             style: "padding: 6px;"
         });
 
-        $("#warningButtonCustom").flyButton({
+        $("#warningButtonCustom").button({
             class: "btn btn-warning",
             text: "Warning",
             style: "padding: 8px;"
         });
 
-        $("#successButtonCustom").flyButton({
+        $("#successButtonCustom").button({
             class: "btn btn-success",
             text: "Success",
             style: "padding: 10px;"
         });
 
-        $("#dangerButtonCustom").flyButton({
+        $("#dangerButtonCustom").button({
             class: "btn btn-danger",
             text: "Danger",
             style: "padding: 12px;"
