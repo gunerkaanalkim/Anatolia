@@ -248,7 +248,6 @@
 
                     //console.log(handlerName + " -> " + handlerFunction);
                 }
-
             }
 
             tbody.append(
