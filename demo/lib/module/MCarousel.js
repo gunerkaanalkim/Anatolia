@@ -12,7 +12,7 @@ var Carousel = (function () {
             // buttons: [
             //     {
             //         class: "btn btn-default btn-xs",
-            //         text: " Varsayılan Yap",
+            //         text: "",
             //         iconClass: "fa fa-check fa-lg",
             //         events: {
             //             click: function (e) {
@@ -22,7 +22,7 @@ var Carousel = (function () {
             //     },
             //     {
             //         class: "btn btn-danger btn-xs",
-            //         text: " Sil",
+            //         text: " ",
             //         iconClass: "fa fa-times fa-lg",
             //         events: {
             //             click: function (e) {
