@@ -1,9 +1,6 @@
-/**
- * Created by gunerkaanalkim on 14/04/16.
- */
-"use strict";
+var Pager = (function () {
+    "use strict";
 
-var FlyPagination = (function () {
     function FlyPagination(options) {
         this._entryPerPage = options.entryPerPage;
         this._buttonCount = options.buttonCount;
