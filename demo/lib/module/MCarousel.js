@@ -5,7 +5,6 @@ var Carousel = (function () {
 
     Carousel.prototype.usage = function () {
         $("#crs").carousel({
-            class: "",
             path: './assets',
             images: ['1.jpg', '2.jpg', '3.jpg'],
             emptyAlert: "Görüntülenecek bir görsel bulunamadı..."

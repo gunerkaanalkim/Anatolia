@@ -6,7 +6,6 @@
 (function ($) {
     $.fn.carousel = function (options) {
         this.html("");
-        var clazz = options.class;
         var path = options.path;
         var images = options.images;
         var buttons = options.buttons;
