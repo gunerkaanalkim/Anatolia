@@ -4,4 +4,6 @@ $(document).ready(function () {
     new Textbox().usage();
 
     new ButtonGroup().usage();
+
+    new Carousel().usage();
 });

@@ -4,16 +4,16 @@
 "use strict";
 
 (function ($) {
-    $.fn.flyCarousel = function (options) {
+    $.fn.carousel = function (options) {
         this.html("");
         var clazz = options.class;
         var path = options.path;
         var images = options.images;
         var buttons = options.buttons;
-        var emptyImagesAlert = options.emptyImagesAlert;
+        var emptyAlert = options.emptyAlert;
 
         if (images != null && images != "" && images.length != 0) {
-            var carouselId = this.selector.split("#")[1];
+            var carouselId = this.attr('id');
 
             this.removeClass("carousel slide");
             this.addClass("carousel slide");
@@ -37,16 +37,15 @@
             for (var i = 0; i < images.length; i++) {
                 var image = images[i];
 
-                //    Indicators
-                //var carouselIndicatorElement = jQuery("<li>", {
-                //    "data-target": "#" + carouselId,
-                //    "data-slide-to": i,
-                //    "class": i == 0 ? "active" : ""
-                //});
-                //
-                //carouselIndicator.append(
-                //    carouselIndicatorElement
-                //);
+                var carouselIndicatorElement = jQuery("<li>", {
+                    "data-target": "#" + carouselId,
+                    "data-slide-to": i,
+                    "class": i == 0 ? "active" : ""
+                });
+
+                carouselIndicator.append(
+                    carouselIndicatorElement
+                );
 
                 var item = jQuery("<div>", {
                     "class": i == 0 ? "item active" : "item"
@@ -147,7 +146,7 @@
         } else {
             var alert = jQuery("<div>", {
                 "class": "alert alert-info",
-                "text": emptyImagesAlert
+                "text": emptyAlert
             });
 
             this.append(alert);
