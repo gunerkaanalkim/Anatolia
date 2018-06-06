@@ -14,7 +14,7 @@ var ButtonGroup = (function () {
                     iconClass: "fa fa-eye fa-lg",
                     events: {
                         click: function (e) {
-
+                            console.log('click!');
                         }
                     }
                 },
@@ -23,8 +23,8 @@ var ButtonGroup = (function () {
                     text: " Düzenle",
                     iconClass: "fa fa-pencil fa-lg",
                     events: {
-                        click: function (e) {
-
+                        mouseenter: function (e) {
+                            console.log('mouseenter!');
                         }
                     }
                 },
@@ -33,8 +33,8 @@ var ButtonGroup = (function () {
                     text: " Yazdır",
                     iconClass: "fa fa-print fa-lg",
                     events: {
-                        click: function (e) {
-
+                        mouseleave: function (e) {
+                            console.log('mouseleave!');
                         }
                     }
                 },
@@ -43,8 +43,8 @@ var ButtonGroup = (function () {
                     text: " Sil",
                     iconClass: "fa fa-times fa-lg",
                     events: {
-                        click: function (e) {
-
+                        dblclick: function (e) {
+                            console.log('dblclick!');
                         }
                     }
                 }
