@@ -11,16 +11,7 @@ var Textbox = (function () {
             value: '',
             placeholder: 'Placeholder',
             events: {
-                click: function () {
-                    console.log('click');
-                },
-                mouseenter: function () {
-                    console.log('mouseenter');
-                },
-                mouseleave: function () {
-                    console.log('mouseleave');
-                },
-                input: function (e) {
+                keyup: function (e) {
                     console.log(e.target.value);
                 }
             }
