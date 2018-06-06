@@ -1,9 +1,6 @@
-/**
- * Created by gunerkaanalkim on 23/01/2017.
- */
-"use strict";
-
 (function ($) {
+    "use strict";
+
     $.fn.flyImageList = function (options) {
         this.html("");
 
