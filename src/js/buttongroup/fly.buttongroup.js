@@ -4,7 +4,7 @@
 "use strict";
 
 (function ($) {
-    $.fn.flyButtonGroup = function (options) {
+    $.fn.buttonGroup = function (options) {
         var cantainerClass = options.class;
         var style = options.style;
         var buttons = options.buttons;
