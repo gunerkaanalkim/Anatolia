@@ -1,11 +1,8 @@
-/**
- * Created by dogukanyilmaz on 06/02/2017.
- */
-var FlyValidator = (function () {
-    function FlyValidator() {
+var Validator = (function () {
+    function Validator() {
     }
 
-    FlyValidator.prototype.formValidate=function (formContainer) {
+    Validator.prototype.formValidate = function (formContainer) {
       var formElements = $("#"+formContainer+"[fly-validator]");
       var validatorObject = new Object();
 
@@ -17,5 +14,5 @@ var FlyValidator = (function () {
           }
       }
     };
-    return FlyValidator;
+    return Validator;
 })();
