@@ -8,4 +8,6 @@ $(document).ready(function () {
     new Carousel().usage();
 
     new DataViewer().usage();
+
+    new Selection().usage();
 });

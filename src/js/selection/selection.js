@@ -1,10 +1,7 @@
-/**
- * Created by gunerkaanalkim on 26/01/2017.
- */
-"use strict";
-
 (function ($) {
-    $.fn.flySelect = function (options) {
+    "use strict";
+
+    $.fn.selection = function (options) {
         this.html("");
 
         var clazz = options.class;
