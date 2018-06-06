@@ -248,6 +248,7 @@
                 }
             }
 
+
             tbody.append(
                 dataRow
             );
