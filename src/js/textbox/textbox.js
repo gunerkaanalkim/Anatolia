@@ -27,5 +27,4 @@
 
         this.append(input);
     };
-
 })(jQuery);
