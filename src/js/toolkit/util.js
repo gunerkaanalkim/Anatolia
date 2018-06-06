@@ -1,11 +1,11 @@
 /**
  * Created by gunerkaanalkim on 20/01/2017.
  */
-var FlyUtil = (function () {
-    function FlyUtil() {
+var Util = (function () {
+    function Util() {
     }
 
-    FlyUtil.prototype.formSerializer = function (formContainer) {
+    Util.prototype.formSerializer = function (formContainer) {
         var formElements = $("#" + formContainer + " [fly-serializable]");
 
         var serializedObject = new Object();
@@ -23,7 +23,7 @@ var FlyUtil = (function () {
         return serializedObject;
     };
 
-    FlyUtil.prototype.formCleaner = function (formContainer) {
+    Util.prototype.formCleaner = function (formContainer) {
         var formElements = $("#" + formContainer + " [fly-serializable]");
 
         var serializedObject = new Object();
@@ -47,11 +47,11 @@ var FlyUtil = (function () {
         return serializedObject;
     };
 
-    FlyUtil.prototype.printScreen = function (container) {
+    Util.prototype.printScreen = function (container) {
         $(container).print();
     };
 
-    FlyUtil.prototype.guid = function () {
+    Util.prototype.guid = function () {
         var d = new Date().getTime();
         if (window.performance && typeof window.performance.now === "function") {
             d += performance.now(); //use high-precision timer if available
@@ -64,5 +64,5 @@ var FlyUtil = (function () {
         return uuid;
     };
 
-    return FlyUtil;
+    return Util;
 })();
