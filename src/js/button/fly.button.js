@@ -12,28 +12,16 @@
         var clazz = options.class;
         var style = options.style;
         var text = options.text;
-        var iconClass = options.iconClass;
-        var spin = options.spin;
+        var fontIcon = options.fontIcon;
         var events = options.events;
 
         //Buttons's bootstrap class
         this.addClass(clazz);
         this[0].setAttribute("style", style);
 
-        //Spinner
-        if (spin != null || spin != "") {
-            var spinner = jQuery("<i>", {
-                "class": spin,
-                "style": "display: none;",
-                "id": this[0].getAttribute("id") + "Spinner"
-            });
-
-            this.append(spinner);
-        }
-
         //Append text and icon
         var icon = jQuery("<i>", {
-            "class": iconClass
+            "class": fontIcon
         });
 
         var buttonText = jQuery("<span>", {

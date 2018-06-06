@@ -3,43 +3,23 @@ var Button = (function () {
 
     }
 
-    Button.prototype.basicUsage = function () {
-        $("#defaultButton").flyButton({
-            class: "btn btn-default",
-            text: "Default"
-        });
-
-        $("#primaryButton").flyButton({
-            class: "btn btn-primary",
-            text: "Primary"
-        });
-
-        $("#infoButton").flyButton({
-            class: "btn btn-info",
-            text: "Info"
-        });
-
-        $("#warningButton").flyButton({
-            class: "btn btn-warning",
-            text: "Warning"
-        });
-
-        $("#successButton").flyButton({
-            class: "btn btn-success",
-            text: "Success"
-        });
-
-        $("#dangerButton").flyButton({
-            class: "btn btn-danger",
-            text: "Danger"
-        });
-    };
-
-    Button.prototype.customStyle = function () {
+    Button.prototype.usage = function () {
         $("#defaultButtonCustom").flyButton({
             class: "btn btn-default",
             text: "Default",
-            style: "padding: 2px;"
+            style: "padding: 2px;",
+            events: {
+                click: function () {
+                    console.log("clicked");
+                },
+                mouseenter: function () {
+                    console.log("mouseenter");
+                },
+                mouseleave: function () {
+                    console.log("mouseleave");
+                }
+                //etc...
+            }
         });
 
         $("#primaryButtonCustom").flyButton({
