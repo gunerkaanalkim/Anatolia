@@ -1,9 +1,6 @@
-/**
- * Created by gunerkaanalkim on 25/01/2017.
- */
-"use strict";
-
 (function ($) {
+    "use strict";
+
     $.fn.flyImagePreviewer = function (options) {
         this.html("");
 
@@ -30,5 +27,4 @@
             this.append(alert);
         }
     };
-
 })(jQuery);
