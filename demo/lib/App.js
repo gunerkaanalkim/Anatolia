@@ -23,6 +23,17 @@ function pubsub() {
     // TODO  : publish in contsructor
     eventbus = new Eventbus();
 
+    // Single Publishing
+    eventbus.publish('event_4', {
+        state: 'foo bar tar'
+    });
+
+    // Single Subscribing
+    eventbus.subscribe('event_4', function (state) {
+        console.log(state);
+    });
+
+    // Multiple Publishing
     eventbus.publish([
         {
             event: 'event_1',
@@ -44,6 +55,7 @@ function pubsub() {
         }
     ]);
 
+    // Multiple Subscribing
     eventbus.subscribe([
         {
             event: 'event_1',
@@ -65,15 +77,6 @@ function pubsub() {
         }
     ]);
 
-    eventbus.subscribe('event_1', function (state) {
-        console.log(state);
-    });
-
-    eventbus.subscribe('event_2', function (state) {
-        console.log(state);
-    });
-
-    eventbus.subscribe('event_3', function (state) {
-        console.log(state);
-    });
+    //Fire event
+    eventbus.fire('event_1');
 }

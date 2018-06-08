@@ -57,6 +57,15 @@ var Eventbus = (function () {
         return _listenEventbus();
     };
 
+    Eventbus.prototype.fire = function (event) {
+        var eventState = _listenEventbus()[event].state;
+        var callBacks = _listenEventbus()[event].callbacks;
+
+        callBacks.forEach(function (callback) {
+            callback(eventState === undefined ? {} : eventState)
+        })
+    };
+
     function _fillPublishers(event, state) {
         if (!eventbus.hasOwnProperty(event)) {
             eventbus[event] = {};
@@ -70,7 +79,7 @@ var Eventbus = (function () {
         }
 
         eventbus[event].callbacks.forEach(function (callback) {
-            callback(state != undefined ? state : {});
+            callback(state === undefined ? {} : state);
         });
     }
 
