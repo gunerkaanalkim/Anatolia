@@ -17,12 +17,16 @@ var Eventbus = (function () {
         } else if (arguments.length === 1) {
             var subscriberList = arguments[0];
 
+            var _subscribers = [];
+
             subscriberList.forEach(function (subscriber) {
                 var event = subscriber.event;
                 var listener = subscriber.listener;
 
-                return _fillSubscribers(event, listener);
+                _subscribers.push(_fillSubscribers(event, listener));
             });
+
+            return _subscribers;
         } else {
             throw 'Error : Event parameter can not be null.'
         }
@@ -115,6 +119,13 @@ var Eventbus = (function () {
     function _listenEventbus() {
         return eventbus;
     }
+
+    //TODO
+    function _silenceEventbus() {
+
+    }
+
+    //TODO return multiple subscriber
 
     return Eventbus;
 })();
