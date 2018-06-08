@@ -57,7 +57,20 @@ var Eventbus = (function () {
         return _listenEventbus();
     };
 
-    Eventbus.prototype.fire = function (event) {
+    Eventbus.prototype.fire = function () {
+        if (!arguments.length) {
+            for (var i in eventbus) {
+                var event = eventbus[i];
+
+                event.callbacks.forEach(function (callback) {
+                    callback(event.state === undefined ? {} : event.state);
+                });
+            }
+
+            return;
+        }
+
+        var event = arguments[0];
         var eventState = _listenEventbus()[event].state;
         var callBacks = _listenEventbus()[event].callbacks;
 
