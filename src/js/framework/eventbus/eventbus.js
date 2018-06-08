@@ -94,7 +94,7 @@ var Eventbus = (function () {
 
         return {
             unsubscribe: function () {
-                delete eventbus[event]['callbacks'].splice(eventIndex, 1);
+                eventbus[event]['callbacks'].splice(eventIndex, 1);
             }
         };
     }
