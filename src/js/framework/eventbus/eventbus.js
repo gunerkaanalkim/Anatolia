@@ -1,3 +1,5 @@
+'use strict';
+
 var Eventbus = (function () {
     var eventbus;
 
@@ -6,19 +8,24 @@ var Eventbus = (function () {
     }
 
     Eventbus.prototype.subscribe = function (event, callback) {
-        if (!eventbus.hasOwnProperty(event)) {
-            throw 'Event is not defined.';
+        if (arguments.length === 2) {
+            var event = arguments[0];
+            var callback = arguments[1];
+
+            return _fillSubscribers(event, callback);
+
+        } else if (arguments.length === 1) {
+            var subscriberList = arguments[0];
+
+            subscriberList.forEach(function (subscriber) {
+                var event = subscriber.event;
+                var listener = subscriber.listener;
+
+                return _fillSubscribers(event, listener);
+            });
+        } else {
+            throw 'Error : Event parameter can not be null.'
         }
-
-        var eventIndex = eventbus[event].callbacks.push(callback) - 1;
-
-        eventbus[event].callbacks[eventIndex](eventbus[event].state);
-
-        return {
-            unsubscribe: function () {
-                delete eventbus[event]['callbacks'].splice(eventIndex, 1);
-            }
-        };
     };
 
     /*
@@ -29,16 +36,16 @@ var Eventbus = (function () {
             var event = arguments[0];
             var state = arguments[1];
 
-            _fillEventbus(event, state);
+            _fillPublishers(event, state);
 
         } else if (arguments.length === 1) {
-            var channelList = arguments[0];
+            var publisherList = arguments[0];
 
-            channelList.forEach(function (channel) {
-                var event = channel.event;
-                var state = channel.state;
+            publisherList.forEach(function (publisher) {
+                var event = publisher.event;
+                var state = publisher.state;
 
-                _fillEventbus(event, state);
+                _fillPublishers(event, state);
             });
 
         } else {
@@ -47,10 +54,10 @@ var Eventbus = (function () {
     };
 
     Eventbus.prototype.listen = function () {
-        return eventbus;
+        return _listenEventbus();
     };
 
-    function _fillEventbus(event, state) {
+    function _fillPublishers(event, state) {
         if (!eventbus.hasOwnProperty(event)) {
             eventbus[event] = {};
         }
@@ -65,6 +72,26 @@ var Eventbus = (function () {
         eventbus[event].callbacks.forEach(function (callback) {
             callback(state != undefined ? state : {});
         });
+    }
+
+    function _fillSubscribers(event, callback) {
+        if (!eventbus.hasOwnProperty(event)) {
+            throw 'Event is not defined.';
+        }
+
+        var eventIndex = eventbus[event].callbacks.push(callback) - 1;
+
+        eventbus[event].callbacks[eventIndex](eventbus[event].state);
+
+        return {
+            unsubscribe: function () {
+                delete eventbus[event]['callbacks'].splice(eventIndex, 1);
+            }
+        };
+    }
+
+    function _listenEventbus() {
+        return eventbus;
     }
 
     return Eventbus;
