@@ -1,3 +1,4 @@
+//TODO event channel
 var eventbus = null;
 
 $(document).ready(function () {
@@ -25,8 +26,36 @@ function pubsub() {
         foo: 'bar tar'
     });
 
-    //TODO a subscriber should not subscribe to the same channel more than once, subscriber should define an ID during subscription
+    eventbus.publish([
+        {
+            event: 'event_1',
+            state: {
+                foo1: 'bar1 tar1'
+            }
+        },
+        {
+            event: 'event_2',
+            state: {
+                foo2: 'bar2 tar2'
+            }
+        },
+        {
+            event: 'event_3',
+            state: {
+                foo3: 'bar3 tar3'
+            }
+        }
+    ]);
+
     eventbus.subscribe('event_1', function (state) {
-        console.log('event_1 -> listener 1 -> state.foo = ' + state.foo + '}');
+        console.log(state);
+    }).unsubscribe();
+
+    eventbus.subscribe('event_2', function (state) {
+        console.log(state);
+    });
+
+    eventbus.subscribe('event_3', function (state) {
+        console.log(state);
     });
 }
