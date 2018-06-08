@@ -77,6 +77,9 @@ function pubsub() {
         }
     ]);
 
-    //Fire event
+    //Fire a specific event
     eventbus.fire('event_1');
+
+    //Fire all events
+    eventbus.fire();
 }
