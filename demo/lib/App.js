@@ -82,4 +82,7 @@ function pubsub() {
 
     //Fire all events
     eventbus.fire();
+
+    //Listen api
+    console.log(eventbus.listen());
 }
