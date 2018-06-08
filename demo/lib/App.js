@@ -20,11 +20,8 @@ $(document).ready(function () {
 var sub1;
 
 function pubsub() {
+    // TODO  : publish in contsructor
     eventbus = new Eventbus();
-
-    eventbus.publish('event_1', {
-        foo: 'bar tar'
-    });
 
     eventbus.publish([
         {
@@ -47,9 +44,30 @@ function pubsub() {
         }
     ]);
 
+    eventbus.subscribe([
+        {
+            event: 'event_1',
+            listener: function (state) {
+                console.log(state);
+            }
+        },
+        {
+            event: 'event_2',
+            listener: function (state) {
+                console.log(state);
+            }
+        },
+        {
+            event: 'event_3',
+            listener: function (state) {
+                console.log(state);
+            }
+        }
+    ]);
+
     eventbus.subscribe('event_1', function (state) {
         console.log(state);
-    }).unsubscribe();
+    });
 
     eventbus.subscribe('event_2', function (state) {
         console.log(state);
