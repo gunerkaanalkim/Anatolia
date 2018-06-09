@@ -1,97 +1,38 @@
 'use strict';
 
 var Eventbus = (function () {
-    var _eventbus;
 
     function Eventbus() {
-        _eventbus = {};
+        this._eventbus = {};
     }
 
     /*
     * TODO 1 : Trigger order of events(round robin algorithm ? Order or weight properties?)
     * */
-    Eventbus.prototype.publisher = {
-        register: _registerPublisher,
-        fire: _firePublisher
+    Eventbus.prototype.publisher = function () {
+        return {
+            register: this._registerPublisher,
+            fire: this._firePublisher,
+            _context: this
+        }
     };
 
-    Eventbus.prototype.subscriber = {
-        register: _registerSubscriber,
-        fire: _fireSubscriber
+    Eventbus.prototype.subscriber = function () {
+        return {
+            register: this._registerSubscriber,
+            fire: this._fireSubscriber,
+            _context: this
+        }
     };
-
-    function _registerPublisher() {
-        for (var i in arguments) {
-            var publisher = arguments[i];
-
-            _fillPublishers(publisher);
-        }
-    }
-
-    function _registerSubscriber() {
-        for (var i in arguments) {
-            var subscriber = arguments[i];
-
-            _fillSubscribers(subscriber);
-        }
-    }
-
-    function _firePublisher(publisher) {
-        var event = publisher.event();
-
-        var subscribers = _eventbus[event].subscribers;
-        var state = _eventbus[event].state;
-
-        subscribers.forEach(function (subscriber) {
-            subscriber.callback()(state === undefined ? {} : state);
-        });
-    }
-
-    function _fireSubscriber(subscriber) {
-        var event = subscriber.event();
-
-        subscriber.callback()(_eventbus[event].state);
-    }
-
-    function _fillPublishers(publisher) {
-        var event = publisher.event();
-        var state = publisher.state();
-
-        if (!_eventbus.hasOwnProperty(event)) {
-            _eventbus[event] = {};
-        }
-
-        _eventbus[event].state = state;
-
-        if (_eventbus[event].subscribers === undefined) {
-            _eventbus[event].subscribers = [];
-            return;
-        }
-
-        _fire(publisher);
-    }
-
-    function _fillSubscribers(subscriber) {
-        var event = subscriber.event();
-        var state = _eventbus[event].state;
-
-        if (!_eventbus.hasOwnProperty(event)) {
-            throw 'Event is not defined.';
-        }
-
-        var eventIndex = _eventbus[event].subscribers.push(subscriber) - 1;
-
-        _eventbus[event].subscribers[eventIndex]._callback(state);
-    }
 
     Eventbus.prototype.listen = function () {
-        return _eventbus;
+        return this._eventbus;
     };
 
     Eventbus.prototype.mute = function () {
         if (!arguments.length) {
-            for (var i in _eventbus) {
-                var event = _eventbus[i];
+            for (var i in this._eventbus) {
+                var event = this._eventbus[i];
 
                 event.subscribers = [];
             }
@@ -99,7 +40,85 @@ var Eventbus = (function () {
     };
 
     Eventbus.prototype.clean = function () {
-        _eventbus = {};
+        this._eventbus = {};
+    };
+
+    Eventbus.prototype._registerPublisher = function () {
+        for (var i in arguments) {
+            var publisher = arguments[i];
+
+            this._context._fillPublishers(publisher);
+        }
+    };
+
+    Eventbus.prototype._registerSubscriber = function () {
+        for (var i in arguments) {
+            var subscriber = arguments[i];
+
+            this._context._fillSubscribers(subscriber);
+        }
+    };
+
+    Eventbus.prototype._firePublisher = function (publisher) {
+        var event = publisher.event();
+
+        if (!this._context._eventbus[event])
+            throw 'Error : Event not found.';
+
+        var subscribers = this._context._eventbus[event].subscribers;
+        var state = this._context._eventbus[event].state;
+
+        subscribers.forEach(function (subscriber) {
+            subscriber.callback()(state === undefined ? {} : state);
+        });
+    };
+
+    Eventbus.prototype._fireSubscriber = function (subscriber) {
+        var event = subscriber.event();
+
+        subscriber.callback()(this._context._eventbus[event].state);
+    };
+
+    Eventbus.prototype._fillPublishers = function (publisher) {
+        var event = publisher.event();
+        var state = publisher.state();
+
+        if (!this._eventbus.hasOwnProperty(event)) {
+            this._eventbus[event] = {};
+        }
+
+        this._eventbus[event].state = state;
+
+        if (this._eventbus[event].subscribers === undefined) {
+            this._eventbus[event].subscribers = [];
+            return;
+        }
+
+        this._fire(publisher);
+    };
+
+    Eventbus.prototype._fillSubscribers = function (subscriber) {
+        var event = subscriber.event();
+        var state = this._eventbus[event].state;
+
+        if (!this._eventbus.hasOwnProperty(event)) {
+            throw 'Event is not defined.';
+        }
+
+        var eventIndex = this._eventbus[event].subscribers.push(subscriber) - 1;
+
+        this._eventbus[event].subscribers[eventIndex]._callback(state);
+    };
+
+    Eventbus.prototype._fire = function (publisher) {
+        var event = publisher.event();
+
+        var subscribers = this._eventbus[event].subscribers;
+        var state = this._eventbus[event].state;
+
+        subscribers.forEach(function (subscriber) {
+            subscriber.callback()(state === undefined ? {} : state);
+        });
     };
 
     return Eventbus;
