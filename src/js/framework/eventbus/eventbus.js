@@ -39,28 +39,43 @@ var Eventbus = (function () {
     * TODO 1 : Trigger order of events(round robin algorithm ? Order or weight properties?)
     * */
 
-    // Eventbus.prototype.;
+    Eventbus.prototype.publisher = {
+        register: _register,
+        multipleRegister: _multipleRegister
+        // register: function () {
+        //     console.log('publisher was register')
+        // }
+    };
 
-    function _publish() {
-        if (arguments.length === 2) {
-            var event = arguments[0];
-            var state = arguments[1];
+    Eventbus.prototype.subscriber = {
+        register: function () {
+            console.log('subscriber was register');
+        }
+    };
+
+    function _register() {
+        for (var i in arguments) {
+            var publisher = arguments[i];
+
+            var event = publisher.event();
+            var state = publisher.state();
 
             _fillPublishers(event, state);
-
-        } else if (arguments.length === 1) {
-            var publisherList = arguments[0];
-
-            publisherList.forEach(function (publisher) {
-                var event = publisher.event;
-                var state = publisher.state;
-
-                _fillPublishers(event, state);
-            });
-
-        } else {
-            throw 'Error : Event parameter can not be null.'
         }
+    }
+
+    function _multipleRegister() {
+
+
+        // debugger;
+        // var publishers = arguments[0];
+        //
+        // publishers.forEach(function (publisher) {
+        //     var event = publisher.event();
+        //     var state = publisher.state();
+        //
+        //     _fillPublishers(event, state);
+        // });
     }
 
     Eventbus.prototype.listen = function () {
@@ -101,16 +116,6 @@ var Eventbus = (function () {
 
     Eventbus.prototype.clean = function () {
         eventbus = {};
-    };
-
-    Eventbus.prototype.publisher = {
-        register: _publish
-    };
-
-    Eventbus.prototype.subscriber = {
-        register: function () {
-            console.log('registered subcriber');
-        }
     };
 
     function _fillPublishers(event, state) {
@@ -154,42 +159,40 @@ var Eventbus = (function () {
 })();
 
 var Publisher = (function () {
-    var _event;
-    var _state;
-
     function Publisher(event, state) {
-        _event = event || null;
-        _state = state || null;
+        this._event = event || null;
+        this._state = state || null;
     }
 
     Publisher.prototype.event = function () {
         if (arguments.length) {
-            _event = arguments[0];
+            this._event = arguments[0];
         }
 
-        return _event;
+        return this._event;
     };
 
     Publisher.prototype.state = function () {
         if (arguments[0] instanceof Object) {
-            _state = arguments[0];
+            this._state = arguments[0];
         } else if (arguments[0] === undefined) {
-            return _state;
+            return this._state;
         }
+    };
+
+    Publisher.prototype.toString = function () {
+        return "Event : " + this._event + " " + " State : " + this._state;
     };
 
     return Publisher;
 })();
 
 var Subscriber = (function () {
-    var _event;
-    var _callback;
-
     function Subscriber(event, callback) {
-        _event = event || null;
+        this._event = event || null;
 
         if (callback instanceof Function) {
-            _callback = callback || null;
+            this._callback = callback || null;
         } else {
             throw 'Contructor should take a callback function.'
         }
@@ -197,17 +200,17 @@ var Subscriber = (function () {
 
     Subscriber.prototype.event = function () {
         if (arguments.length) {
-            _event = arguments[0];
+            this._event = arguments[0];
         }
 
-        return _event;
+        return this._event;
     };
 
     Subscriber.prototype.callback = function () {
         if (arguments[0] instanceof Function) {
-            _callback = arguments[0];
+            this._callback = arguments[0];
         } else if (arguments[0] === undefined) {
-            return _callback;
+            return this._callback;
         }
     };
 
