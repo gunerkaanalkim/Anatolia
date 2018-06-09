@@ -180,3 +180,36 @@ var Publisher = (function () {
 
     return Publisher;
 })();
+
+var Subscriber = (function () {
+    var _event;
+    var _callback;
+
+    function Subscriber(event, callback) {
+        _event = event || null;
+
+        if (callback instanceof Function) {
+            _callback = callback || null;
+        } else {
+            throw 'Contructor should take a callback function.'
+        }
+    }
+
+    Subscriber.prototype.event = function () {
+        if (arguments.length) {
+            _event = arguments[0];
+        }
+
+        return _event;
+    };
+
+    Subscriber.prototype.callback = function () {
+        if (arguments[0] instanceof Function) {
+            _callback = arguments[0];
+        } else if (arguments[0] === undefined) {
+            return _callback;
+        }
+    };
+
+    return Subscriber;
+})();
