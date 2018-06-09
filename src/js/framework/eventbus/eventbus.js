@@ -40,11 +40,7 @@ var Eventbus = (function () {
     * */
 
     Eventbus.prototype.publisher = {
-        register: _register,
-        multipleRegister: _multipleRegister
-        // register: function () {
-        //     console.log('publisher was register')
-        // }
+        register: _registerPublisher
     };
 
     Eventbus.prototype.subscriber = {
@@ -53,7 +49,7 @@ var Eventbus = (function () {
         }
     };
 
-    function _register() {
+    function _registerPublisher() {
         for (var i in arguments) {
             var publisher = arguments[i];
 
@@ -62,20 +58,6 @@ var Eventbus = (function () {
 
             _fillPublishers(event, state);
         }
-    }
-
-    function _multipleRegister() {
-
-
-        // debugger;
-        // var publishers = arguments[0];
-        //
-        // publishers.forEach(function (publisher) {
-        //     var event = publisher.event();
-        //     var state = publisher.state();
-        //
-        //     _fillPublishers(event, state);
-        // });
     }
 
     Eventbus.prototype.listen = function () {
