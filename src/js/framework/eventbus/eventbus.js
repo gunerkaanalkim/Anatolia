@@ -38,52 +38,43 @@ var Eventbus = (function () {
     /*
     * TODO 1 : Trigger order of events(round robin algorithm ? Order or weight properties?)
     * */
-
     Eventbus.prototype.publisher = {
         register: _registerPublisher
     };
 
     Eventbus.prototype.subscriber = {
-        register: function () {
-            console.log('subscriber was register');
-        }
+        register: _registerSubscriber
     };
 
     function _registerPublisher() {
         for (var i in arguments) {
             var publisher = arguments[i];
 
-            var event = publisher.event();
-            var state = publisher.state();
-
-            _fillPublishers(event, state);
+            _fillPublishers(publisher);
         }
+    }
+
+    function _registerSubscriber() {
+        for (var i in arguments) {
+            var subscriber = arguments[i];
+
+            _fillSubscribers(subscriber);
+        }
+    }
+
+    function _fire(publisher) {
+        var event = publisher.event();
+
+        var subscribers = eventbus[event].subscribers;
+        var state = eventbus[event].state;
+
+        subscribers.forEach(function (subscriber) {
+            subscriber.callback()(state === undefined ? {} : state);
+        });
     }
 
     Eventbus.prototype.listen = function () {
         return _listenEventbus();
-    };
-
-    Eventbus.prototype.fire = function () {
-        if (!arguments.length) {
-            for (var i in eventbus) {
-                var event = eventbus[i];
-
-                event.callbacks.forEach(function (callback) {
-                    callback(event.state === undefined ? {} : event.state);
-                });
-            }
-
-            return;
-        }
-
-        var event = arguments[0];
-        var eventState = _listenEventbus()[event].state;
-        var callBacks = _listenEventbus()[event].callbacks;
-
-        callBacks.forEach(function (callback) {
-            callback(eventState === undefined ? {} : eventState)
-        })
     };
 
     Eventbus.prototype.mute = function () {
@@ -100,37 +91,34 @@ var Eventbus = (function () {
         eventbus = {};
     };
 
-    function _fillPublishers(event, state) {
+    function _fillPublishers(publisher) {
+        var event = publisher.event();
+        var state = publisher.state();
+
         if (!eventbus.hasOwnProperty(event)) {
             eventbus[event] = {};
         }
 
         eventbus[event].state = state;
 
-        if (eventbus[event].callbacks === undefined) {
-            eventbus[event].callbacks = [];
+        if (eventbus[event].subscribers === undefined) {
+            eventbus[event].subscribers = [];
             return;
         }
 
-        eventbus[event].callbacks.forEach(function (callback) {
-            callback(state === undefined ? {} : state);
-        });
+        _fire(publisher);
     }
 
-    function _fillSubscribers(event, callback) {
+    function _fillSubscribers(subscriber) {
+        var event = subscriber.event();
+
         if (!eventbus.hasOwnProperty(event)) {
             throw 'Event is not defined.';
         }
 
-        var eventIndex = eventbus[event].callbacks.push(callback) - 1;
+        var eventIndex = eventbus[event].subscribers.push(subscriber) - 1;
 
-        eventbus[event].callbacks[eventIndex](eventbus[event].state);
-
-        return {
-            unsubscribe: function () {
-                eventbus[event]['callbacks'].splice(eventIndex, 1);
-            }
-        };
+        eventbus[event].subscribers[eventIndex]._callback(eventbus[event].state);
     }
 
     function _listenEventbus() {
