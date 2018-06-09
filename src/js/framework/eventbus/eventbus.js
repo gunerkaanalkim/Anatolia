@@ -17,12 +17,16 @@ var Eventbus = (function () {
         } else if (arguments.length === 1) {
             var subscriberList = arguments[0];
 
+            var _subscribers = [];
+
             subscriberList.forEach(function (subscriber) {
                 var event = subscriber.event;
                 var listener = subscriber.listener;
 
-                return _fillSubscribers(event, listener);
+                _subscribers.push(_fillSubscribers(event, listener));
             });
+
+            return _subscribers;
         } else {
             throw 'Error : Event parameter can not be null.'
         }
@@ -57,7 +61,20 @@ var Eventbus = (function () {
         return _listenEventbus();
     };
 
-    Eventbus.prototype.fire = function (event) {
+    Eventbus.prototype.fire = function () {
+        if (!arguments.length) {
+            for (var i in eventbus) {
+                var event = eventbus[i];
+
+                event.callbacks.forEach(function (callback) {
+                    callback(event.state === undefined ? {} : event.state);
+                });
+            }
+
+            return;
+        }
+
+        var event = arguments[0];
         var eventState = _listenEventbus()[event].state;
         var callBacks = _listenEventbus()[event].callbacks;
 
@@ -102,6 +119,13 @@ var Eventbus = (function () {
     function _listenEventbus() {
         return eventbus;
     }
+
+    //TODO
+    function _silenceEventbus() {
+
+    }
+
+    //TODO return multiple subscriber
 
     return Eventbus;
 })();

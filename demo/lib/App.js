@@ -17,8 +17,6 @@ $(document).ready(function () {
     pubsub();
 });
 
-var sub1;
-
 function pubsub() {
     // TODO  : publish in contsructor
     eventbus = new Eventbus();
@@ -29,7 +27,7 @@ function pubsub() {
     });
 
     // Single Subscribing
-    eventbus.subscribe('event_4', function (state) {
+    var subscribe = eventbus.subscribe('event_4', function (state) {
         console.log(state);
     });
 
@@ -56,7 +54,7 @@ function pubsub() {
     ]);
 
     // Multiple Subscribing
-    eventbus.subscribe([
+    var subscribers = eventbus.subscribe([
         {
             event: 'event_1',
             listener: function (state) {
@@ -77,6 +75,12 @@ function pubsub() {
         }
     ]);
 
-    //Fire event
+    //Fire a specific event
     eventbus.fire('event_1');
+
+    //Fire all events
+    eventbus.fire();
+
+    //Listen api
+    console.log(eventbus.listen());
 }
