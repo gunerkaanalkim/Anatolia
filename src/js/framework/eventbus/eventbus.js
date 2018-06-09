@@ -39,7 +39,8 @@ var Eventbus = (function () {
     * TODO 1 : Trigger order of events(round robin algorithm ? Order or weight properties?)
     * */
     Eventbus.prototype.publisher = {
-        register: _registerPublisher
+        register: _registerPublisher,
+        fire: _fire
     };
 
     Eventbus.prototype.subscriber = {
