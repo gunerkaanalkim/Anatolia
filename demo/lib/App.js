@@ -1,11 +1,15 @@
 //TODO event channel
 var eventbus = null;
+var eventbus2 = null;
+
 var publisher_1 = null;
 var publisher_2 = null;
 var publisher_3 = null;
+
 var subscriber_1 = null;
 var subscriber_2 = null;
 var subscriber_3 = null;
+var subscriber_4 = null;
 
 $(document).ready(function () {
     new Button().usage();
@@ -24,7 +28,6 @@ $(document).ready(function () {
 });
 
 function pubsub() {
-    // TODO  : publish in contsructor
     eventbus = new Eventbus();
 
     publisher_1 = new Publisher('event_1', {
@@ -66,79 +69,6 @@ function pubsub() {
     eventbus.publisher.fire(publisher_1);
 
 
-    // subscriber = new Subscriber('event_1', function (state) {
-    //     console.log(state);
-    // });
-
-    // eventbus.publisher.register([
-    //     publisher_1,
-    //     publisher_2
-    // ]);
-    // eventbus.publisher.register(publisher_1);
-
-    // // Single Publishing
-    // eventbus.publish('event_4', {
-    //     state: 'foo bar tar'
-    // });
-    //
-    // // Single Subscribing
-    // var subscribe = eventbus.subscribe('event_4', function (state) {
-    //     console.log(state);
-    // });
-
-    // Multiple Publishing
-    // eventbus.publisher.register([
-    //     {
-    //         event: 'event_1',
-    //         state: {
-    //             foo1: 'bar1 tar1'
-    //         }
-    //     },
-    //     {
-    //         event: 'event_2',
-    //         state: {
-    //             foo2: 'bar2 tar2'
-    //         }
-    //     },
-    //     {
-    //         event: 'event_3',
-    //         state: {
-    //             foo3: 'bar3 tar3'
-    //         }
-    //     }
-    // ]);
-    //
-    // // Multiple Subscribing
-    // var subscribers = eventbus.subscribe([
-    //     {
-    //         event: 'event_1',
-    //         listener: function (state) {
-    //             // console.log(state);
-    //         }
-    //     },
-    //     {
-    //         event: 'event_2',
-    //         listener: function (state) {
-    //             // console.log(state);
-    //         }
-    //     },
-    //     {
-    //         event: 'event_3',
-    //         listener: function (state) {
-    //             // console.log(state);
-    //         }
-    //     }
-    // ]);
-    //
-    // console.log(eventbus.listen());
-
-
-    // //Fire a specific event
-    // eventbus.fire('event_1');
-    //
-    // //Fire all events
-    // eventbus.fire();
-    //
     // //Listen event bus
     // eventbus.listen();
     // //Callbacks removed
