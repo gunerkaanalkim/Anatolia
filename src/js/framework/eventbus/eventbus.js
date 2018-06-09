@@ -1,10 +1,10 @@
 'use strict';
 
 var Eventbus = (function () {
-    var eventbus;
+    var _eventbus;
 
     function Eventbus() {
-        eventbus = {};
+        _eventbus = {};
     }
 
     /*
@@ -40,11 +40,12 @@ var Eventbus = (function () {
     * */
     Eventbus.prototype.publisher = {
         register: _registerPublisher,
-        fire: _fire
+        fire: _firePublisher
     };
 
     Eventbus.prototype.subscriber = {
-        register: _registerSubscriber
+        register: _registerSubscriber,
+        fire: _fireSubscriber
     };
 
     function _registerPublisher() {
@@ -63,15 +64,21 @@ var Eventbus = (function () {
         }
     }
 
-    function _fire(publisher) {
+    function _firePublisher(publisher) {
         var event = publisher.event();
 
-        var subscribers = eventbus[event].subscribers;
-        var state = eventbus[event].state;
+        var subscribers = _eventbus[event].subscribers;
+        var state = _eventbus[event].state;
 
         subscribers.forEach(function (subscriber) {
             subscriber.callback()(state === undefined ? {} : state);
         });
+    }
+
+    function _fireSubscriber(subscriber) {
+        var event = subscriber.event();
+
+        subscriber.callback()(_eventbus[event].state);
     }
 
     Eventbus.prototype.listen = function () {
@@ -80,8 +87,8 @@ var Eventbus = (function () {
 
     Eventbus.prototype.mute = function () {
         if (!arguments.length) {
-            for (var i in eventbus) {
-                var event = eventbus[i];
+            for (var i in _eventbus) {
+                var event = _eventbus[i];
 
                 event.callbacks = [];
             }
@@ -89,21 +96,21 @@ var Eventbus = (function () {
     };
 
     Eventbus.prototype.clean = function () {
-        eventbus = {};
+        _eventbus = {};
     };
 
     function _fillPublishers(publisher) {
         var event = publisher.event();
         var state = publisher.state();
 
-        if (!eventbus.hasOwnProperty(event)) {
-            eventbus[event] = {};
+        if (!_eventbus.hasOwnProperty(event)) {
+            _eventbus[event] = {};
         }
 
-        eventbus[event].state = state;
+        _eventbus[event].state = state;
 
-        if (eventbus[event].subscribers === undefined) {
-            eventbus[event].subscribers = [];
+        if (_eventbus[event].subscribers === undefined) {
+            _eventbus[event].subscribers = [];
             return;
         }
 
@@ -113,17 +120,17 @@ var Eventbus = (function () {
     function _fillSubscribers(subscriber) {
         var event = subscriber.event();
 
-        if (!eventbus.hasOwnProperty(event)) {
+        if (!_eventbus.hasOwnProperty(event)) {
             throw 'Event is not defined.';
         }
 
-        var eventIndex = eventbus[event].subscribers.push(subscriber) - 1;
+        var eventIndex = _eventbus[event].subscribers.push(subscriber) - 1;
 
-        eventbus[event].subscribers[eventIndex]._callback(eventbus[event].state);
+        _eventbus[event].subscribers[eventIndex]._callback(_eventbus[event].state);
     }
 
     function _listenEventbus() {
-        return eventbus;
+        return _eventbus;
     }
 
     return Eventbus;
