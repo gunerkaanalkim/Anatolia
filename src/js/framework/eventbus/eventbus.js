@@ -8,34 +8,6 @@ var Eventbus = (function () {
     }
 
     /*
-    * TODO Take subsscibe ID for multiple subscribing
-    * */
-    Eventbus.prototype.subscribe = function (event, callback) {
-        if (arguments.length === 2) {
-            var event = arguments[0];
-            var callback = arguments[1];
-
-            return _fillSubscribers(event, callback);
-
-        } else if (arguments.length === 1) {
-            var subscriberList = arguments[0];
-
-            var _subscribers = [];
-
-            subscriberList.forEach(function (subscriber) {
-                var event = subscriber.event;
-                var listener = subscriber.listener;
-
-                _subscribers.push(_fillSubscribers(event, listener));
-            });
-
-            return _subscribers;
-        } else {
-            throw 'Error : Event parameter can not be null.'
-        }
-    };
-
-    /*
     * TODO 1 : Trigger order of events(round robin algorithm ? Order or weight properties?)
     * */
     Eventbus.prototype.publisher = {
@@ -81,24 +53,6 @@ var Eventbus = (function () {
         subscriber.callback()(_eventbus[event].state);
     }
 
-    Eventbus.prototype.listen = function () {
-        return _listenEventbus();
-    };
-
-    Eventbus.prototype.mute = function () {
-        if (!arguments.length) {
-            for (var i in _eventbus) {
-                var event = _eventbus[i];
-
-                event.callbacks = [];
-            }
-        }
-    };
-
-    Eventbus.prototype.clean = function () {
-        _eventbus = {};
-    };
-
     function _fillPublishers(publisher) {
         var event = publisher.event();
         var state = publisher.state();
@@ -119,6 +73,7 @@ var Eventbus = (function () {
 
     function _fillSubscribers(subscriber) {
         var event = subscriber.event();
+        var state = _eventbus[event].state;
 
         if (!_eventbus.hasOwnProperty(event)) {
             throw 'Event is not defined.';
@@ -126,12 +81,26 @@ var Eventbus = (function () {
 
         var eventIndex = _eventbus[event].subscribers.push(subscriber) - 1;
 
-        _eventbus[event].subscribers[eventIndex]._callback(_eventbus[event].state);
+        _eventbus[event].subscribers[eventIndex]._callback(state);
     }
 
-    function _listenEventbus() {
+    Eventbus.prototype.listen = function () {
         return _eventbus;
-    }
+    };
+
+    Eventbus.prototype.mute = function () {
+        if (!arguments.length) {
+            for (var i in _eventbus) {
+                var event = _eventbus[i];
+
+                event.subscribers = [];
+            }
+        }
+    };
+
+    Eventbus.prototype.clean = function () {
+        _eventbus = {};
+    };
 
     return Eventbus;
 })();
