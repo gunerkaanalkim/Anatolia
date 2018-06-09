@@ -38,7 +38,10 @@ var Eventbus = (function () {
     /*
     * TODO 1 : Trigger order of events(round robin algorithm ? Order or weight properties?)
     * */
-    Eventbus.prototype.publish = function () {
+
+    // Eventbus.prototype.;
+
+    function _publish() {
         if (arguments.length === 2) {
             var event = arguments[0];
             var state = arguments[1];
@@ -58,7 +61,7 @@ var Eventbus = (function () {
         } else {
             throw 'Error : Event parameter can not be null.'
         }
-    };
+    }
 
     Eventbus.prototype.listen = function () {
         return _listenEventbus();
@@ -100,6 +103,16 @@ var Eventbus = (function () {
         eventbus = {};
     };
 
+    Eventbus.prototype.publisher = {
+        register: _publish
+    };
+
+    Eventbus.prototype.subscriber = {
+        register: function () {
+            console.log('registered subcriber');
+        }
+    };
+
     function _fillPublishers(event, state) {
         if (!eventbus.hasOwnProperty(event)) {
             eventbus[event] = {};
@@ -138,4 +151,32 @@ var Eventbus = (function () {
     }
 
     return Eventbus;
+})();
+
+var Publisher = (function () {
+    var _event;
+    var _state;
+
+    function Publisher(event, state) {
+        _event = event || null;
+        _state = state || null;
+    }
+
+    Publisher.prototype.event = function () {
+        if (arguments.length) {
+            _event = arguments[0];
+        }
+
+        return _event;
+    };
+
+    Publisher.prototype.state = function () {
+        if (arguments[0] instanceof Object) {
+            _state = arguments[0];
+        } else if (arguments[0] === undefined) {
+            return _state;
+        }
+    };
+
+    return Publisher;
 })();
