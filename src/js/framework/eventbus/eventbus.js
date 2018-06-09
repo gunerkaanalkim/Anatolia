@@ -7,6 +7,9 @@ var Eventbus = (function () {
         eventbus = {};
     }
 
+    /*
+    * TODO Take subsscibe ID for multiple subscribing
+    * */
     Eventbus.prototype.subscribe = function (event, callback) {
         if (arguments.length === 2) {
             var event = arguments[0];
@@ -83,6 +86,20 @@ var Eventbus = (function () {
         })
     };
 
+    Eventbus.prototype.mute = function () {
+        if (!arguments.length) {
+            for (var i in eventbus) {
+                var event = eventbus[i];
+
+                event.callbacks = [];
+            }
+        }
+    };
+
+    Eventbus.prototype.clean = function () {
+        eventbus = {};
+    };
+
     function _fillPublishers(event, state) {
         if (!eventbus.hasOwnProperty(event)) {
             eventbus[event] = {};
@@ -119,13 +136,6 @@ var Eventbus = (function () {
     function _listenEventbus() {
         return eventbus;
     }
-
-    //TODO
-    function _silenceEventbus() {
-
-    }
-
-    //TODO return multiple subscriber
 
     return Eventbus;
 })();
