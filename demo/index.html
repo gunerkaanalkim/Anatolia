@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
     <script type="application/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
     <script type="application/javascript" src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../bower_components/lorem-ipsum-generator/lorem-ipsum.js"></script>
 
     <script type="application/javascript" src="../src/js/widgets/button/button.js"></script>
     <script type="application/javascript" src="../src/js/widgets/textbox/textbox.js"></script>
@@ -18,6 +19,7 @@
     <script type="application/javascript" src="../src/js/framework/dataviewer/dataviewer.js"></script>
     <script type="application/javascript" src="../src/js/widgets/selection/selection.js"></script>
     <script type="application/javascript" src="../src/js/framework/eventbus/eventbus.js"></script>
+    <script type="application/javascript" src="../src/js/framework/component.js"></script>
 
     <script type="application/javascript" src="lib/module/MButton.js"></script>
     <script type="application/javascript" src="lib/module/MTextbox.js"></script>
@@ -25,7 +27,8 @@
     <script type="application/javascript" src="lib/module/MCarousel.js"></script>
     <script type="application/javascript" src="lib/module/MDataViewer.js"></script>
     <script type="application/javascript" src="lib/module/MSeelection.js"></script>
-    <script type="application/javascript" src="lib/module/MPubSub.js"></script>
+    <!--<script type="application/javascript" src="lib/module/MPubSub.js"></script>-->
+    <script type="application/javascript" src="lib/module/MComponent.js"></script>
     <script type="application/javascript" src="lib/App.js"></script>
 
     <style>
@@ -138,60 +141,68 @@
         </ul>
     </div>
     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-        <div class="row clearfix" id="flyButton">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <h1>Fly.Button
-                    <small><a href="https://getbootstrap.com/docs/3.3/css/#buttons">Button</a></small>
-                </h1>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <h5>Özel Stiller</h5>
-                <button id="defaultButtonCustom"></button>
-                <button id="primaryButtonCustom"></button>
-                <button id="infoButtonCustom"></button>
-                <button id="warningButtonCustom"></button>
-                <button id="successButtonCustom"></button>
-                <button id="dangerButtonCustom"></button>
-            </div>
-        </div>
-        <div class="row clearfix" id="textbox">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <h1>Textbox</h1>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div id="textview"></div>
-            </div>
-        </div>
-        <div class="row clearfix" id="buttonGroup">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <h1>Button Group</h1>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div id="buttongrp"></div>
-            </div>
-        </div>
-        <div class="row clearfix" id="carousel">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <h1>Button Group</h1>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div id="crs"></div>
-            </div>
-        </div>
-        <div class="row clearfix" id="dataviewer">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <h1>Data Viewer</h1>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div id="dw"></div>
-            </div>
-        </div>
+        <!--<div class="row clearfix" id="flyButton">-->
+        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+        <!--<h1>Fly.Button-->
+        <!--<small><a href="https://getbootstrap.com/docs/3.3/css/#buttons">Button</a></small>-->
+        <!--</h1>-->
+        <!--</div>-->
+        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+        <!--<h5>Özel Stiller</h5>-->
+        <!--<button id="defaultButtonCustom"></button>-->
+        <!--<button id="primaryButtonCustom"></button>-->
+        <!--<button id="infoButtonCustom"></button>-->
+        <!--<button id="warningButtonCustom"></button>-->
+        <!--<button id="successButtonCustom"></button>-->
+        <!--<button id="dangerButtonCustom"></button>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row clearfix" id="textbox">-->
+        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+        <!--<h1>Textbox</h1>-->
+        <!--</div>-->
+        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+        <!--<div id="textview"></div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row clearfix" id="buttonGroup">-->
+        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+        <!--<h1>Button Group</h1>-->
+        <!--</div>-->
+        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+        <!--<div id="buttongrp"></div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row clearfix" id="carousel">-->
+        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+        <!--<h1>Button Group</h1>-->
+        <!--</div>-->
+        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+        <!--<div id="crs"></div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row clearfix" id="dataviewer">-->
+        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+        <!--<h1>Data Viewer</h1>-->
+        <!--</div>-->
+        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+        <!--<div id="dw"></div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row clearfix" id="selection">-->
+        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+        <!--<h1>Selection</h1>-->
+        <!--</div>-->
+        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+        <!--<div id="slct"></div>-->
+        <!--</div>-->
+        <!--</div>-->
         <div class="row clearfix" id="selection">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <h1>Selection</h1>
+                <h1>Component</h1>
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div id="slct"></div>
+                <div id="component"></div>
             </div>
         </div>
     </div>

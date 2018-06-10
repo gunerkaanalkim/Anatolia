@@ -13,10 +13,7 @@ var Component = (function () {
     }
 
     Component.prototype._render = function (componentName, rawTemplate, container) {
-
         this._subscriber = new Subscriber('event1', function (state) {
-            console.log(state);
-
             var template = rawTemplate;
 
             var regex = /{{\s*([^}]+)\s*}}/g;
@@ -30,7 +27,6 @@ var Component = (function () {
                     template = template.replace(replacedItem, state[searchedItem]);
                 }
             }
-
 
             document.querySelector(container).innerHTML = template;
         });
