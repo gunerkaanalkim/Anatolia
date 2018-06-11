@@ -22,10 +22,15 @@ var Comp = (function () {
         eventbus.publisher().register(pub);
 
         component = new Component('myComponent', {
+            template: "<div style='{{style}}'> <p f-on:click='clickText()'>{{text_1}}</p> <p f-on:click='clickText()'>{{text_2}}</p> <p>{{text_3}}</p> <p>{{text_4}}</p> <p>{{text_5}}</p> </div>",
             container: '#component',
             eventbus: eventbus,
             event: 'event1',
-            template: "<div style='{{style}}'> <p>{{text_1}}</p> <p>{{text_2}}</p> <p>{{text_3}}</p> <p>{{text_4}}</p> <p>{{text_5}}</p> </div>"
+            methods: {
+                clickText: function (element) {
+                    console.log('Clicked!');
+                }
+            }
         });
     };
 
