@@ -2,6 +2,7 @@ var eventbus = null;
 var sub = null;
 var pub = null;
 var component = null;
+var fon = {};
 
 var Comp = (function () {
     function Comp() {
@@ -9,6 +10,8 @@ var Comp = (function () {
     }
 
     Comp.prototype.usage = function () {
+        window.fon.components = {};
+
         eventbus = new Eventbus();
 
         pub = new Publisher('event1', {
@@ -22,13 +25,16 @@ var Comp = (function () {
         eventbus.publisher().register(pub);
 
         component = new Component('myComponent', {
-            template: "<div style='{{style}}'> <p f-on:click='clickText()'>{{text_1}}</p> <p f-on:click='clickText()'>{{text_2}}</p> <p>{{text_3}}</p> <p>{{text_4}}</p> <p>{{text_5}}</p> </div>",
+            template: "<div style='{{style}}'> <p f-on:click='clickText(`asd`,`qwe`)' f-on:mouseenter='mouseEnter(this)'>{{text_1}}</p> <p f-on:click='clickText()'>{{text_2}}</p> <p>{{text_3}}</p> <p>{{text_4}}</p> <p>{{text_5}}</p> </div>",
             container: '#component',
             eventbus: eventbus,
             event: 'event1',
             methods: {
-                clickText: function (element) {
-                    console.log('Clicked!');
+                clickText: function (value1, value2) {
+                    console.log(value1);
+                },
+                mouseEnter: function (value) {
+                    console.log(value);
                 }
             }
         });
