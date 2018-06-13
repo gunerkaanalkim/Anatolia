@@ -23,4 +23,6 @@ Anatolia.prototype.render = function () {
 
         console.log(component._render());
     }
+
+    return this;
 };
