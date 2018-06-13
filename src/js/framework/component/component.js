@@ -18,12 +18,9 @@ Component.prototype._render = function () {
     var context = this;
     if (!this._globalSetting.components.hasOwnProperty(this._name)) {
         this._globalSetting.components[this._name] = {};
-        this._globalSetting.components[this._name]['methods'] = {};
     }
 
     this._subscriber = new Subscriber(this._event, function (state) {
-        var component = document.createElement(context._name);
-
         var template = context._template;
 
         var expressionRegex = /{{\s*([^}]+)\s*}}/g;
@@ -38,26 +35,25 @@ Component.prototype._render = function () {
             }
         }
 
-        var methodsRegex = /f-on:(\S+)\s*=\s*([']|["])\s*([\W\w]*?)\s*\2/g;
-        var method;
+        var component = document.createElement('template');
+        component.innerHTML = template;
 
-        while (method = methodsRegex.exec(template)) {
-            var replacedMethod = method[0].trim();
-            var searchedMethod = method[1].trim();
-            var event = method[3].trim();
-            var eventKey = method[3].trim().split('(')[0];
+        for (var i in context._methods) {
+            var methods = context._methods[i];
 
-            //Setting event in global anatolia object
-            context._globalSetting.components[context._name]['methods'][eventKey] = context._methods[eventKey];
+            for (var j in methods) {
+                var fn = methods[j];
 
+                var targetElements = component.content.querySelectorAll(i);
 
-            if (context._methods.hasOwnProperty(method[3].trim().split('(')[0])) {
-                template = template.replace(replacedMethod, 'on' + searchedMethod + '=\'window._anatolia.components.' + context._name + '.methods.' + event + '\'');
+                targetElements.forEach(function (element) {
+                    element.addEventListener(j, fn);
+                });
             }
         }
 
         if (context._container !== undefined) {
-            document.querySelector(context._container).innerHTML = template;
+            document.querySelector(context._container).append(component.content);
         } else {
             throw 'Undefined container for component : ' + context._name;
         }
