@@ -63,8 +63,6 @@ Component.prototype._render = function () {
         }
     });
 
-    console.log(this._subscriber.event());
-
     this._eventbus.subscriber().register(this._subscriber);
 };
 
