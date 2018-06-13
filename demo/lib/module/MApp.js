@@ -29,24 +29,32 @@ var App = (function () {
         eventbus.publisher().register(pub, pub2);
 
         var component = new Component('myComponent', {
-            template: "<div style='{{style}}'> <p f-on:click='clickText(`asd`,`qwe`)' f-on:mouseenter='mouseEnter(this)'>{{text_1}}</p> <p f-on:click='clickText()'>{{text_2}}</p> <p>{{text_3}}</p> <p>{{text_4}}</p> <p>{{text_5}}</p> </div>",
+            template: "<div style='{{style}}'> <p>{{text_1}}</p> <p >{{text_2}}</p> <p>{{text_3}}</p> <p>{{text_4}}</p> <p my-attribute='foo'>{{text_5}}</p> </div>",
             event: 'event1',
             methods: {
-                clickText: function (value1, value2) {
-                    console.log(value1);
+                'p': {
+                    click: function () {
+                        console.log(this);
+                    }
                 },
-                mouseEnter: function (value) {
-                    console.log(value);
+                '[my-attribute=foo]': {
+                    mouseenter: function () {
+                        var myAttribute = this.getAttribute('my-attribute');
+
+                        console.log('my-attribute : ' + myAttribute);
+                    }
                 }
             }
         });
 
         var component_2 = new Component('myComponent', {
-            template: "<div style='{{style}}'> <p f-on:click='clickText()' f-on:mouseenter='mouseEnter(this)'>{{text_1}}</p> </div>",
+            template: "<div style='{{style}}'> <p class='paragraf'>{{text_1}}</p> </div><div style='{{style}}'> <p class='paragraf'>{{text_1}}</p> </div>",
             event: 'event2',
             methods: {
-                clickText: function (value1, value2) {
-                    console.log('Holy Anatolia.JS');
+                '.paragraf': {
+                    click: function () {
+                        console.log(this);
+                    }
                 }
             }
         });
