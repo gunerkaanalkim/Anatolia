@@ -13,6 +13,9 @@ var Component = (function () {
     }
 
     Component.prototype._render = function (componentName, rawTemplate, container, methods) {
+        window.fon.components[componentName] = {};
+        window.fon.components[componentName] = {};
+
         this._subscriber = new Subscriber('event1', function (state) {
             var component = document.createElement(componentName);
 
@@ -31,18 +34,18 @@ var Component = (function () {
             }
 
             var methodsRegex = /f-on:(\S+)\s*=\s*([']|["])\s*([\W\w]*?)\s*\2/g;
-            //<[a-z].*>.*<\/[a-z].*> for html
 
             while (method = methodsRegex.exec(template)) {
                 var replacedMethod = method[0].trim();
                 var searchedMethod = method[1].trim();
                 var event = method[3].trim();
+                var eventKey = method[3].trim().split('(')[0];
 
                 if (methods.hasOwnProperty(method[3].trim().split('(')[0])) {
-                    template = template.replace(replacedMethod, 'on' + searchedMethod + '=\'' + event + '\'');
+                    template = template.replace(replacedMethod, 'on' + searchedMethod + '=\'window.fon.components.' + componentName + '.' + event + '\'');
                 }
 
-                window[method[3].trim().split('(')[0]] = methods[method[3].trim().split('(')[0]];
+                window.fon.components[componentName][eventKey] = methods[eventKey];
             }
 
 
