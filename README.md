@@ -1,2 +1,2 @@
-# FlyUI
-Fast, cute and scalable jQuery UI/UX library powered by Twitter Bootstrap
+# Anatolia 
+Fast, cute and scalable UI/UX library powered by Twitter Bootstrap
