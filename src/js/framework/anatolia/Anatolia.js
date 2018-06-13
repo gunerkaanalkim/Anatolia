@@ -19,7 +19,7 @@ Anatolia.prototype._initialize = function () {
 };
 
 Anatolia.prototype.listen = function () {
-    console.table(this._options);
+   return this._options;
 };
 
 Anatolia.prototype.render = function () {
@@ -30,8 +30,6 @@ Anatolia.prototype.render = function () {
         component.setContainer(componentContainer);
         component.setEventbus(this._eventbus);
         component.setGlobalSetting(window._anatolia);
-
-        console.log(component._render());
     }
 
     return this;
