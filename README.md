@@ -11,6 +11,7 @@ bower install
 //foo
 //bar
 //tar
+```
 
 **Sample Component**
 ```js
