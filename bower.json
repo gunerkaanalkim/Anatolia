@@ -9,8 +9,7 @@
   "keywords": [
     "ui",
     "ux",
-    "js",
-    "anatolia"
+    "js"
   ],
   "devDependencies": {
     "bootstrap": "3.3.7",
