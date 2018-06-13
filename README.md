@@ -1,2 +1,2 @@
 # Anatolia 
-Fast, cute and scalable UI/UX library powered by Twitter Bootstrap
+Understandable and production-ready JavaScript framework for amazing UI/UX
