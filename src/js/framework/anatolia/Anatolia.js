@@ -14,6 +14,7 @@ Anatolia.prototype.constructor = Anatolia;
 Anatolia.prototype._initialize = function () {
     if (!window.hasOwnProperty('_anatolia')) {
         window._anatolia = {};
+        window._anatolia.components = {};
     }
 };
 
@@ -28,6 +29,7 @@ Anatolia.prototype.render = function () {
 
         component.setContainer(componentContainer);
         component.setEventbus(this._eventbus);
+        component.setGlobalSetting(window._anatolia);
 
         console.log(component._render());
     }
