@@ -13,16 +13,16 @@ var App = (function () {
         window.fon.components = {};
 
         pub = new Publisher('event1', {
-            text_1: new LoremIpsum().generate(5),
-            text_2: new LoremIpsum().generate(5),
-            text_3: new LoremIpsum().generate(5),
-            text_4: new LoremIpsum().generate(5),
-            text_5: new LoremIpsum().generate(5),
+            text_1: 'Sumer',
+            text_2: 'Hitit',
+            text_3: 'Hatti',
+            text_4: 'Hurri',
+            text_5: 'İskit',
             style: "font-size: 20px; text-align:center; padding:50px; background-color: " + '#' + Math.floor(Math.random() * 16777215).toString(16) + "; color: " + '#' + Math.floor(Math.random() * 16777215).toString(16) + "; "
         });
 
         pub2 = new Publisher('event2', {
-            text_1: new LoremIpsum().generate(5),
+            text_1: 'Türk',
             style: "font-size: 20px; text-align:center; padding:50px; background-color: " + '#' + Math.floor(Math.random() * 16777215).toString(16) + "; color: " + '#' + Math.floor(Math.random() * 16777215).toString(16) + "; "
         });
 
@@ -42,7 +42,7 @@ var App = (function () {
         });
 
         var component_2 = new Component('myComponent', {
-            template: "<p f-on:click='clickText()' f-on:mouseenter='mouseEnter(this)'>{{text_1}}</p>",
+            template: "<div style='{{style}}'> <p f-on:click='clickText()' f-on:mouseenter='mouseEnter(this)'>{{text_1}}</p> </div>",
             event: 'event2',
             methods: {
                 clickText: function (value1, value2) {

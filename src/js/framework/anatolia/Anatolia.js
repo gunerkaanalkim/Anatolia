@@ -30,6 +30,8 @@ Anatolia.prototype.render = function () {
         component.setContainer(componentContainer);
         component.setEventbus(this._eventbus);
         component.setGlobalSetting(window._anatolia);
+
+        component._render();
     }
 
     return this;
