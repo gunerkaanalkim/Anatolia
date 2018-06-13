@@ -4,22 +4,18 @@ var Component = (function () {
         this._name = name;
         this._options = options;
 
-        this._container = this._options.container;
         this._template = this._options.template;
-        this._eventbus = this._options.eventbus;
         this._methods = this._options.methods;
-
-        this._render(this._name, this._template, this._container, this._methods);
     }
 
-    Component.prototype._render = function (componentName, rawTemplate, container, methods) {
-        window.fon.components[componentName] = {};
-        window.fon.components[componentName] = {};
+    Component.prototype._render = function () {
+        var context = this;
+        window.fon.components[this._name] = {};
 
         this._subscriber = new Subscriber('event1', function (state) {
-            var component = document.createElement(componentName);
+            var component = document.createElement(context._name);
 
-            var template = rawTemplate;
+            var template = context._template;
 
             var expressionRegex = /{{\s*([^}]+)\s*}}/g;
             var expression;
@@ -41,15 +37,19 @@ var Component = (function () {
                 var event = method[3].trim();
                 var eventKey = method[3].trim().split('(')[0];
 
-                if (methods.hasOwnProperty(method[3].trim().split('(')[0])) {
-                    template = template.replace(replacedMethod, 'on' + searchedMethod + '=\'window.fon.components.' + componentName + '.' + event + '\'');
+                if (context._methods.hasOwnProperty(method[3].trim().split('(')[0])) {
+                    template = template.replace(replacedMethod, 'on' + searchedMethod + '=\'window.fon.components.' + context._name + '.' + event + '\'');
                 }
 
-                window.fon.components[componentName][eventKey] = methods[eventKey];
+                window.fon.components[context._name][eventKey] = context._methods[eventKey];
             }
 
 
-            document.querySelector(container).innerHTML = template;
+            if (context._container !== undefined) {
+                document.querySelector(context._container).innerHTML = template;
+            } else {
+                throw 'Undefined container for component : ' + context._name;
+            }
         });
 
         this._eventbus.subscriber().register(this._subscriber);
@@ -57,6 +57,14 @@ var Component = (function () {
 
     Component.prototype.fire = function () {
         this._eventbus.subscriber().fire(this._subscriber);
+    };
+
+    Component.prototype.setContainer = function (componentContainer) {
+        this._container = componentContainer;
+    };
+
+    Component.prototype.setEventbus = function (eventbus) {
+        this._eventbus = eventbus;
     };
 
     return Component;

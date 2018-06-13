@@ -23,7 +23,6 @@ var App = (function () {
 
         var component = new Component('myComponent', {
             template: "<div style='{{style}}'> <p f-on:click='clickText(`asd`,`qwe`)' f-on:mouseenter='mouseEnter(this)'>{{text_1}}</p> <p f-on:click='clickText()'>{{text_2}}</p> <p>{{text_3}}</p> <p>{{text_4}}</p> <p>{{text_5}}</p> </div>",
-            eventbus: eventbus,
             event: 'event1',
             methods: {
                 clickText: function (value1, value2) {
