@@ -1,4 +1,5 @@
 var eventbus = null;
+var pub = null;
 
 var App = (function () {
     function App() {
@@ -10,7 +11,7 @@ var App = (function () {
 
         window.fon.components = {};
 
-        var pub = new Publisher('event1', {
+        pub = new Publisher('event1', {
             text_1: new LoremIpsum().generate(5),
             text_2: new LoremIpsum().generate(5),
             text_3: new LoremIpsum().generate(5),
