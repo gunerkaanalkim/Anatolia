@@ -15,7 +15,9 @@ Component.prototype._initialize = function () {
 };
 
 Component.prototype._render = function () {
+    //Component's context binding
     var context = this;
+
     if (!this._globalSetting.components.hasOwnProperty(this._name)) {
         this._globalSetting.components[this._name] = {};
     }
@@ -36,9 +38,10 @@ Component.prototype._render = function () {
         }
 
         matchList.forEach(function (matching) {
-            template = template.replace(matching.searched, context._resolveKeys(state, matching.replaced));
+            template = template.replace(matching.searched, context._flatten(state)[matching.replaced]);
         });
 
+        //Creating HTML template from string
         var component = document.createElement('template');
         component.innerHTML = template;
 
@@ -82,10 +85,22 @@ Component.prototype.setGlobalSetting = function (anatoliaGlobalSetting) {
     this._globalSetting = anatoliaGlobalSetting;
 };
 
-Component.prototype._resolveKeys = function (state, keys) {
-    try {
-        return eval("state." + keys);
-    } catch (e) {
-        return undefined;
+Component.prototype._flatten = function (obj) {
+    var toReturn = {};
+
+    for (var i in obj) {
+        if (!obj.hasOwnProperty(i)) continue;
+
+        if ((typeof obj[i]) == 'object') {
+            var flatObject = this._flatten(obj[i]);
+            for (var x in flatObject) {
+                if (!flatObject.hasOwnProperty(x)) continue;
+
+                toReturn[i + '.' + x] = flatObject[x];
+            }
+        } else {
+            toReturn[i] = obj[i];
+        }
     }
+    return toReturn;
 };
