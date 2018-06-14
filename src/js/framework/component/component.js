@@ -36,8 +36,7 @@ Component.prototype._render = function () {
         }
 
         matchList.forEach(function (matching) {
-            var evaluationValue = eval('state.' + matching.replaced);
-            template = template.replace(matching.searched, evaluationValue);
+            template = template.replace(matching.searched, context._resolveKeys(state, matching.replaced));
         });
 
         var component = document.createElement('template');
