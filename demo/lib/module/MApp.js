@@ -81,21 +81,46 @@ var App = (function () {
     App.prototype.nestedComponents = function () {
         eventbus2 = new Eventbus();
 
-        var pub = new Publisher('event1', [
-            {
-                text: "Kadın",
-                value: 'K'
-            },
-            {
-                text: "Erkek",
-                value: 'E'
-            }
-        ]);
+        var pub = new Publisher('event1', {
+            items: [
+                {
+                    id: '1',
+                    text: "Sümer",
+                    value: 'S'
+                },
+                {
+                    id: '2',
+                    text: "Hitit",
+                    value: 'H'
+                },
+                {
+                    id: '3',
+                    text: "Hatti",
+                    value: 'Ht'
+                },
+                {
+                    id: '4',
+                    text: "Hurri",
+                    value: 'Hr'
+                },
+                {
+                    id: '5',
+                    text: "İskit",
+                    value: 'İ'
+                }
+            ]
+        });
 
         eventbus2.publisher().register(pub);
 
         var component = new Component('myComponent', {
-            template: "",
+            template: `
+                <div>
+                    <ul class="list-group">
+                        <li class="list-group-item" a-for="items" a-key="items[index].id" my-attribute="{{item}}">{{item}} - {{items[item].value}} - {{items[item].text}}</li>
+                    </ul>
+                </div>
+            `,
             event: 'event1',
             methods: {
                 'li': {
