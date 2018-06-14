@@ -23,17 +23,22 @@ Component.prototype._render = function () {
     this._subscriber = new Subscriber(this._event, function (state) {
         var template = context._template;
 
+        var matchList = [];
         var expressionRegex = /{{\s*([^}]+)\s*}}/g;
-        var expression;
+        var matcher;
 
-        while (expression = expressionRegex.exec(template)) {
-            var replacedExpression = expression[0].trim();
-            var searchedExpression = expression[1].trim();
+        while (matcher = expressionRegex.exec(template)) {
+            var obj = {};
+            obj.searched = matcher[0];
+            obj.replaced = matcher[1];
 
-            if (state.hasOwnProperty(searchedExpression)) {
-                template = template.replace(replacedExpression, state[searchedExpression]);
-            }
+            matchList.push(obj);
         }
+
+        matchList.forEach(function (matching) {
+            var evaluationValue = eval('state.' + matching.replaced);
+            template = template.replace(matching.searched, evaluationValue);
+        });
 
         var component = document.createElement('template');
         component.innerHTML = template;
@@ -76,4 +81,12 @@ Component.prototype.setEventbus = function (eventbus) {
 
 Component.prototype.setGlobalSetting = function (anatoliaGlobalSetting) {
     this._globalSetting = anatoliaGlobalSetting;
+};
+
+Component.prototype._resolveKeys = function (state, keys) {
+    try {
+        return eval("state." + keys);
+    } catch (e) {
+        return undefined;
+    }
 };
