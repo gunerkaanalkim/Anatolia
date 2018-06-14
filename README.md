@@ -31,7 +31,7 @@ var pub = new Publisher('event1', {
 });
 
 var component = new Component('myComponent', {
-    template: "<div style='{{style}}'> <p>{{text_1}}</p> <p >{{text_2}}</p> <p>{{text_3}}</p> <p>{{text_4}}</p> <p my-attribute='foo'>{{text_5}}</p> </div>",
+    template: "<div style='{{style}}'> <p>{{text_1.state}} ({{text_1.year.start}} - {{text_1.year.end}})</p> <p>{{text_2}}</p> <p>{{text_3}}</p> <p>{{text_4}}</p> <p my-attribute='foo'>{{text_5}}</p> </div>",
     event: 'event1',
     methods: {
         'p': {
