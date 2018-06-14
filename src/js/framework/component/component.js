@@ -82,11 +82,3 @@ Component.prototype.setEventbus = function (eventbus) {
 Component.prototype.setGlobalSetting = function (anatoliaGlobalSetting) {
     this._globalSetting = anatoliaGlobalSetting;
 };
-
-Component.prototype._resolveKeys = function (state, keys) {
-    try {
-        return eval("state." + keys);
-    } catch (e) {
-        return undefined;
-    }
-};
