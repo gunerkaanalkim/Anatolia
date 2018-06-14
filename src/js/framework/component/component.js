@@ -36,8 +36,7 @@ Component.prototype._render = function () {
         }
 
         matchList.forEach(function (matching) {
-            var evaluationValue = eval('state.' + matching.replaced);
-            template = template.replace(matching.searched, evaluationValue);
+            template = template.replace(matching.searched, context._resolveKeys(state, matching.replaced));
         });
 
         var component = document.createElement('template');
@@ -81,4 +80,12 @@ Component.prototype.setEventbus = function (eventbus) {
 
 Component.prototype.setGlobalSetting = function (anatoliaGlobalSetting) {
     this._globalSetting = anatoliaGlobalSetting;
+};
+
+Component.prototype._resolveKeys = function (state, keys) {
+    try {
+        return eval("state." + keys);
+    } catch (e) {
+        return undefined;
+    }
 };
