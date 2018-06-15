@@ -117,7 +117,7 @@ var App = (function () {
             template: `
                 <div>
                     <ul class="list-group">
-                        <li class="list-group-item" a-for="item in items" my-attribute="{{item}}">{{item}} - {{items[item].value}} - {{items[item].text}}</li>
+                        <li class="list-group-item" a-for="item in items" my-attribute="{{item}}">{{item.value}} - {{item.text}}</li>
                     </ul>
                 </div>
             `,

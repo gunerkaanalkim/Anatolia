@@ -1,3 +1,7 @@
 $(document).ready(function () {
-    new App().start();
+    var app = new App();
+    app.singleComponent();
+    //
+    // app.nestedComponents();
+
 });
