@@ -76,3 +76,19 @@ AnatoliaTemplate.prototype._flatten = function (obj) {
     }
     return toReturn;
 };
+
+AnatoliaTemplate.prototype._findByKeyArray = function (state, keys) {
+    var newState = null;
+
+    for (var i in keys) {
+        var key = keys[i];
+
+        if (newState === null) {
+            newState = state[key];
+        } else {
+            newState = newState[key];
+        }
+    }
+
+    return newState;
+};
