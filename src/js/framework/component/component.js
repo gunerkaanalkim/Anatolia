@@ -60,7 +60,7 @@ Component.prototype._render = function () {
         }
 
         if (context._container !== undefined) {
-            document.querySelector(context._container).append(component.content);
+            document.querySelector(context._container).innerHTML = component.innerHTML;
         } else {
             throw 'Undefined container for component : ' + context._name;
         }
