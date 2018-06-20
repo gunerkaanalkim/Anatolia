@@ -68,8 +68,8 @@ var App = (function () {
             eventbus: eventbus,
             components: {
                 '#component_1': component
-                ,
-                '#component_2': component_2
+                // ,
+                // '#component_2': component_2
             }
         });
 
