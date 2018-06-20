@@ -23,44 +23,15 @@ Component.prototype._render = function () {
     }
 
     this._subscriber = new Subscriber(this._event, function (state) {
-        var template = context._template;
-
-        var matchList = [];
-        var expressionRegex = /{{\s*([^}]+)\s*}}/g;
-        var matcher;
-
-        while (matcher = expressionRegex.exec(template)) {
-            var obj = {};
-            obj.searched = matcher[0];
-            obj.replaced = matcher[1];
-
-            matchList.push(obj);
-        }
-
-        matchList.forEach(function (matching) {
-            template = template.replace(matching.searched, context._flatten(state)[matching.replaced]);
-        });
-
-        //Creating HTML template from string
-        var component = document.createElement('template');
-        component.innerHTML = template;
-
-        for (var i in context._methods) {
-            var methods = context._methods[i];
-
-            for (var j in methods) {
-                var fn = methods[j];
-
-                var targetElements = component.content.querySelectorAll(i);
-
-                targetElements.forEach(function (element) {
-                    element.addEventListener(j, fn);
-                });
-            }
-        }
+        var component = new AnatoliaTemplate({
+            template: context._template,
+            data: state
+        }).parseAndReplace().bindMethods(context._methods);
 
         if (context._container !== undefined) {
-            document.querySelector(context._container).innerHTML = component.innerHTML;
+            var container = document.querySelector(context._container);
+            context._toEmpty(container);
+            container.append(component.content);
         } else {
             throw 'Undefined container for component : ' + context._name;
         }
@@ -103,4 +74,10 @@ Component.prototype._flatten = function (obj) {
         }
     }
     return toReturn;
+};
+
+Component.prototype._toEmpty = function (component) {
+    while (component.firstChild) {
+        component.removeChild(component.firstChild);
+    }
 };
