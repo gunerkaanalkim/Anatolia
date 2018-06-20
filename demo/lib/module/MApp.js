@@ -82,33 +82,36 @@ var App = (function () {
         eventbus2 = new Eventbus();
 
         var pub = new Publisher('event1', {
-            items: [
-                {
-                    id: '1',
-                    text: "Sümer",
-                    value: 'S'
-                },
-                {
-                    id: '2',
-                    text: "Hitit",
-                    value: 'H'
-                },
-                {
-                    id: '3',
-                    text: "Hatti",
-                    value: 'Ht'
-                },
-                {
-                    id: '4',
-                    text: "Hurri",
-                    value: 'Hr'
-                },
-                {
-                    id: '5',
-                    text: "İskit",
-                    value: 'İ'
-                }
-            ]
+            list: {
+                items: [
+                    {
+                        id: '1',
+                        text: "Sümer",
+                        value: 'S'
+                    },
+                    {
+                        id: '2',
+                        text: "Hitit",
+                        value: 'H'
+                    },
+                    {
+                        id: '3',
+                        text: "Hatti",
+                        value: 'Ht'
+                    },
+                    {
+                        id: '4',
+                        text: "Hurri",
+                        value: 'Hr'
+                    },
+                    {
+                        id: '5',
+                        text: "İskit",
+                        value: 'İ'
+                    }
+                ]
+            },
+            text_1: 'Loop Example'
         });
 
         eventbus2.publisher().register(pub);
@@ -116,11 +119,22 @@ var App = (function () {
         var component = new Component('myComponent', {
             template: `
                 <div>
+                    <legend>{{text_1}}</legend>
                     <ul class="list-group">
-                        <li class="list-group-item" a-for="item in items" my-attribute="{{item}}">{{item.value}} - {{item.text}}</li>
+                        <li class="list-group-item" a-for="item in list.items" my-attribute="{{item.id}}">{{item.value}} - {{item.text}}</li>
+                    </ul>
+                    <ul class="list-group">
+                        <li class="list-group-item" a-for="item in list.items" my-attribute="{{item.id}}">{{item.value}} - {{item.text}}</li>
                     </ul>
                 </div>
             `,
+            dynamicRender: [
+                {
+                    selector: 'li',
+                    data: 'list.items',
+                    index: 'item'
+                }
+            ],
             event: 'event1',
             methods: {
                 'li': {
