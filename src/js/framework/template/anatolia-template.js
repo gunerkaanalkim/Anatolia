@@ -11,38 +11,6 @@ AnatoliaTemplate.prototype.constructor = AnatoliaTemplate;
 AnatoliaTemplate.prototype.parseAndReplace = function () {
     var context = this;
 
-    var component = document.createElement('template');
-    component.innerHTML = context._template;
-
-    var elements = component.content.querySelectorAll("[a-for]");
-
-    if (elements.length) {
-        elements.forEach(function (element) {
-            var forAttribute = element.getAttribute('a-for').split(' ');
-            var dataKey = forAttribute[2];
-            var dataItem = forAttribute[0];
-
-            var state = context._findByKeyArray(context._data, dataKey.split('.'));
-
-            if (state instanceof Array) {
-                var elementCount = state.length;
-
-                var tempElement = "";
-
-                for (var i = 1; i <= elementCount; i++) {
-                    tempElement += element.outerHTML;
-                }
-
-                var newElement = document.createElement('template');
-                newElement.innerHTML = tempElement;
-
-                element.parentElement.append(newElement.content);
-            }
-        });
-    }
-
-    context._template = component.innerHTML;
-
     var matchList = [];
     var expressionRegex = /{{\s*([^}]+)\s*}}/g;
     var matcher;
