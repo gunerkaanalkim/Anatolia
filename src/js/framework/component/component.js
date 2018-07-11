@@ -9,9 +9,8 @@ function Component(name, options) {
 
 Component.prototype._initialize = function () {
     this._subscriber = null;
-    this._template = this._options.template;
+    this._renderMethod = this._options.render;
     this._event = this._options.event;
-    this._methods = this._options.methods;
 };
 
 Component.prototype._render = function () {
@@ -23,15 +22,12 @@ Component.prototype._render = function () {
     }
 
     this._subscriber = new Subscriber(this._event, function (state) {
-        var component = new AnatoliaTemplate({
-            template: context._template,
-            data: state
-        }).parseAndReplace().bindMethods(context._methods);
-
         if (context._container !== undefined) {
+            var el = context._renderMethod(state);
+
             var container = document.querySelector(context._container);
             context._toEmpty(container);
-            container.append(component.content);
+            container.append(el);
         } else {
             throw 'Undefined container for component : ' + context._name;
         }

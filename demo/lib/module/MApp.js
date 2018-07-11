@@ -32,34 +32,25 @@ var App = (function () {
         eventbus.publisher().register(pub, pub2);
 
         var component = new Component('myComponent', {
-            template: "<div style='{{style}}'> <p>{{text_1.state}} ({{text_1.year.start}} - {{text_1.year.end}})</p> <p>{{text_2}}</p> <p>{{text_3}}</p> <p>{{text_4}}</p> <p my-attribute='foo'>{{text_5}}</p> </div>",
-            event: 'event1',
-            methods: {
-                'p': {
-                    click: function () {
-                        console.log(this);
-                    }
-                },
-                '[my-attribute=foo]': {
-                    mouseenter: function () {
-                        var myAttribute = this.getAttribute('my-attribute');
+            render: function (state) {
+                var el = document.createElement("p");
+                el.innerText = "Hittites";
+                el.setAttribute("style", state.style);
 
-                        console.log('my-attribute : ' + myAttribute);
-                    }
-                }
-            }
+                return el;
+            },
+            event: 'event1'
         });
 
         var component_2 = new Component('myComponent', {
-            template: "<div style='{{style}}'> <p class='paragraf'>{{text_1}}</p> </div> <div style='{{style}}'> <p class='paragraf'>{{text_1}}</p> </div>",
-            event: 'event2',
-            methods: {
-                '.paragraf': {
-                    click: function () {
-                        console.log(this);
-                    }
-                }
-            }
+            render: function (state) {
+                var el = document.createElement("p");
+                el.innerText = "Hurries";
+                el.setAttribute("style", state.style);
+
+                return el;
+            },
+            event: 'event2'
         });
 
         //Routing
@@ -67,9 +58,8 @@ var App = (function () {
             name: 'AnatoliaApp',
             eventbus: eventbus,
             components: {
-                '#component_1': component
-                // ,
-                // '#component_2': component_2
+                '#component_1': component,
+                '#component_2': component_2
             }
         });
 
@@ -117,17 +107,7 @@ var App = (function () {
         eventbus2.publisher().register(pub);
 
         var component = new Component('myComponent', {
-            template: `
-                <div>
-                    <legend>{{text_1}}</legend>
-                    <ul class="list-group">
-                        <li class="list-group-item" a-for="item in list.items" my-attribute="{{item.id}}">{{item.value}} - {{item.text}}</li>
-                    </ul>
-                    <ul class="list-group">
-                        <li class="list-group-item" a-for="item in list.items" my-attribute="{{item.id}}">{{item.value}} - {{item.text}}</li>
-                    </ul>
-                </div>
-            `,
+            template: "",
             dynamicRender: [
                 {
                     selector: 'li',
