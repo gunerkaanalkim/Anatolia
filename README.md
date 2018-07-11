@@ -1,5 +1,5 @@
 # Anatolia 
-Understandable and production-ready JavaScript framework for amazing UI/UX
+Understandable and human-readable JavaScript framework for amazing UI/UX
 
 **Dev Installation** 
 
