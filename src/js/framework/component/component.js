@@ -9,7 +9,7 @@ function Component(name, options) {
 
 Component.prototype._initialize = function () {
     this._subscriber = null;
-    this._template = this._options.render;
+    this._renderMethod = this._options.render;
     this._event = this._options.event;
 };
 
@@ -22,7 +22,15 @@ Component.prototype._render = function () {
     }
 
     this._subscriber = new Subscriber(this._event, function (state) {
-        context._template(state);
+        if (context._container !== undefined) {
+            var el = context._renderMethod(state);
+
+            var container = document.querySelector(context._container);
+            context._toEmpty(container);
+            container.append(el);
+        } else {
+            throw 'Undefined container for component : ' + context._name;
+        }
     });
 
     this._eventbus.subscriber().register(this._subscriber);

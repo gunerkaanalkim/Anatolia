@@ -33,14 +33,22 @@ var App = (function () {
 
         var component = new Component('myComponent', {
             render: function (state) {
-                console.log(state);
+                var el = document.createElement("p");
+                el.innerText = "Hittites";
+                el.setAttribute("style", state.style);
+
+                return el;
             },
             event: 'event1'
         });
 
         var component_2 = new Component('myComponent', {
             render: function (state) {
-                console.log(state);
+                var el = document.createElement("p");
+                el.innerText = "Hurries";
+                el.setAttribute("style", state.style);
+
+                return el;
             },
             event: 'event2'
         });
