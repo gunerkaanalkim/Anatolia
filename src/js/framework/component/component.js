@@ -11,6 +11,7 @@ Component.prototype._initialize = function () {
     this._subscriber = null;
     this._renderMethod = this._options.render;
     this._event = this._options.event;
+    this._methods = this._options.methods;
 };
 
 Component.prototype._render = function () {
@@ -24,6 +25,8 @@ Component.prototype._render = function () {
     this._subscriber = new Subscriber(this._event, function (state) {
         if (context._container !== undefined) {
             var el = context._renderMethod(state);
+
+            if (context._methods) context._bindEventToTemplate(context._methods, el, state);
 
             var container = document.querySelector(context._container);
             context._toEmpty(container);
@@ -75,5 +78,47 @@ Component.prototype._flatten = function (obj) {
 Component.prototype._toEmpty = function (component) {
     while (component.firstChild) {
         component.removeChild(component.firstChild);
+    }
+};
+
+Component.createElement = function (tag, option) {
+    var el = document.createElement(tag);
+
+    for (var i in option) {
+        i === "text" ? el.innerText = option[i] : el.setAttribute(i, option[i]);
+    }
+
+    el.on = Component.on;
+
+    return el;
+};
+
+Component.on = function (event, fn) {
+    this.addEventListener(event, fn);
+
+    return this;
+};
+
+Component.prototype._bindEventToTemplate = function (componentMethods, template, state) {
+    for (var i in componentMethods) {
+        if (componentMethods.hasOwnProperty(i)) {
+            var selector = i;
+            var methods = componentMethods[i];
+
+            var elements = template.querySelectorAll(selector);
+
+            elements.forEach(function (element) {
+                var bundle = {
+                    state: state,
+                    targetElement: element
+                };
+
+                for (var i in methods) {
+                    if (methods.hasOwnProperty(i)) {
+                        element.addEventListener(i, methods[i].bind(bundle));
+                    }
+                }
+            });
+        }
     }
 };
