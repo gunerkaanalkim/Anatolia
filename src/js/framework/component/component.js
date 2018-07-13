@@ -18,25 +18,40 @@ Component.prototype._render = function () {
     //Component's context binding
     var context = this;
 
-    if (!this._globalSetting.components.hasOwnProperty(this._name)) {
-        this._globalSetting.components[this._name] = {};
-    }
+    if (this._event) {
+        var el;
 
-    this._subscriber = new Subscriber(this._event, function (state) {
+        this._subscriber = new Subscriber(this._event, function (state) {
+            el = context._renderMethod(state);
+
+            if (context._container !== undefined) {
+
+                if (context._methods) context._bindEventToTemplate(context._methods, el, state);
+
+                var container = document.querySelector(context._container);
+                context._toEmpty(container);
+                container.append(el);
+            }
+        });
+
+        this._eventbus.subscriber().register(this._subscriber);
+
+        return el;
+    } else {
+        var state = {};
+        var el = context._renderMethod(state);
+
         if (context._container !== undefined) {
-            var el = context._renderMethod(state);
 
             if (context._methods) context._bindEventToTemplate(context._methods, el, state);
 
             var container = document.querySelector(context._container);
             context._toEmpty(container);
             container.append(el);
-        } else {
-            throw 'Undefined container for component : ' + context._name;
         }
-    });
 
-    this._eventbus.subscriber().register(this._subscriber);
+        return el;
+    }
 };
 
 Component.prototype.fire = function () {
@@ -49,6 +64,8 @@ Component.prototype.setContainer = function (componentContainer) {
 
 Component.prototype.setEventbus = function (eventbus) {
     this._eventbus = eventbus;
+
+    return this;
 };
 
 Component.prototype.setGlobalSetting = function (anatoliaGlobalSetting) {
@@ -81,6 +98,17 @@ Component.prototype._toEmpty = function (component) {
     }
 };
 
+Component.prototype.render = function () {
+    var el = this._render();
+    return el;
+};
+
+Component.prototype.setEvent = function (event) {
+    this._event = event;
+
+    return this;
+};
+
 Component.createElement = function (tag, option) {
     var el = document.createElement(tag);
 
@@ -110,7 +138,8 @@ Component.prototype._bindEventToTemplate = function (componentMethods, template,
             elements.forEach(function (element) {
                 var bundle = {
                     state: state,
-                    targetElement: element
+                    targetElement: element,
+                    parentElement: element.parentElement
                 };
 
                 for (var i in methods) {

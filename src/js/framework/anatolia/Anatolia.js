@@ -19,7 +19,7 @@ Anatolia.prototype._initialize = function () {
 };
 
 Anatolia.prototype.listen = function () {
-   return this._options;
+    return this._options;
 };
 
 Anatolia.prototype.render = function () {
