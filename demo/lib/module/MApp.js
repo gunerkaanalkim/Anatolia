@@ -9,48 +9,46 @@ var App = (function () {
     App.prototype.singleComponent = function () {
         eventbus = new Eventbus();
 
-        var pub = new Publisher('event1', {
-            text_1: {
-                state: 'Sumer',
-                year: {
-                    start: 'c. 4500',
-                    end: 'c. 1900 BC'
-                }
-            },
-            text_2: 'Hitit',
-            text_3: 'Hatti',
-            text_4: 'Hurri',
-            text_5: 'İskit',
-            style: "font-size: 20px; text-align:center; padding:50px; background-color: " + '#' + Math.floor(Math.random() * 16777215).toString(16) + "; color: " + '#' + Math.floor(Math.random() * 16777215).toString(16) + "; "
-        });
+        // TODO publisher's data model for MVVM pattern
+        // TODO publisher's computed properties
+        var pub = new Publisher('event1', [
+            {name: 'Sumer'},
+            {name: 'Hitit'},
+            {name: 'Hatti'},
+            {name: 'Hurri'},
+            {name: 'İskit'}
+        ]);
 
-        var pub2 = new Publisher('event2', {
-            text_1: 'Türk',
-            style: "font-size: 20px; text-align:center; padding:50px; background-color: " + '#' + Math.floor(Math.random() * 16777215).toString(16) + "; color: " + '#' + Math.floor(Math.random() * 16777215).toString(16) + "; "
-        });
-
-        eventbus.publisher().register(pub, pub2);
+        eventbus.publisher().register(pub);
 
         var component = new Component('myComponent', {
+            event: 'event1',
             render: function (state) {
-                var el = document.createElement("p");
-                el.innerText = "Hittites";
-                el.setAttribute("style", state.style);
+                var ce = Component.createElement;
 
-                return el;
+                var ul = ce("ul", {class: "list-group"});
+
+                for (var i in state) {
+                    if (state.hasOwnProperty(i)) {
+                        var li = Component.createElement("li", {class: "list-group-item", text: state[i].name});
+                        ul.append(li);
+                    }
+                }
+
+                return ul;
             },
-            event: 'event1'
-        });
-
-        var component_2 = new Component('myComponent', {
-            render: function (state) {
-                var el = document.createElement("p");
-                el.innerText = "Hurries";
-                el.setAttribute("style", state.style);
-
-                return el;
-            },
-            event: 'event2'
+            methods: { // or Component.createElement 's on function
+                'li': { // all selectors; (.), (#), (tag name)
+                    click: function (e) {
+                        console.log(this.targetElement);
+                    }
+                },
+                '#myLi': {
+                    mouseenter: function (e) {
+                        console.log("mouse enter");
+                    }
+                }
+            }
         });
 
         //Routing
@@ -58,8 +56,7 @@ var App = (function () {
             name: 'AnatoliaApp',
             eventbus: eventbus,
             components: {
-                '#component_1': component,
-                '#component_2': component_2
+                '#component_1': component
             }
         });
 
@@ -69,67 +66,83 @@ var App = (function () {
     };
 
     App.prototype.nestedComponents = function () {
-        eventbus2 = new Eventbus();
+        eventbus = new Eventbus();
 
-        var pub = new Publisher('event1', {
-            list: {
-                items: [
-                    {
-                        id: '1',
-                        text: "Sümer",
-                        value: 'S'
-                    },
-                    {
-                        id: '2',
-                        text: "Hitit",
-                        value: 'H'
-                    },
-                    {
-                        id: '3',
-                        text: "Hatti",
-                        value: 'Ht'
-                    },
-                    {
-                        id: '4',
-                        text: "Hurri",
-                        value: 'Hr'
-                    },
-                    {
-                        id: '5',
-                        text: "İskit",
-                        value: 'İ'
-                    }
-                ]
-            },
-            text_1: 'Loop Example'
+        // TODO publisher's data model for MVVM pattern
+        // TODO publisher's computed properties
+        var pub = new Publisher('event1', [
+            {order: 1, name: 'Sumer'},
+            {order: 2, name: 'Hitit'},
+            {order: 3, name: 'Hatti'},
+            {order: 4, name: 'Hurri'},
+            {order: 5, name: 'İskit'}
+        ]);
+
+        var stylePub = new Publisher('styleEvent', [
+            {class: 1, name: "table table-condensed table-striped table-hover"}
+        ]);
+
+        eventbus.publisher().register(pub, stylePub);
+
+        var tableComponent = new Component('table', {
+            render: function (state) {
+                return Component.createElement("table", {class: "table table-condensed table-striped table-hover"});
+            }
         });
 
-        eventbus2.publisher().register(pub);
-
         var component = new Component('myComponent', {
-            template: "",
-            dynamicRender: [
-                {
-                    selector: 'li',
-                    data: 'list.items',
-                    index: 'item'
-                }
-            ],
             event: 'event1',
-            methods: {
-                'li': {
-                    click: function () {
-                        console.log(this);
+            render: function (state) {
+                var $$ = Component.createElement;
+
+                var table = tableComponent.setEventbus(eventbus).setEvent("styleEvent").render();
+
+                var thead = $$("thead");
+                var tbody = $$("tbody");
+                var theadRow = $$("tr");
+                var orderCellThead = $$("th", {text: "Order"});
+
+                var nameCellThead = $$("th", {text: "Name"});
+
+                theadRow.append(orderCellThead, nameCellThead);
+                thead.append(theadRow);
+                table.append(thead);
+                table.append(tbody);
+
+                for (var i in state) {
+                    if (state.hasOwnProperty(i)) {
+                        var tr = $$("tr");
+
+                        var orderCell = $$("td", {text: state[i].order});
+                        var nameCell = $$("td", {text: state[i].name});
+
+                        tr.append(orderCell, nameCell);
+                        tbody.append(tr);
+                    }
+                }
+
+                return table;
+            },
+            methods: { // or Component.createElement 's on function
+                'li': { // all selectors; (.), (#), (tag name)
+                    click: function (e) {
+                        console.log(this.targetElement);
+                    }
+                },
+                '#myLi': {
+                    mouseenter: function (e) {
+                        console.log("mouse enter");
                     }
                 }
             }
         });
 
+        //Routing
         var anatolia = new Anatolia({
-            name: 'AnatoliaApp2',
-            eventbus: eventbus2,
+            name: 'AnatoliaApp',
+            eventbus: eventbus,
             components: {
-                '#component_3': component
+                '#component_1': component
             }
         });
 
