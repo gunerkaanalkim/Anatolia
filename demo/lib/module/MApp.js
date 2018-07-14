@@ -66,7 +66,7 @@ var App = (function () {
     };
 
     App.prototype.nestedComponents = function () {
-        eventbus = new Eventbus();
+        eventbus = new Eventbus(); //TODO publsher change event with object propert set event
 
         // TODO publisher's data model for MVVM pattern
         // TODO publisher's computed properties
@@ -78,15 +78,39 @@ var App = (function () {
             {order: 5, name: 'İskit'}
         ]);
 
-        var stylePub = new Publisher('styleEvent', [
-            {class: 1, name: "table table-condensed table-striped table-hover"}
-        ]);
+        var stylePub = new Publisher('styleEvent',
+            {
+                class: "table table-condensed table-striped table-hover",
+                header: [
+                    {text: "Order"},
+                    {text: "Name"}
+                ]
+            }
+        );
 
         eventbus.publisher().register(pub, stylePub);
 
         var tableComponent = new Component('table', {
             render: function (state) {
-                return Component.createElement("table", {class: "table table-condensed table-striped table-hover"});
+                var table = Component.createElement("table", {class: state.class});
+                var thead = Component.createElement("thead"); // TODO  Component.createElement("table.table.table-condensed.table-striped > thead - tbody")
+                var tbody = Component.createElement("tbody");
+                var theadRow = Component.createElement("tr");
+
+                Component.createElement("table.table.table-condensed.table-striped > thead,tbody");
+
+                for(var i in state.header) {
+                    if(state.header.hasOwnProperty(i)) {
+                        var headerCell = Component.createElement("th", {text: state.header[i].text});
+                        theadRow.append(headerCell);
+                    }
+                }
+
+                thead.append(theadRow);
+                table.append(thead);
+                table.append(tbody);
+
+                return table;
             }
         });
 
@@ -95,19 +119,8 @@ var App = (function () {
             render: function (state) {
                 var $$ = Component.createElement;
 
+                //TODO re-render containerless components when subscriber fired
                 var table = tableComponent.setEventbus(eventbus).setEvent("styleEvent").render();
-
-                var thead = $$("thead");
-                var tbody = $$("tbody");
-                var theadRow = $$("tr");
-                var orderCellThead = $$("th", {text: "Order"});
-
-                var nameCellThead = $$("th", {text: "Name"});
-
-                theadRow.append(orderCellThead, nameCellThead);
-                thead.append(theadRow);
-                table.append(thead);
-                table.append(tbody);
 
                 for (var i in state) {
                     if (state.hasOwnProperty(i)) {
@@ -117,7 +130,7 @@ var App = (function () {
                         var nameCell = $$("td", {text: state[i].name});
 
                         tr.append(orderCell, nameCell);
-                        tbody.append(tr);
+                        table.children[1].append(tr);
                     }
                 }
 

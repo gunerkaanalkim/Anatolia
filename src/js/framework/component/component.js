@@ -113,7 +113,8 @@ Component.createElement = function (tag, option) {
     var el = document.createElement(tag);
 
     for (var i in option) {
-        i === "text" ? el.innerText = option[i] : el.setAttribute(i, option[i]);
+        if (option.hasOwnProperty(i))
+            i === "text" ? el.innerText = option[i] : el.setAttribute(i, option[i]);
     }
 
     el.on = Component.on;
