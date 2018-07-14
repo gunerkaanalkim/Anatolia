@@ -97,8 +97,6 @@ var App = (function () {
                 var tbody = Component.createElement("tbody");
                 var theadRow = Component.createElement("tr");
 
-                Component.createElement("table.table.table-condensed.table-striped > thead,tbody");
-
                 for(var i in state.header) {
                     if(state.header.hasOwnProperty(i)) {
                         var headerCell = Component.createElement("th", {text: state.header[i].text});
