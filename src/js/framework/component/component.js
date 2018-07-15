@@ -17,17 +17,15 @@ Component.prototype._initialize = function () {
 Component.prototype._render = function () {
     //Component's context binding
     var context = this;
+    var el = null;
 
     if (this._event) {
-        var el;
 
         this._subscriber = new Subscriber(this._event, function (state) {
             el = context._renderMethod(state);
+            if (context._methods) context._bindEventToTemplate(context._methods, el, state);
 
             if (context._container !== undefined) {
-
-                if (context._methods) context._bindEventToTemplate(context._methods, el, state);
-
                 var container = document.querySelector(context._container);
                 context._toEmpty(container);
                 container.append(el);
@@ -39,12 +37,10 @@ Component.prototype._render = function () {
         return el;
     } else {
         var state = {};
-        var el = context._renderMethod(state);
+        el = context._renderMethod(state);
+        if (context._methods) context._bindEventToTemplate(context._methods, el, state);
 
         if (context._container !== undefined) {
-
-            if (context._methods) context._bindEventToTemplate(context._methods, el, state);
-
             var container = document.querySelector(context._container);
             context._toEmpty(container);
             container.append(el);
@@ -120,6 +116,33 @@ Component.createElement = function (tag, option) {
     el.on = Component.on;
 
     return el;
+};
+
+Component.createElementFromObject = function (element) {
+    var tag = null;
+
+    for (var attribute in element) {
+        if (element.hasOwnProperty(attribute)) {
+            var attributeValue = element[attribute];
+
+            if (attribute === "tagName") {
+                tag = document.createElement(attributeValue);
+            } else if (attribute !== "child" && attribute !== "text") {
+                tag.setAttribute(attribute, attributeValue);
+            } else if (attribute === "text") {
+                tag.innerText = attributeValue;
+            }
+
+            if (attribute === "child") {
+                attributeValue.forEach(function (childElementObject) {
+                    var childElement = Component.createElementFromObject(childElementObject);
+                    tag.append(childElement);
+                })
+            }
+        }
+    }
+
+    return tag;
 };
 
 Component.on = function (event, fn) {

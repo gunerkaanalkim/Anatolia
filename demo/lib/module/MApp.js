@@ -103,7 +103,7 @@ var App = (function () {
 
                 return responsiveContainer.content.firstChild;
             }
-        });
+        }).setEventbus(eventbus).setEvent('tableResponsive');
 
         var tableComponent = new Component('table', {
             render: function (state) {
@@ -168,7 +168,7 @@ var App = (function () {
                 var $$ = Component.createElement;
 
                 //TODO re-render containerless components when subscriber fired
-                var tableResponsiveContainer = tableResponsiveComponent.setEventbus(eventbus).setEvent('tableResponsive').render();
+                var tableResponsiveContainer = tableResponsiveComponent.render();
                 var table = tableComponent.setEventbus(eventbus).setEvent("styleEvent").render();
                 var tableFooter = tableFooterComponent.render();
 
