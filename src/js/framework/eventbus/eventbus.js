@@ -136,21 +136,35 @@ Publisher.prototype.constructor = Publisher;
 Publisher.prototype._init = function (options) {
     this._event = options.event || null;
     this._state = options.state || null;
-
     this._propertyHandler = options.propertyHandler || null;
+    this._computedProperties = options.computedProperties || null;
 
     //Property handler
     this.propertyHandlerMethod();
+    //New computed property
+    this.computedPropertiesMethod();
 };
 
 Publisher.prototype.propertyHandlerMethod = function () {
     if (this._propertyHandler && this._state) {
         for (var property in this._state) {
-            if (this._state.hasOwnProperty(property)) {
+            if (this._state.hasOwnProperty(property) && this._propertyHandler.hasOwnProperty(property)) {
                 this._propertyHandler[property](property, this._state[property]);
             }
         }
     }
+};
+
+Publisher.prototype.computedPropertiesMethod = function () {
+    if (this._computedProperties && this._state) {
+        for (var newProperty in this._computedProperties) {
+            if (this._computedProperties.hasOwnProperty(newProperty)) {
+                this._state[newProperty] = this._computedProperties[newProperty](this._state);
+            }
+        }
+    }
+
+    console.log(this._state);
 };
 
 Publisher.prototype.event = function () {
