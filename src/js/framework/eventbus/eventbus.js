@@ -3,7 +3,7 @@
 function Eventbus() {
     this._eventbus = {};
 }
-
+//TODO publisher change event with object propert set event
 Eventbus.prototype.constructor = Eventbus;
 
 /*
@@ -124,6 +124,8 @@ Eventbus.prototype._fire = function (publisher) {
 /*
 * Publisher
 * */
+// TODO publisher's data model for MVVM pattern
+// TODO publisher's computed properties
 function Publisher(event, state) {
     this._event = event || null;
     this._state = state || null;

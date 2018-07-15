@@ -1,4 +1,5 @@
 'use strict';
+//TODO re-render containerless components when subscriber fired
 
 function Component(name, options) {
     this._options = options;

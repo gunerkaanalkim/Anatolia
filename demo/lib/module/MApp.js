@@ -9,8 +9,6 @@ var App = (function () {
     App.prototype.singleComponent = function () {
         eventbus = new Eventbus();
 
-        // TODO publisher's data model for MVVM pattern
-        // TODO publisher's computed properties
         var pub = new Publisher('event1', [
             {name: 'Sumer'},
             {name: 'Hitit'},
@@ -66,10 +64,8 @@ var App = (function () {
     };
 
     App.prototype.nestedComponents = function () {
-        eventbus = new Eventbus(); //TODO publsher change event with object propert set event
+        eventbus = new Eventbus();
 
-        // TODO publisher's data model for MVVM pattern
-        // TODO publisher's computed properties
         var pub = new Publisher('event1', [
             {order: 1, name: 'Sumer'},
             {order: 2, name: 'Hitit'},
@@ -167,7 +163,6 @@ var App = (function () {
             render: function (state) {
                 var $$ = Component.createElement;
 
-                //TODO re-render containerless components when subscriber fired
                 var tableResponsiveContainer = tableResponsiveComponent.render();
                 var table = tableComponent.setEventbus(eventbus).setEvent("styleEvent").render();
                 var tableFooter = tableFooterComponent.render();
