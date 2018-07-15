@@ -125,8 +125,6 @@ Eventbus.prototype._fire = function (publisher) {
 /*
 * Publisher
 * */
-
-// TODO publisher's computed properties
 function Publisher(options) {
     this._init(options);
 }
