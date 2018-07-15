@@ -69,26 +69,6 @@ Component.prototype.setGlobalSetting = function (anatoliaGlobalSetting) {
     this._globalSetting = anatoliaGlobalSetting;
 };
 
-Component.prototype._flatten = function (obj) {
-    var toReturn = {};
-
-    for (var i in obj) {
-        if (!obj.hasOwnProperty(i)) continue;
-
-        if ((typeof obj[i]) == 'object') {
-            var flatObject = this._flatten(obj[i]);
-            for (var x in flatObject) {
-                if (!flatObject.hasOwnProperty(x)) continue;
-
-                toReturn[i + '.' + x] = flatObject[x];
-            }
-        } else {
-            toReturn[i] = obj[i];
-        }
-    }
-    return toReturn;
-};
-
 Component.prototype._toEmpty = function (component) {
     while (component.firstChild) {
         component.removeChild(component.firstChild);
