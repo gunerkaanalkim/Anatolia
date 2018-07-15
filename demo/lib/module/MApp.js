@@ -104,7 +104,7 @@ var App = (function () {
         var tableComponent = new Component('table', {
             render: function (state) {
                 var table = Component.createElement("table", {class: state.class});
-                var thead = Component.createElement("thead"); // TODO  Component.createElement("table.table.table-condensed.table-striped > thead - tbody")
+                var thead = Component.createElement("thead");
                 var tbody = Component.createElement("tbody");
                 var theadRow = Component.createElement("tr");
 
