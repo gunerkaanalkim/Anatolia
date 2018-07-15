@@ -1,6 +1,6 @@
 'use strict';
 //TODO re-render containerless components when subscriber fired
-
+// TODO  Component.createElement("table.table.table-condensed.table-striped > thead - tbody")
 function Component(name, options) {
     this._options = options;
     this._name = name;
