@@ -66,27 +66,41 @@ var App = (function () {
     App.prototype.nestedComponents = function () {
         eventbus = new Eventbus();
 
-        var pub = new Publisher('event1', [
-            {order: 1, name: 'Sumer'},
-            {order: 2, name: 'Hitit'},
-            {order: 3, name: 'Hatti'},
-            {order: 4, name: 'Hurri'},
-            {order: 5, name: 'İskit'}
-        ]);
+        var pub = new Publisher({
+            event: 'event1',
+            state: [
+                {order: 1, name: 'Sumer'},
+                {order: 2, name: 'Hitit'},
+                {order: 3, name: 'Hatti'},
+                {order: 4, name: 'Hurri'},
+                {order: 5, name: 'İskit'}
+            ]
+        });
 
-        var stylePub = new Publisher('styleEvent',
-            {
+        var stylePub = new Publisher({
+            event: 'styleEvent',
+            state: {
                 class: "table table-condensed table-striped table-hover",
                 header: [
                     {text: "Order"},
                     {text: "Name"}
                 ]
+            },
+            propertyHandler: {
+                class: function (key, value) {
+                    console.log(key);
+                },
+                header: function (key, value) {
+                    console.log(value);
+                }
             }
-        );
+        });
 
-        var tableResponsivePub = new Publisher('tableResponsive',
-            {
-                class: "table-responsive"
+        var tableResponsivePub = new Publisher({
+                event: 'tableResponsive',
+                state: {
+                    class: "table-responsive"
+                }
             }
         );
 
