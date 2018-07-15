@@ -88,7 +88,22 @@ var App = (function () {
             }
         );
 
-        eventbus.publisher().register(pub, stylePub);
+        var tableResponsivePub = new Publisher('tableResponsive',
+            {
+                class: "table-responsive"
+            }
+        );
+
+        eventbus.publisher().register(pub, stylePub, tableResponsivePub);
+
+        var tableResponsiveComponent = new Component("tableResponsive", {
+            render: function (state) {
+                var responsiveContainer = document.createElement("template");
+                responsiveContainer.innerHTML = "<div class=" + state.class + "></div>";
+
+                return responsiveContainer.content.firstChild;
+            }
+        });
 
         var tableComponent = new Component('table', {
             render: function (state) {
@@ -97,8 +112,8 @@ var App = (function () {
                 var tbody = Component.createElement("tbody");
                 var theadRow = Component.createElement("tr");
 
-                for(var i in state.header) {
-                    if(state.header.hasOwnProperty(i)) {
+                for (var i in state.header) {
+                    if (state.header.hasOwnProperty(i)) {
                         var headerCell = Component.createElement("th", {text: state.header[i].text});
                         theadRow.append(headerCell);
                     }
@@ -112,13 +127,50 @@ var App = (function () {
             }
         });
 
+        var tableFooterComponent = new Component("tfoot", {
+            render: function () {
+                var el = Component.createElementFromObject({
+                    tagName: "tfoot",
+                    class: "tfoot",
+                    id: "tfoot",
+                    myAttribute: "tfoot",
+                    child: [
+                        {
+                            tagName: "tr",
+                            child: [
+                                {
+                                    tagName: "td",
+                                    text: "Hello"
+                                },
+                                {
+                                    tagName: "td",
+                                    text: "World"
+                                }
+                            ]
+                        }
+                    ]
+                });
+
+                return el;
+            },
+            methods: {
+                'td': {
+                    click: function (e) {
+                        console.log(this);
+                    }
+                }
+            }
+        });
+
         var component = new Component('myComponent', {
             event: 'event1',
             render: function (state) {
                 var $$ = Component.createElement;
 
                 //TODO re-render containerless components when subscriber fired
+                var tableResponsiveContainer = tableResponsiveComponent.setEventbus(eventbus).setEvent('tableResponsive').render();
                 var table = tableComponent.setEventbus(eventbus).setEvent("styleEvent").render();
+                var tableFooter = tableFooterComponent.render();
 
                 for (var i in state) {
                     if (state.hasOwnProperty(i)) {
@@ -132,19 +184,17 @@ var App = (function () {
                     }
                 }
 
-                return table;
+                table.append(tableFooter);
+                tableResponsiveContainer.append(table);
+
+                return tableResponsiveContainer;
             },
             methods: { // or Component.createElement 's on function
-                'li': { // all selectors; (.), (#), (tag name)
-                    click: function (e) {
-                        console.log(this.targetElement);
-                    }
-                },
-                '#myLi': {
-                    mouseenter: function (e) {
-                        console.log("mouse enter");
-                    }
-                }
+                // 'tr': { // all selectors; (.), (#), (tag name)
+                //     click: function (e) {
+                //         console.log(this.targetElement);
+                //     }
+                // }
             }
         });
 
