@@ -125,7 +125,7 @@ Eventbus.prototype._fire = function (publisher) {
 /*
 * Publisher
 * */
-// TODO publisher's data model for MVVM pattern
+
 // TODO publisher's computed properties
 function Publisher(options) {
     this._init(options);
@@ -139,15 +139,16 @@ Publisher.prototype._init = function (options) {
 
     this._propertyHandler = options.propertyHandler || null;
 
-    if (this._propertyHandler && this._state) {
-        this._propertyHandlerMethod();
-    }
+    //Property handler
+    this.propertyHandlerMethod();
 };
 
-Publisher.prototype._propertyHandlerMethod = function () {
-    for (var property in this._state) {
-        if (this._state.hasOwnProperty(property)) {
-            this._propertyHandler[property](property, this._state[property]);
+Publisher.prototype.propertyHandlerMethod = function () {
+    if (this._propertyHandler && this._state) {
+        for (var property in this._state) {
+            if (this._state.hasOwnProperty(property)) {
+                this._propertyHandler[property](property, this._state[property]);
+            }
         }
     }
 };
