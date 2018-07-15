@@ -84,14 +84,21 @@ var App = (function () {
                 header: [
                     {text: "Order"},
                     {text: "Name"}
-                ]
+                ],
+                propA: "my",
+                propB: "Class"
             },
-            propertyHandler: {
+            propertyHandler: { // for MVVM pattern
                 class: function (key, value) {
                     console.log(key);
                 },
                 header: function (key, value) {
-                    console.log(value);
+                    // console.log(value);
+                }
+            },
+            computedProperties: { // for new property
+                newProp: function (state) {
+                    return state.propA + state.propB;
                 }
             }
         });
