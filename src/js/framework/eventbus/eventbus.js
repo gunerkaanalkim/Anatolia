@@ -3,6 +3,7 @@
 function Eventbus() {
     this._eventbus = {};
 }
+
 //TODO publisher change event with object propert set event
 Eventbus.prototype.constructor = Eventbus;
 
@@ -126,12 +127,30 @@ Eventbus.prototype._fire = function (publisher) {
 * */
 // TODO publisher's data model for MVVM pattern
 // TODO publisher's computed properties
-function Publisher(event, state) {
-    this._event = event || null;
-    this._state = state || null;
+function Publisher(options) {
+    this._init(options);
 }
 
 Publisher.prototype.constructor = Publisher;
+
+Publisher.prototype._init = function (options) {
+    this._event = options.event || null;
+    this._state = options.state || null;
+
+    this._propertyHandler = options.propertyHandler || null;
+
+    if (this._propertyHandler && this._state) {
+        this._propertyHandlerMethod();
+    }
+};
+
+Publisher.prototype._propertyHandlerMethod = function () {
+    for (var property in this._state) {
+        if (this._state.hasOwnProperty(property)) {
+            this._propertyHandler[property](property, this._state[property]);
+        }
+    }
+};
 
 Publisher.prototype.event = function () {
     if (arguments.length) {
