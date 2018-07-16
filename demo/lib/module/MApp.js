@@ -74,23 +74,26 @@ var App = (function () {
                 {order: 3, name: 'Hatti'},
                 {order: 4, name: 'Hurri'},
                 {order: 5, name: 'İskit'}
-            ]
+            ],
+            watcher: function (key, oldValue, newValue) {
+
+            }
         });
 
         var stylePub = new Publisher({
             event: 'styleEvent',
             state: {
                 class: "table table-condensed table-striped table-hover",
-                header: [
-                    {text: "Order"},
-                    {text: "Name"}
-                ],
+                header: {
+                    asd: "Order",
+                    qwe: "Name"
+                },
                 propA: "my",
                 propB: "Class"
             },
             propertyHandler: { // for MVVM pattern
                 class: function (key, value) {
-                    console.log(key);
+                    // console.log(key);
                 },
                 header: function (key, value) {
                     // console.log(value);
@@ -100,16 +103,21 @@ var App = (function () {
                 newProp: function (state) {
                     return state.propA + state.propB;
                 }
+            },
+            watcher: function (key, oldValue, newValue) {
+
             }
         });
 
         var tableResponsivePub = new Publisher({
-                event: 'tableResponsive',
-                state: {
-                    class: "table-responsive"
-                }
+            event: 'tableResponsive',
+            state: {
+                class: "table-responsive"
+            },
+            watcher: function (key, oldValue, newValue) {
+
             }
-        );
+        });
 
         eventbus.publisher().register(pub, stylePub, tableResponsivePub);
 
