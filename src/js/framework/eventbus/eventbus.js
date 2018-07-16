@@ -163,25 +163,28 @@ Publisher.prototype.propertyOnChange = function () {
 };
 
 Publisher.prototype.propertyHandlerMethod = function () {
+    var bundle = {context: this, state: this._state};
+
     if (this._propertyHandler && this._state) {
         for (var property in this._state) {
             if (this._state.hasOwnProperty(property) && this._propertyHandler.hasOwnProperty(property)) {
-                this._propertyHandler[property](property, this._state[property]);
+                this._propertyHandler[property].call(bundle, property, this._state[property]);
             }
         }
     }
 };
 
 Publisher.prototype.computedPropertiesMethod = function () {
+    var bundle = {context: this, state: this._state};
+
     if (this._computedProperties && this._state) {
         for (var newProperty in this._computedProperties) {
             if (this._computedProperties.hasOwnProperty(newProperty)) {
-                this._state[newProperty] = this._computedProperties[newProperty](this._state);
+
+                this._state[newProperty] = this._computedProperties[newProperty].call(bundle, this._state);
             }
         }
     }
-
-    console.log(this._state);
 };
 
 Publisher.prototype.event = function () {
