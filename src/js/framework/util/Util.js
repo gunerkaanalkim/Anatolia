@@ -23,3 +23,11 @@ Util.flattenObject = function (obj) {
     }
     return toReturn;
 };
+
+Util.observer = function (object, handler) {
+    for (var prop in object) {
+        if (object.hasOwnProperty(prop)) {
+            console.log(object[prop]);
+        }
+    }
+};
