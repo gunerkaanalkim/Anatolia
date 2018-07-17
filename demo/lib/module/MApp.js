@@ -80,14 +80,26 @@ var App = (function () {
             }
         });
 
+        Util.observer({
+            class: "table table-condensed table-striped table-hover",
+            header: [
+                {text: "Order"},
+                {text: "Name"}
+            ],
+            propA: "my",
+            propB: "Class"
+        }, function (key, value) {
+
+        });
+
         var stylePub = new Publisher({
             event: 'styleEvent',
             state: {
                 class: "table table-condensed table-striped table-hover",
-                header: {
-                    asd: "Order",
-                    qwe: "Name"
-                },
+                header: [
+                    {text: "Order"},
+                    {text: "Name"}
+                ],
                 propA: "my",
                 propB: "Class"
             },
