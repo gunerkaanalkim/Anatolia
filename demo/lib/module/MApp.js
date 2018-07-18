@@ -1,5 +1,4 @@
 var eventbus;
-
 var App = (function () {
     function App() {
 
@@ -94,6 +93,19 @@ var App = (function () {
             console.log(key);
         });
 
+        new Publisher({
+            event: 'styleEvent',
+            state: {
+                class: "table table-condensed table-striped table-hover",
+                header: [
+                    {text: "Order"},
+                    {text: "Name"}
+                ],
+                propA: "my",
+                propB: "Class"
+            }
+        });
+
         var stylePub = new Publisher({
             event: 'styleEvent',
             state: {
@@ -133,12 +145,19 @@ var App = (function () {
             }
         });
 
-        eventbus.publisher().register(pub, stylePub, tableResponsivePub);
+        var tfootPub = new Publisher({
+            event: 'tfoot',
+            state: {
+                style: "background-color: grey; color: white;"
+            }
+        });
+
+        eventbus.publisher().register(pub, stylePub, tableResponsivePub, tfootPub);
 
         var tableResponsiveComponent = new Component("tableResponsive", {
             render: function (state) {
                 var responsiveContainer = document.createElement("template");
-                responsiveContainer.innerHTML = "<div class=" + state.class + "></div>";
+                responsiveContainer.innerHTML = "<div style='background-color: #e1e1e1;' id='foo' bar='tar' class=" + state.class + "></div>";
 
                 return responsiveContainer.content.firstChild;
             }
@@ -167,11 +186,12 @@ var App = (function () {
         });
 
         var tableFooterComponent = new Component("tfoot", {
-            render: function () {
+            render: function (state) {
                 var el = Component.createElementFromObject({
                     tagName: "tfoot",
                     class: "tfoot",
                     id: "tfoot",
+                    style: state.style,
                     myAttribute: "tfoot",
                     child: [
                         {
@@ -206,9 +226,11 @@ var App = (function () {
             render: function (state) {
                 var $$ = Component.createElement;
 
-                var tableResponsiveContainer = tableResponsiveComponent.render();
-                var table = tableComponent.setEventbus(eventbus).setEvent("styleEvent").render();
-                var tableFooter = tableFooterComponent.render();
+                var myComponentContainer = $$("div");
+
+                var tableResponsiveContainer = tableResponsiveComponent.render(this);
+                var table = tableComponent.setEventbus(eventbus).setEvent("styleEvent").render(this);
+                var tableFooter = tableFooterComponent.setEventbus(eventbus).setEvent("tfoot").render(this);
 
                 for (var i in state) {
                     if (state.hasOwnProperty(i)) {
@@ -224,8 +246,8 @@ var App = (function () {
 
                 table.append(tableFooter);
                 tableResponsiveContainer.append(table);
-
-                return tableResponsiveContainer;
+                myComponentContainer.append(tableResponsiveContainer);
+                return myComponentContainer;
             },
             methods: { // or Component.createElement 's on function
                 // 'tr': { // all selectors; (.), (#), (tag name)
