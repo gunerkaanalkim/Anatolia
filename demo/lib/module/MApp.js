@@ -1,5 +1,6 @@
 var eventbus;
 var eventbus2;
+var state;
 
 var App = (function () {
     function App() {
@@ -80,16 +81,19 @@ var App = (function () {
             }
         });
 
-        Util.observer({
+        state = {
             class: "table table-condensed table-striped table-hover",
             header: [
-                {text: "Order"},
-                {text: "Name"}
+                {text1: "Order"},
+                {text2: "Name"}
             ],
+            otherProp: {asd: "asd"},
             propA: "my",
             propB: "Class"
-        }, function (key, value) {
+        };
 
+        Util.observer(state, function (key, oldValue, newValue) {
+            console.log(key);
         });
 
         var stylePub = new Publisher({
