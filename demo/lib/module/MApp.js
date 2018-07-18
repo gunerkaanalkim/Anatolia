@@ -88,7 +88,7 @@ var App = (function () {
         };
 
         Util.observer(state, function (key, oldValue, newValue) {
-            console.log(key);
+            console.log("key : " + key + " oldValue : " + oldValue + " newValue :" + newValue);
         });
 
         var stylePub = new Publisher({
