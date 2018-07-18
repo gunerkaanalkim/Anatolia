@@ -63,7 +63,7 @@ var App = (function () {
     };
 
     App.prototype.nestedComponents = function () {
-        eventbus = new Eventbus();
+        var eventbus = new Eventbus();
 
         var pub = new Publisher({
             event: 'event1',

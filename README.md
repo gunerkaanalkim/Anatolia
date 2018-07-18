@@ -15,6 +15,8 @@ bower install
 
 **Sample Component**
 ```js
+var eventbus = new Eventbus();
+
 var pub = new Publisher({
     event: 'event1',
     state: [
@@ -24,6 +26,21 @@ var pub = new Publisher({
         {order: 4, name: 'Hurri'},
         {order: 5, name: 'İskit'}
     ]
+});
+
+var state = {
+    class: "table table-condensed table-striped table-hover",
+    header: [
+        {text1: "Order"},
+        {text2: "Name"}
+    ],
+    otherProp: {asd: "asd"},
+    propA: "my",
+    propB: "Class"
+};
+
+Util.observer(state, function (key, oldValue, newValue) {
+    console.log("key : " + key + " oldValue : " + oldValue + " newValue :" + newValue);
 });
 
 var stylePub = new Publisher({
@@ -39,7 +56,7 @@ var stylePub = new Publisher({
     },
     propertyHandler: { // for MVVM pattern
         class: function (key, value) {
-            console.log(key);
+            // console.log(key);
         },
         header: function (key, value) {
             // console.log(value);
@@ -53,12 +70,11 @@ var stylePub = new Publisher({
 });
 
 var tableResponsivePub = new Publisher({
-        event: 'tableResponsive',
-        state: {
-            class: "table-responsive"
-        }
+    event: 'tableResponsive',
+    state: {
+        class: "table-responsive"
     }
-);
+});
 
 eventbus.publisher().register(pub, stylePub, tableResponsivePub);
 
