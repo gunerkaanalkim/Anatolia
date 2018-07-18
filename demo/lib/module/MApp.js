@@ -1,6 +1,4 @@
 var eventbus;
-var eventbus2;
-var state;
 
 var App = (function () {
     function App() {
@@ -81,7 +79,7 @@ var App = (function () {
             }
         });
 
-        state = {
+        var state = {
             class: "table table-condensed table-striped table-hover",
             header: [
                 {text1: "Order"},
