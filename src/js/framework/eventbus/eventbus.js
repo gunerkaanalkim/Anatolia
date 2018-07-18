@@ -4,12 +4,8 @@ function Eventbus() {
     this._eventbus = {};
 }
 
-//TODO publisher change event with object propert set event
 Eventbus.prototype.constructor = Eventbus;
 
-/*
-* TODO 1 : Trigger order of events(round robin algorithm ? Order or weight properties?)
-* */
 Eventbus.prototype.publisher = function () {
     return {
         register: this._registerPublisher,
