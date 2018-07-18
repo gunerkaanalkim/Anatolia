@@ -142,24 +142,6 @@ Publisher.prototype._init = function (options) {
 
     //New computed property
     this.computedPropertiesMethod();
-
-    //Property on change
-    this.propertyOnChange.call({state: this._state, context: this});
-};
-
-Publisher.prototype.propertyOnChange = function () {
-    var state = this.state;
-
-    if (state) {
-        for (var prop in state) {
-            if (state.hasOwnProperty(prop)) {
-                console.log(prop);
-                if (typeof state[prop] === "object") {
-                    this.context.propertyOnChange.call({state: state[prop]});
-                }
-            }
-        }
-    }
 };
 
 Publisher.prototype.propertyHandlerMethod = function () {
