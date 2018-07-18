@@ -73,10 +73,7 @@ var App = (function () {
                 {order: 3, name: 'Hatti'},
                 {order: 4, name: 'Hurri'},
                 {order: 5, name: 'İskit'}
-            ],
-            watcher: function (key, oldValue, newValue) {
-
-            }
+            ]
         });
 
         var state = {
@@ -117,9 +114,6 @@ var App = (function () {
                 newProp: function (state) {
                     return state.propA + state.propB;
                 }
-            },
-            watcher: function (key, oldValue, newValue) {
-
             }
         });
 
@@ -127,9 +121,6 @@ var App = (function () {
             event: 'tableResponsive',
             state: {
                 class: "table-responsive"
-            },
-            watcher: function (key, oldValue, newValue) {
-
             }
         });
 
