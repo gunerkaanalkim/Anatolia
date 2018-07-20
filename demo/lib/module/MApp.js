@@ -1,4 +1,5 @@
 var eventbus;
+var tableResponsiveComponent;
 
 var App = (function () {
     function App() {
@@ -126,7 +127,7 @@ var App = (function () {
 
         eventbus.publisher().register(pub, stylePub, tableResponsivePub);
 
-        var tableResponsiveComponent = new Component("tableResponsive", {
+        tableResponsiveComponent = new Component("tableResponsive", {
             render: function (state) {
                 var responsiveContainer = document.createElement("template");
                 responsiveContainer.innerHTML = "<div class=" + state.class + "></div>";
@@ -197,9 +198,9 @@ var App = (function () {
             render: function (state) {
                 var $$ = Component.createElement;
 
-                var tableResponsiveContainer = tableResponsiveComponent.render();
-                var table = tableComponent.setEventbus(eventbus).setEvent("styleEvent").render();
-                var tableFooter = tableFooterComponent.render();
+                var tableResponsiveContainer = tableResponsiveComponent.render(this);
+                var table = tableComponent.setEventbus(eventbus).setEvent("styleEvent").render(this);
+                var tableFooter = tableFooterComponent.render(this);
 
                 for (var i in state) {
                     if (state.hasOwnProperty(i)) {

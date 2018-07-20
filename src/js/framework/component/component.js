@@ -13,6 +13,7 @@ Component.prototype._initialize = function () {
     this._renderMethod = this._options.render;
     this._event = this._options.event;
     this._methods = this._options.methods;
+    this._parentComponentContainer = [];
 };
 
 Component.prototype._render = function () {
@@ -57,6 +58,10 @@ Component.prototype.setContainer = function (componentContainer) {
     this._container = componentContainer;
 };
 
+Component.prototype.getContainer = function (componentContainer) {
+    return this._container;
+};
+
 Component.prototype.setEventbus = function (eventbus) {
     this._eventbus = eventbus;
 
@@ -73,9 +78,17 @@ Component.prototype._toEmpty = function (component) {
     }
 };
 
-Component.prototype.render = function () {
-    var el = this._render();
-    return el;
+Component.prototype.render = function (context) {
+    this._setParentContainer(context);
+    return this._render();
+};
+
+Component.prototype._setParentContainer = function (parentComponentContext) {
+    this._parentComponentContainer.push(parentComponentContext.getContainer());
+};
+
+Component.prototype._getParentContainer = function () {
+    return this._parentComponentContainer;
 };
 
 Component.prototype.setEvent = function (event) {
@@ -84,6 +97,32 @@ Component.prototype.setEvent = function (event) {
     return this;
 };
 
+Component.prototype._bindEventToTemplate = function (componentMethods, template, state) {
+    for (var i in componentMethods) {
+        if (componentMethods.hasOwnProperty(i)) {
+            var selector = i;
+            var methods = componentMethods[i];
+
+            var elements = template.querySelectorAll(selector);
+
+            elements.forEach(function (element) {
+                var bundle = {
+                    state: state,
+                    targetElement: element,
+                    parentElement: element.parentElement
+                };
+
+                for (var i in methods) {
+                    if (methods.hasOwnProperty(i)) {
+                        element.addEventListener(i, methods[i].bind(bundle));
+                    }
+                }
+            });
+        }
+    }
+};
+
+// Static Members
 Component.createElement = function (tag, option) {
     var el = document.createElement(tag);
 
@@ -130,27 +169,5 @@ Component.on = function (event, fn) {
     return this;
 };
 
-Component.prototype._bindEventToTemplate = function (componentMethods, template, state) {
-    for (var i in componentMethods) {
-        if (componentMethods.hasOwnProperty(i)) {
-            var selector = i;
-            var methods = componentMethods[i];
 
-            var elements = template.querySelectorAll(selector);
-
-            elements.forEach(function (element) {
-                var bundle = {
-                    state: state,
-                    targetElement: element,
-                    parentElement: element.parentElement
-                };
-
-                for (var i in methods) {
-                    if (methods.hasOwnProperty(i)) {
-                        element.addEventListener(i, methods[i].bind(bundle));
-                    }
-                }
-            });
-        }
-    }
-};
+// Static Members
