@@ -14,6 +14,7 @@ Component.prototype._initialize = function () {
     this._event = this._options.event;
     this._methods = this._options.methods;
     this._parentComponentContainer = [];
+    this._vDOM = {};
 };
 
 Component.prototype._render = function () {
@@ -28,13 +29,16 @@ Component.prototype._render = function () {
         });
 
         this._eventbus.subscriber().register(this._subscriber);
-
-        return el;
     } else {
         el = context._renderedHTML(context, {});
-
-        return el;
     }
+
+    context._vDOM = Component.vDOM(el);
+    console.log(context._vDOM);
+
+    return el;
+
+
 };
 
 Component.prototype._renderedHTML = function (context, state) {
@@ -169,5 +173,36 @@ Component.on = function (event, fn) {
     return this;
 };
 
+Component.vDOM = function (templateContainerElement) {
+    var attributes = templateContainerElement.attributes;
+    var attributeObjects = [];
+
+    for (var prop in attributes) {
+        if (attributes.hasOwnProperty(prop)) {
+            attributeObjects.push({
+                name: attributes[prop].name,
+                value: attributes[prop].value
+            });
+        }
+    }
+
+    //find bounded events
+    // TODO comparation method Intl.Collator().compare('','') || txt1.localeCompare(txt2)
+    var vDOM = {
+        originalElement: templateContainerElement.outerHTML,
+        attributes: attributeObjects,
+        tagName: templateContainerElement.tagName,
+        child: []
+    };
+
+    if (templateContainerElement.hasChildNodes()) {
+        templateContainerElement.childNodes.forEach(function (childNode) {
+            vDOM.child.push(Component.vDOM(childNode));
+        });
+
+    }
+
+    return vDOM;
+};
 
 // Static Members

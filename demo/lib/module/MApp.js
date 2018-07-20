@@ -1,5 +1,8 @@
 var eventbus;
 var tableResponsiveComponent;
+var tableComponent;
+var tableFooterComponent;
+var component;
 
 var App = (function () {
     function App() {
@@ -136,7 +139,7 @@ var App = (function () {
             }
         }).setEventbus(eventbus).setEvent('tableResponsive');
 
-        var tableComponent = new Component('table', {
+        tableComponent = new Component('table', {
             render: function (state) {
                 var table = Component.createElement("table", {class: state.class});
                 var thead = Component.createElement("thead");
@@ -158,7 +161,7 @@ var App = (function () {
             }
         });
 
-        var tableFooterComponent = new Component("tfoot", {
+        tableFooterComponent = new Component("tfoot", {
             render: function () {
                 var el = Component.createElementFromObject({
                     tagName: "tfoot",
@@ -193,7 +196,7 @@ var App = (function () {
             }
         });
 
-        var component = new Component('myComponent', {
+        component = new Component('myComponent', {
             event: 'event1',
             render: function (state) {
                 var $$ = Component.createElement;
