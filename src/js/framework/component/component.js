@@ -186,7 +186,7 @@ Component.vDOM = function (templateContainerElement) {
         }
     }
 
-    //find bounded events
+    // TODO find bounded events || rebind methods after vDOM comparation
     // TODO comparation method Intl.Collator().compare('','') || txt1.localeCompare(txt2)
     var vDOM = {
         originalElement: templateContainerElement.outerHTML,
