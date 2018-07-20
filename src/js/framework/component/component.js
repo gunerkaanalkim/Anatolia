@@ -23,32 +23,30 @@ Component.prototype._render = function () {
     if (this._event) {
 
         this._subscriber = new Subscriber(this._event, function (state) {
-            el = context._renderMethod(state);
-            if (context._methods) context._bindEventToTemplate(context._methods, el, state);
-
-            if (context._container !== undefined) {
-                var container = document.querySelector(context._container);
-                context._toEmpty(container);
-                container.append(el);
-            }
+            el = context._renderedHTML(context, state);
         });
 
         this._eventbus.subscriber().register(this._subscriber);
 
         return el;
     } else {
-        var state = {};
-        el = context._renderMethod(state);
-        if (context._methods) context._bindEventToTemplate(context._methods, el, state);
-
-        if (context._container !== undefined) {
-            var container = document.querySelector(context._container);
-            context._toEmpty(container);
-            container.append(el);
-        }
+        el = context._renderedHTML(context, {});
 
         return el;
     }
+};
+
+Component.prototype._renderedHTML = function (context, state) {
+    var el = context._renderMethod(state);
+    if (context._methods) context._bindEventToTemplate(context._methods, el, state);
+
+    if (context._container !== undefined) {
+        var container = document.querySelector(context._container);
+        context._toEmpty(container);
+        container.append(el);
+    }
+
+    return el;
 };
 
 Component.prototype.fire = function () {
