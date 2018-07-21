@@ -177,7 +177,6 @@ Component.on = function (event, fn) {
 Component.vDOM = function (templateContainerElement) {
     if (!templateContainerElement) return;
 
-
     var attributes = templateContainerElement.attributes;
     var attributeObjects = [];
 
