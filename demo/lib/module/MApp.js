@@ -1,4 +1,10 @@
 var eventbus;
+var tableResponsiveComponent;
+var tableComponent;
+var tableFooterComponent;
+var component;
+var eventbus;
+var sub;
 
 var App = (function () {
     function App() {
@@ -63,7 +69,7 @@ var App = (function () {
     };
 
     App.prototype.nestedComponents = function () {
-        var eventbus = new Eventbus();
+        eventbus = new Eventbus();
 
         var pub = new Publisher({
             event: 'event1',
@@ -126,7 +132,16 @@ var App = (function () {
 
         eventbus.publisher().register(pub, stylePub, tableResponsivePub);
 
-        var tableResponsiveComponent = new Component("tableResponsive", {
+        sub = new Subscriber({
+            event: ['event1', 'styleEvent'],
+            callback: function (state) {
+                // console.log(state);
+            }
+        });
+
+        eventbus.subscriber().register(sub);
+
+        tableResponsiveComponent = new Component("tableResponsive", {
             render: function (state) {
                 var responsiveContainer = document.createElement("template");
                 responsiveContainer.innerHTML = "<div class=" + state.class + "></div>";
@@ -135,7 +150,7 @@ var App = (function () {
             }
         }).setEventbus(eventbus).setEvent('tableResponsive');
 
-        var tableComponent = new Component('table', {
+        tableComponent = new Component('table', {
             render: function (state) {
                 var table = Component.createElement("table", {class: state.class});
                 var thead = Component.createElement("thead");
@@ -157,7 +172,7 @@ var App = (function () {
             }
         });
 
-        var tableFooterComponent = new Component("tfoot", {
+        tableFooterComponent = new Component("tfoot", {
             render: function () {
                 var el = Component.createElementFromObject({
                     tagName: "tfoot",
@@ -192,14 +207,14 @@ var App = (function () {
             }
         });
 
-        var component = new Component('myComponent', {
+        component = new Component('myComponent', {
             event: 'event1',
             render: function (state) {
                 var $$ = Component.createElement;
 
-                var tableResponsiveContainer = tableResponsiveComponent.render();
-                var table = tableComponent.setEventbus(eventbus).setEvent("styleEvent").render();
-                var tableFooter = tableFooterComponent.render();
+                var tableResponsiveContainer = tableResponsiveComponent.render(this);
+                var table = tableComponent.setEventbus(eventbus).setEvent("styleEvent").render(this);
+                var tableFooter = tableFooterComponent.render(this);
 
                 for (var i in state) {
                     if (state.hasOwnProperty(i)) {

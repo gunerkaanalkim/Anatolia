@@ -13,6 +13,8 @@ Component.prototype._initialize = function () {
     this._renderMethod = this._options.render;
     this._event = this._options.event;
     this._methods = this._options.methods;
+    this._parentComponentContainer = [];
+    this._vDOM = {};
 };
 
 Component.prototype._render = function () {
@@ -21,34 +23,37 @@ Component.prototype._render = function () {
     var el = null;
 
     if (this._event) {
-
-        this._subscriber = new Subscriber(this._event, function (state) {
-            el = context._renderMethod(state);
-            if (context._methods) context._bindEventToTemplate(context._methods, el, state);
-
-            if (context._container !== undefined) {
-                var container = document.querySelector(context._container);
-                context._toEmpty(container);
-                container.append(el);
+        this._subscriber = new Subscriber({
+            event: this._event,
+            callback: function (state) {
+                el = context._renderedHTML(context, state);
             }
         });
 
         this._eventbus.subscriber().register(this._subscriber);
-
-        return el;
     } else {
-        var state = {};
-        el = context._renderMethod(state);
-        if (context._methods) context._bindEventToTemplate(context._methods, el, state);
-
-        if (context._container !== undefined) {
-            var container = document.querySelector(context._container);
-            context._toEmpty(container);
-            container.append(el);
-        }
-
-        return el;
+        el = context._renderedHTML(context, {});
     }
+
+    context._vDOM = Component.vDOM(el);
+    // console.log(context._vDOM);
+
+    return el;
+
+
+};
+
+Component.prototype._renderedHTML = function (context, state) {
+    var el = context._renderMethod(state);
+    if (context._methods) context._bindEventToTemplate(context._methods, el, state);
+
+    if (context._container !== undefined) {
+        var container = document.querySelector(context._container);
+        context._toEmpty(container);
+        container.append(el);
+    }
+
+    return el;
 };
 
 Component.prototype.fire = function () {
@@ -57,6 +62,10 @@ Component.prototype.fire = function () {
 
 Component.prototype.setContainer = function (componentContainer) {
     this._container = componentContainer;
+};
+
+Component.prototype.getContainer = function (componentContainer) {
+    return this._container;
 };
 
 Component.prototype.setEventbus = function (eventbus) {
@@ -75,9 +84,18 @@ Component.prototype._toEmpty = function (component) {
     }
 };
 
-Component.prototype.render = function () {
-    var el = this._render();
-    return el;
+Component.prototype.render = function (context) {
+    if (context) this._setParentContainer(context);
+
+    return this._render();
+};
+
+Component.prototype._setParentContainer = function (parentComponentContext) {
+    this._parentComponentContainer.push(parentComponentContext.getContainer());
+};
+
+Component.prototype._getParentContainer = function () {
+    return this._parentComponentContainer;
 };
 
 Component.prototype.setEvent = function (event) {
@@ -86,6 +104,34 @@ Component.prototype.setEvent = function (event) {
     return this;
 };
 
+Component.prototype._bindEventToTemplate = function (componentMethods, template, state) {
+    for (var i in componentMethods) {
+        if (componentMethods.hasOwnProperty(i)) {
+            var selector = i;
+            var methods = componentMethods[i];
+
+            var elements = template.querySelectorAll(selector);
+
+            elements.forEach(function (element) {
+                var bundle = {
+                    state: state,
+                    targetElement: element,
+                    parentElement: element.parentElement
+                };
+
+                for (var i in methods) {
+                    if (methods.hasOwnProperty(i)) {
+                        element.addEventListener(i, methods[i].bind(bundle));
+                    }
+                }
+            });
+        }
+    }
+};
+
+/**
+ * Static Members
+ * **/
 Component.createElement = function (tag, option) {
     var el = document.createElement(tag);
 
@@ -132,27 +178,36 @@ Component.on = function (event, fn) {
     return this;
 };
 
-Component.prototype._bindEventToTemplate = function (componentMethods, template, state) {
-    for (var i in componentMethods) {
-        if (componentMethods.hasOwnProperty(i)) {
-            var selector = i;
-            var methods = componentMethods[i];
+Component.vDOM = function (templateContainerElement) {
+    if (!templateContainerElement) return;
 
-            var elements = template.querySelectorAll(selector);
+    var attributes = templateContainerElement.attributes;
+    var attributeObjects = [];
 
-            elements.forEach(function (element) {
-                var bundle = {
-                    state: state,
-                    targetElement: element,
-                    parentElement: element.parentElement
-                };
-
-                for (var i in methods) {
-                    if (methods.hasOwnProperty(i)) {
-                        element.addEventListener(i, methods[i].bind(bundle));
-                    }
-                }
+    for (var prop in attributes) {
+        if (attributes.hasOwnProperty(prop)) {
+            attributeObjects.push({
+                name: attributes[prop].name,
+                value: attributes[prop].value
             });
         }
     }
+
+    // TODO find bounded events || rebind methods after vDOM comparation
+    // TODO comparation method Intl.Collator().compare('','') || txt1.localeCompare(txt2)
+    var vDOM = {
+        tagName: templateContainerElement.tagName || "plainText",
+        originalElement: templateContainerElement.outerHTML || templateContainerElement.textContent,
+        attributes: attributeObjects,
+        child: []
+    };
+
+    if (templateContainerElement.hasChildNodes()) {
+        templateContainerElement.childNodes.forEach(function (childNode) {
+            vDOM.child.push(Component.vDOM(childNode));
+        });
+
+    }
+
+    return vDOM;
 };
