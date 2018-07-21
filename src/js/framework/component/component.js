@@ -83,7 +83,8 @@ Component.prototype._toEmpty = function (component) {
 };
 
 Component.prototype.render = function (context) {
-    this._setParentContainer(context);
+    if (context) this._setParentContainer(context);
+
     return this._render();
 };
 
