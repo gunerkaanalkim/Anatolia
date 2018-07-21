@@ -4,22 +4,9 @@ function Eventbus() {
     this._eventbus = {};
 }
 
-Eventbus.prototype.publisher = function () {
-    return {
-        register: this._registerPublisher,
-        fire: this._firePublisher,
-        _context: this
-    }
-};
-
-Eventbus.prototype.subscriber = function () {
-    return {
-        register: this._registerSubscriber,
-        fire: this._fireSubscriber,
-        _context: this
-    }
-};
-
+/**
+ * Eventbus Operation
+ * **/
 Eventbus.prototype.listen = function () {
     return this._eventbus;
 };
@@ -38,40 +25,34 @@ Eventbus.prototype.clean = function () {
     this._eventbus = {};
 };
 
-Eventbus.prototype._registerPublisher = function () {
-    for (var i in arguments) {
-        var publisher = arguments[i];
-
-        this._context._fillPublishers(publisher);
-    }
-};
-
-Eventbus.prototype._registerSubscriber = function () {
-    for (var i in arguments) {
-        var subscriber = arguments[i];
-
-        this._context._fillSubscribers(subscriber);
-    }
-};
-
-Eventbus.prototype._firePublisher = function (publisher) {
+Eventbus.prototype._fire = function (publisher) {
     var event = publisher.event();
 
-    if (!this._context._eventbus[event])
-        throw 'Error : Event not found.';
-
-    var subscribers = this._context._eventbus[event].subscribers;
-    var state = this._context._eventbus[event].state;
+    var subscribers = this._eventbus[event].subscribers;
+    var state = this._eventbus[event].state;
 
     subscribers.forEach(function (subscriber) {
         subscriber.callback()(state === undefined ? {} : state);
     });
 };
 
-Eventbus.prototype._fireSubscriber = function (subscriber) {
-    var event = subscriber.event();
+/**
+ * Publisher Operation
+ * **/
+Eventbus.prototype.publisher = function () {
+    return {
+        register: this._registerPublisher,
+        fire: this._firePublisher,
+        _context: this
+    }
+};
 
-    subscriber.callback()(this._context._eventbus[event].state);
+Eventbus.prototype._registerPublisher = function () {
+    for (var i in arguments) {
+        var publisher = arguments[i];
+
+        this._context._fillPublishers(publisher);
+    }
 };
 
 Eventbus.prototype._fillPublishers = function (publisher) {
@@ -92,6 +73,39 @@ Eventbus.prototype._fillPublishers = function (publisher) {
     this._fire(publisher);
 };
 
+Eventbus.prototype._firePublisher = function (publisher) {
+    var event = publisher.event();
+
+    if (!this._context._eventbus[event])
+        throw 'Error : Event not found.';
+
+    var subscribers = this._context._eventbus[event].subscribers;
+    var state = this._context._eventbus[event].state;
+
+    subscribers.forEach(function (subscriber) {
+        subscriber.callback()(state === undefined ? {} : state);
+    });
+};
+
+/**
+ * Subscriber Operation
+ * **/
+Eventbus.prototype.subscriber = function () {
+    return {
+        register: this._registerSubscriber,
+        fire: this._fireSubscriber,
+        _context: this
+    }
+};
+
+Eventbus.prototype._registerSubscriber = function () {
+    for (var i in arguments) {
+        var subscriber = arguments[i];
+
+        this._context._fillSubscribers(subscriber);
+    }
+};
+
 Eventbus.prototype._fillSubscribers = function (subscriber) {
     var event = subscriber.event();
     var state = this._eventbus[event].state;
@@ -105,20 +119,15 @@ Eventbus.prototype._fillSubscribers = function (subscriber) {
     this._eventbus[event].subscribers[eventIndex]._callback(state);
 };
 
-Eventbus.prototype._fire = function (publisher) {
-    var event = publisher.event();
+Eventbus.prototype._fireSubscriber = function (subscriber) {
+    var event = subscriber.event();
 
-    var subscribers = this._eventbus[event].subscribers;
-    var state = this._eventbus[event].state;
-
-    subscribers.forEach(function (subscriber) {
-        subscriber.callback()(state === undefined ? {} : state);
-    });
+    subscriber.callback()(this._context._eventbus[event].state);
 };
 
-/*
-* Publisher
-* */
+/**
+ * Publisher
+ * **/
 function Publisher(options) {
     this._init(options);
 }
@@ -181,9 +190,9 @@ Publisher.prototype.toString = function () {
     return "Event : " + this._event + " " + " State : " + this._state;
 };
 
-/*
-* Subsriber
-* */
+/**
+ * Subscriber
+ * **/
 function Subscriber(event, callback) {
     this._event = event || null;
 
