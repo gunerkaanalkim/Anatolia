@@ -129,7 +129,9 @@ Component.prototype._bindEventToTemplate = function (componentMethods, template,
     }
 };
 
-// Static Members
+/**
+ * Static Members
+ * **/
 Component.createElement = function (tag, option) {
     var el = document.createElement(tag);
 
@@ -209,5 +211,3 @@ Component.vDOM = function (templateContainerElement) {
 
     return vDOM;
 };
-
-// Static Members
