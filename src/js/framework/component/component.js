@@ -23,9 +23,11 @@ Component.prototype._render = function () {
     var el = null;
 
     if (this._event) {
-
-        this._subscriber = new Subscriber(this._event, function (state) {
-            el = context._renderedHTML(context, state);
+        this._subscriber = new Subscriber({
+            event: this._event,
+            callback: function (state) {
+                el = context._renderedHTML(context, state);
+            }
         });
 
         this._eventbus.subscriber().register(this._subscriber);
@@ -34,7 +36,7 @@ Component.prototype._render = function () {
     }
 
     context._vDOM = Component.vDOM(el);
-    console.log(context._vDOM);
+    // console.log(context._vDOM);
 
     return el;
 

@@ -107,22 +107,37 @@ Eventbus.prototype._registerSubscriber = function () {
 };
 
 Eventbus.prototype._fillSubscribers = function (subscriber) {
-    var event = subscriber.event();
-    var state = this._eventbus[event].state;
+    var me = this;
 
-    if (!this._eventbus.hasOwnProperty(event)) {
-        throw 'Event is not defined.';
+    if (Array.isArray(subscriber.event())) {
+        subscriber.event().forEach(function (event) {
+            _action(me, event);
+        });
+    } else {
+        _action(me, subscriber.event());
     }
 
-    var eventIndex = this._eventbus[event].subscribers.push(subscriber) - 1;
+    function _action(context, event) {
+        var state = context._eventbus[event].state;
 
-    this._eventbus[event].subscribers[eventIndex]._callback(state);
+        if (!context._eventbus.hasOwnProperty(event)) {
+            throw 'Event is not defined.';
+        }
+
+        var eventIndex = context._eventbus[event].subscribers.push(subscriber) - 1;
+
+        context._eventbus[event].subscribers[eventIndex]._callback(state);
+    }
 };
 
 Eventbus.prototype._fireSubscriber = function (subscriber) {
-    var event = subscriber.event();
-
-    subscriber.callback()(this._context._eventbus[event].state);
+    if (Array.isArray(subscriber.event())) {
+        subscriber.event().forEach(function (event) {
+            subscriber.callback()(this._context._eventbus[event].state);
+        });
+    } else {
+        subscriber.callback()(this._context._eventbus[subscriber.event()].state);
+    }
 };
 
 /**
@@ -193,15 +208,19 @@ Publisher.prototype.toString = function () {
 /**
  * Subscriber
  * **/
-function Subscriber(event, callback) {
-    this._event = event || null;
+function Subscriber(options) {
+    this._init(options);
+}
 
-    if (callback instanceof Function) {
-        this._callback = callback || null;
+Subscriber.prototype._init = function (options) {
+    this._event = options.event || null;
+
+    if (options.callback instanceof Function) {
+        this._callback = options.callback || null;
     } else {
         throw 'Contructor should take a callback function.'
     }
-}
+};
 
 Subscriber.prototype.event = function () {
     if (arguments.length) {

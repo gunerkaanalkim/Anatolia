@@ -3,6 +3,8 @@ var tableResponsiveComponent;
 var tableComponent;
 var tableFooterComponent;
 var component;
+var eventbus;
+var sub;
 
 var App = (function () {
     function App() {
@@ -67,7 +69,7 @@ var App = (function () {
     };
 
     App.prototype.nestedComponents = function () {
-        var eventbus = new Eventbus();
+        eventbus = new Eventbus();
 
         var pub = new Publisher({
             event: 'event1',
@@ -129,6 +131,15 @@ var App = (function () {
         });
 
         eventbus.publisher().register(pub, stylePub, tableResponsivePub);
+
+        sub = new Subscriber({
+            event: ['event1', 'styleEvent'],
+            callback: function (state) {
+                // console.log(state);
+            }
+        });
+
+        eventbus.subscriber().register(sub);
 
         tableResponsiveComponent = new Component("tableResponsive", {
             render: function (state) {
