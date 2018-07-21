@@ -41,9 +41,8 @@ Eventbus.prototype._fire = function (publisher) {
  * **/
 Eventbus.prototype.publisher = function () {
     return {
-        register: this._registerPublisher,
-        fire: this._firePublisher,
-        _context: this
+        register: this._registerPublisher.bind(this),
+        fire: this._firePublisher.bind(this)
     }
 };
 
@@ -51,7 +50,7 @@ Eventbus.prototype._registerPublisher = function () {
     for (var i in arguments) {
         var publisher = arguments[i];
 
-        this._context._fillPublishers(publisher);
+        this._fillPublishers(publisher);
     }
 };
 
@@ -76,11 +75,11 @@ Eventbus.prototype._fillPublishers = function (publisher) {
 Eventbus.prototype._firePublisher = function (publisher) {
     var event = publisher.event();
 
-    if (!this._context._eventbus[event])
+    if (!this._eventbus[event])
         throw 'Error : Event not found.';
 
-    var subscribers = this._context._eventbus[event].subscribers;
-    var state = this._context._eventbus[event].state;
+    var subscribers = this._eventbus[event].subscribers;
+    var state = this._eventbus[event].state;
 
     subscribers.forEach(function (subscriber) {
         subscriber.callback()(state === undefined ? {} : state);
@@ -92,9 +91,8 @@ Eventbus.prototype._firePublisher = function (publisher) {
  * **/
 Eventbus.prototype.subscriber = function () {
     return {
-        register: this._registerSubscriber,
-        fire: this._fireSubscriber,
-        _context: this
+        register: this._registerSubscriber.bind(this),
+        fire: this._fireSubscriber.bind(this)
     }
 };
 
@@ -102,7 +100,7 @@ Eventbus.prototype._registerSubscriber = function () {
     for (var i in arguments) {
         var subscriber = arguments[i];
 
-        this._context._fillSubscribers(subscriber);
+        this._fillSubscribers(subscriber);
     }
 };
 
@@ -133,10 +131,10 @@ Eventbus.prototype._fillSubscribers = function (subscriber) {
 Eventbus.prototype._fireSubscriber = function (subscriber) {
     if (Array.isArray(subscriber.event())) {
         subscriber.event().forEach(function (event) {
-            subscriber.callback()(this._context._eventbus[event].state);
+            subscriber.callback()(this._eventbus[event].state);
         });
     } else {
-        subscriber.callback()(this._context._eventbus[subscriber.event()].state);
+        subscriber.callback()(this._eventbus[subscriber.event()].state);
     }
 };
 
