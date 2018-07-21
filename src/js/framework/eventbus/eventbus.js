@@ -4,8 +4,6 @@ function Eventbus() {
     this._eventbus = {};
 }
 
-Eventbus.prototype.constructor = Eventbus;
-
 Eventbus.prototype.publisher = function () {
     return {
         register: this._registerPublisher,
@@ -125,8 +123,6 @@ function Publisher(options) {
     this._init(options);
 }
 
-Publisher.prototype.constructor = Publisher;
-
 Publisher.prototype._init = function (options) {
     this._event = options.event || null;
     this._state = options.state || null;
@@ -197,8 +193,6 @@ function Subscriber(event, callback) {
         throw 'Contructor should take a callback function.'
     }
 }
-
-Subscriber.prototype.constructor = Subscriber;
 
 Subscriber.prototype.event = function () {
     if (arguments.length) {
