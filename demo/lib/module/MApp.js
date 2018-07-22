@@ -173,6 +173,8 @@ var App = (function () {
                     }
                 }
 
+                console.log(styles.header);
+
                 for (var i in data) {
                     if (data.hasOwnProperty(i)) {
                         var tr = $$("tr");

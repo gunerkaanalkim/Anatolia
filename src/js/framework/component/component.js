@@ -1,6 +1,6 @@
 'use strict';
-//TODO re-render containerless components when subscriber fired
-// TODO  Component.createElement("table.table.table-condensed.table-striped > thead - tbody")
+// TODO : re-render containerless components when subscriber fired
+// TODO : Component.createElement("table.table.table-condensed.table-striped > thead - tbody")
 function Component(name, options) {
     this._options = options;
     this._name = name;
@@ -35,8 +35,9 @@ Component.prototype._render = function () {
         el = context._renderedHTML(context, {});
     }
 
+    console.log(el);
     context._vDOM = Component.vDOM(el);
-    console.log(context._vDOM);
+    // console.log(context._vDOM);
 
     return el;
 };
