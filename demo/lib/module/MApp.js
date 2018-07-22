@@ -135,7 +135,7 @@ var App = (function () {
         sub = new Subscriber({
             event: ['event1', 'styleEvent'],
             callback: function (state) {
-                // console.log(state);
+                console.log(state);
             }
         });
 
@@ -151,7 +151,7 @@ var App = (function () {
         }).setEventbus(eventbus).setEvent('tableResponsive');
 
         tableComponent = new Component('table', {
-            render: function (state) {
+            render: function (state) {  // TODO pass all states in boject or array
                 var table = Component.createElement("table", {class: state.class});
                 var thead = Component.createElement("thead");
                 var tbody = Component.createElement("tbody");
@@ -161,6 +161,18 @@ var App = (function () {
                     if (state.header.hasOwnProperty(i)) {
                         var headerCell = Component.createElement("th", {text: state.header[i].text});
                         theadRow.append(headerCell);
+                    }
+                }
+
+                for (var i in state) {
+                    if (state.hasOwnProperty(i)) {
+                        var tr = $$("tr");
+
+                        var orderCell = $$("td", {text: state[i].order});
+                        var nameCell = $$("td", {text: state[i].name});
+
+                        tr.append(orderCell, nameCell);
+                        table.children[1].append(tr);
                     }
                 }
 
@@ -213,20 +225,8 @@ var App = (function () {
                 var $$ = Component.createElement;
 
                 var tableResponsiveContainer = tableResponsiveComponent.render(this);
-                var table = tableComponent.setEventbus(eventbus).setEvent("styleEvent").render(this);
+                var table = tableComponent.setEventbus(eventbus).setEvent(["styleEvent", "event1"]).render(this);
                 var tableFooter = tableFooterComponent.render(this);
-
-                for (var i in state) {
-                    if (state.hasOwnProperty(i)) {
-                        var tr = $$("tr");
-
-                        var orderCell = $$("td", {text: state[i].order});
-                        var nameCell = $$("td", {text: state[i].name});
-
-                        tr.append(orderCell, nameCell);
-                        table.children[1].append(tr);
-                    }
-                }
 
                 table.append(tableFooter);
                 tableResponsiveContainer.append(table);
@@ -247,7 +247,7 @@ var App = (function () {
             name: 'AnatoliaApp',
             eventbus: eventbus,
             components: {
-                '#component_1': component
+                // '#component_1': component
             }
         });
 
