@@ -36,11 +36,9 @@ Component.prototype._render = function () {
     }
 
     context._vDOM = Component.vDOM(el);
-    // console.log(context._vDOM);
+    console.log(context._vDOM);
 
     return el;
-
-
 };
 
 Component.prototype._renderedHTML = function (context, state) {
