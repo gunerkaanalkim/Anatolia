@@ -132,7 +132,6 @@ var App = (function () {
 
         eventbus.publisher().register(pub, stylePub, tableResponsivePub);
 
-        // TODO yalnızca bir event tetiklenirse diğeri boş geliyor ve render başarısız oluyor.
         sub = new Subscriber({
             event: ['event1', 'styleEvent'],
             callback: function (state) {
