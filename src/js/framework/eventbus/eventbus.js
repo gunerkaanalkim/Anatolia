@@ -62,14 +62,20 @@ Eventbus.prototype._fillPublishers = function (publisher) {
 };
 
 Eventbus.prototype._firePublisher = function (publisher) {
+    var context = this;
     var event = publisher.event();
 
     if (!this._eventbus[event])
         throw 'Error : Event not found.';
 
     var subscribers = this._eventbus[event].subscribers;
+
     var state = {};
-    state[event] = this._eventbus[event].state;
+    subscribers.forEach(function (subscriber) {
+        subscriber.event().forEach(function (event) {
+            state[event] = context._eventbus[event].state;
+        });
+    });
 
     subscribers.forEach(function (subscriber) {
         subscriber.callback()(state === undefined ? {} : state);
