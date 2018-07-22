@@ -1,8 +1,8 @@
 $(document).ready(function () {
-    // var app = new App();
+    var app = new App();
     // app.singleComponent();
 
-    // app.nestedComponents();
-    new PubSub().usage();
+    app.nestedComponents();
+    // new PubSub().usage();
 
 });
