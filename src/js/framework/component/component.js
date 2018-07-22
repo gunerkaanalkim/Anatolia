@@ -1,6 +1,6 @@
 'use strict';
-//TODO re-render containerless components when subscriber fired
-// TODO  Component.createElement("table.table.table-condensed.table-striped > thead - tbody")
+// TODO : re-render containerless components when subscriber fired
+// TODO : Component.createElement("table.table.table-condensed.table-striped > thead - tbody")
 function Component(name, options) {
     this._options = options;
     this._name = name;
@@ -35,12 +35,11 @@ Component.prototype._render = function () {
         el = context._renderedHTML(context, {});
     }
 
+    console.log(el);
     context._vDOM = Component.vDOM(el);
     // console.log(context._vDOM);
 
     return el;
-
-
 };
 
 Component.prototype._renderedHTML = function (context, state) {
@@ -60,24 +59,6 @@ Component.prototype.fire = function () {
     this._eventbus.subscriber().fire(this._subscriber);
 };
 
-Component.prototype.setContainer = function (componentContainer) {
-    this._container = componentContainer;
-};
-
-Component.prototype.getContainer = function (componentContainer) {
-    return this._container;
-};
-
-Component.prototype.setEventbus = function (eventbus) {
-    this._eventbus = eventbus;
-
-    return this;
-};
-
-Component.prototype.setGlobalSetting = function (anatoliaGlobalSetting) {
-    this._globalSetting = anatoliaGlobalSetting;
-};
-
 Component.prototype._toEmpty = function (component) {
     while (component.firstChild) {
         component.removeChild(component.firstChild);
@@ -88,20 +69,6 @@ Component.prototype.render = function (context) {
     if (context) this._setParentContainer(context);
 
     return this._render();
-};
-
-Component.prototype._setParentContainer = function (parentComponentContext) {
-    this._parentComponentContainer.push(parentComponentContext.getContainer());
-};
-
-Component.prototype._getParentContainer = function () {
-    return this._parentComponentContainer;
-};
-
-Component.prototype.setEvent = function (event) {
-    this._event = event;
-
-    return this;
 };
 
 Component.prototype._bindEventToTemplate = function (componentMethods, template, state) {
@@ -127,6 +94,53 @@ Component.prototype._bindEventToTemplate = function (componentMethods, template,
             });
         }
     }
+};
+
+/**
+ * Setters & Getters
+ * **/
+Component.prototype.setContainer = function (componentContainer) {
+    this._container = componentContainer;
+};
+
+Component.prototype.getContainer = function (componentContainer) {
+    return this._container;
+};
+
+Component.prototype.setEventbus = function (eventbus) {
+    this._eventbus = eventbus;
+
+    return this;
+};
+
+Component.prototype.getEventbus = function (eventbus) {
+    return this._eventbus;
+};
+
+Component.prototype.setGlobalSetting = function (anatoliaGlobalSetting) {
+    this._globalSetting = anatoliaGlobalSetting;
+};
+
+Component.prototype.getGlobalSetting = function (anatoliaGlobalSetting) {
+    return this._globalSetting;
+};
+
+Component.prototype.setEvent = function (event) {
+    this._event = event;
+
+    return this;
+};
+
+Component.prototype.getEvent = function (event) {
+    return this._event;
+};
+
+Component.prototype._setParentContainer = function (parentComponentContext) {
+    this._parentComponentContainer.push(parentComponentContext.getContainer());
+};
+
+Component.prototype._getParentContainer = function () {
+    return this._parentComponentContainer;
 };
 
 /**

@@ -16,32 +16,51 @@ var PubSub = (function () {
     PubSub.prototype.usage = function () {
         eventbus = new Eventbus();
 
-        publisher_1 = new Publisher('event_1', {
-            foo: 'bar'
+        publisher_1 = new Publisher({
+            event: 'event_1',
+            state: {
+                foo: 'bar'
+
+            }
         });
 
-        publisher_2 = new Publisher('event_2', {
-            zar: 'tar'
+        publisher_2 = new Publisher({
+            event: 'event_2',
+            state: {
+                zar: 'tar'
+            }
         });
 
-        publisher_3 = new Publisher('event_3', {
-            car: 'tır'
+        publisher_3 = new Publisher({
+            event: 'event_3',
+            state: {
+                car: 'tır'
+            }
         });
 
         [publisher_1, publisher_2, publisher_3].forEach(function (value) {
             eventbus.publisher().register(value);
         });
 
-        subscriber_1 = new Subscriber('event_1', function (state) {
-            console.log(state);
+        subscriber_1 = new Subscriber({
+            event: ['event_1', 'event_2', 'event_3'],
+            callback: function (state) {
+                console.log(state);
+            }
         });
 
-        subscriber_2 = new Subscriber('event_2', function (state) {
-            console.log(state);
+        subscriber_2 = new Subscriber({
+            event: 'event_2',
+            callback: function (state) {
+                // console.log(state);
+            }
         });
 
-        subscriber_3 = new Subscriber('event_3', function (state) {
-            console.log(state);
+        subscriber_3 = new Subscriber({
+            event: 'event_3',
+            callback: function (state) {
+                // console.log(state);
+            }
         });
 
         [subscriber_1, subscriber_2, subscriber_3].forEach(function (subscriber) {
@@ -53,15 +72,15 @@ var PubSub = (function () {
 
 
         //Listen event bus
-        console.log(eventbus.listen());
+        // console.log(eventbus.listen());
         //Callbacks removed
-        eventbus.mute();
+        // eventbus.mute();
 
-        console.log(eventbus.listen());
+        // console.log(eventbus.listen());
 
         //New Eventbus insctance
-        eventbus.clean();
-        console.log(eventbus.listen());
+        // eventbus.clean();
+        // console.log(eventbus.listen());
     };
 
     return PubSub;

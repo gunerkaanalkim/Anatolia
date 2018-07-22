@@ -135,7 +135,7 @@ var App = (function () {
         sub = new Subscriber({
             event: ['event1', 'styleEvent'],
             callback: function (state) {
-                // console.log(state);
+                console.log(state);
             }
         });
 
@@ -144,7 +144,7 @@ var App = (function () {
         tableResponsiveComponent = new Component("tableResponsive", {
             render: function (state) {
                 var responsiveContainer = document.createElement("template");
-                responsiveContainer.innerHTML = "<div class=" + state.class + "></div>";
+                responsiveContainer.innerHTML = "<div class=" + state.tableResponsive.class + "></div>";
 
                 return responsiveContainer.content.firstChild;
             }
@@ -152,21 +152,42 @@ var App = (function () {
 
         tableComponent = new Component('table', {
             render: function (state) {
-                var table = Component.createElement("table", {class: state.class});
-                var thead = Component.createElement("thead");
-                var tbody = Component.createElement("tbody");
-                var theadRow = Component.createElement("tr");
+                var styles = state.styleEvent;
+                var data = state.event1;
 
-                for (var i in state.header) {
-                    if (state.header.hasOwnProperty(i)) {
-                        var headerCell = Component.createElement("th", {text: state.header[i].text});
-                        theadRow.append(headerCell);
-                    }
-                }
+                var $$ = Component.createElement;
+
+                var table = $$("table", {class: styles.class});
+                var thead = $$("thead");
+                var tbody = $$("tbody");
+                var theadRow = $$("tr");
 
                 thead.append(theadRow);
                 table.append(thead);
                 table.append(tbody);
+
+                for (var i in styles.header) {
+                    if (styles.header.hasOwnProperty(i)) {
+                        var headerCell = $$("th", {text: styles.header[i].text});
+                        theadRow.append(headerCell);
+                    }
+                }
+
+                console.log(styles.header);
+
+                for (var i in data) {
+                    if (data.hasOwnProperty(i)) {
+                        var tr = $$("tr");
+
+                        var orderCell = $$("td", {text: data[i].order});
+                        var nameCell = $$("td", {text: data[i].name});
+
+                        tr.append(orderCell, nameCell);
+                        table.children[1].append(tr);
+                    }
+                }
+
+
 
                 return table;
             }
@@ -208,25 +229,10 @@ var App = (function () {
         });
 
         component = new Component('myComponent', {
-            event: 'event1',
-            render: function (state) {
-                var $$ = Component.createElement;
-
+            render: function () {
                 var tableResponsiveContainer = tableResponsiveComponent.render(this);
-                var table = tableComponent.setEventbus(eventbus).setEvent("styleEvent").render(this);
+                var table = tableComponent.setEventbus(eventbus).setEvent(["styleEvent", "event1"]).render(this);
                 var tableFooter = tableFooterComponent.render(this);
-
-                for (var i in state) {
-                    if (state.hasOwnProperty(i)) {
-                        var tr = $$("tr");
-
-                        var orderCell = $$("td", {text: state[i].order});
-                        var nameCell = $$("td", {text: state[i].name});
-
-                        tr.append(orderCell, nameCell);
-                        table.children[1].append(tr);
-                    }
-                }
 
                 table.append(tableFooter);
                 tableResponsiveContainer.append(table);

@@ -25,17 +25,6 @@ Eventbus.prototype.clean = function () {
     this._eventbus = {};
 };
 
-Eventbus.prototype._fire = function (publisher) {
-    var event = publisher.event();
-
-    var subscribers = this._eventbus[event].subscribers;
-    var state = this._eventbus[event].state;
-
-    subscribers.forEach(function (subscriber) {
-        subscriber.callback()(state === undefined ? {} : state);
-    });
-};
-
 /**
  * Publisher Operation
  * **/
@@ -69,22 +58,30 @@ Eventbus.prototype._fillPublishers = function (publisher) {
         return;
     }
 
-    this._fire(publisher);
+    this._firePublisher(publisher);
 };
 
 Eventbus.prototype._firePublisher = function (publisher) {
+    var context = this;
     var event = publisher.event();
 
     if (!this._eventbus[event])
         throw 'Error : Event not found.';
 
     var subscribers = this._eventbus[event].subscribers;
-    var state = this._eventbus[event].state;
+
+    var state = {};
+    subscribers.forEach(function (subscriber) {
+        subscriber.event().forEach(function (event) {
+            state[event] = context._eventbus[event].state;
+        });
+    });
 
     subscribers.forEach(function (subscriber) {
         subscriber.callback()(state === undefined ? {} : state);
     });
 };
+
 
 /**
  * Subscriber Operation
@@ -105,26 +102,37 @@ Eventbus.prototype._registerSubscriber = function () {
 };
 
 Eventbus.prototype._fillSubscribers = function (subscriber) {
-    var me = this;
+    var context = this;
+    var states = {};
 
     if (Array.isArray(subscriber.event())) {
-        subscriber.event().forEach(function (event) {
-            _action(me, event);
+        subscriber.event().forEach(function (event, index) {
+            states[event] = context._eventbus[event].state;
+
+            if (index === (subscriber.event().length - 1)) { // one time fire
+                _action(context, subscriber.event(), states);
+            }
         });
     } else {
-        _action(me, subscriber.event());
+        states[subscriber.event()] = context._eventbus[subscriber.event()].state;
+        _action(context, [subscriber.event()], states);
     }
 
-    function _action(context, event) {
-        var state = context._eventbus[event].state;
+    function _action(context, events, states) {
+        var eventIndex = null;
+        var _event = null;
 
-        if (!context._eventbus.hasOwnProperty(event)) {
-            throw 'Event is not defined.';
-        }
+        events.forEach(function (event) {
+            if (!context._eventbus.hasOwnProperty(event)) {
+                throw 'Event is not defined.';
+            }
 
-        var eventIndex = context._eventbus[event].subscribers.push(subscriber) - 1;
+            eventIndex = context._eventbus[event].subscribers.push(subscriber) - 1;
+            _event = event
+        });
 
-        context._eventbus[event].subscribers[eventIndex]._callback(state);
+
+        context._eventbus[_event].subscribers[eventIndex]._callback(states);
     }
 };
 
