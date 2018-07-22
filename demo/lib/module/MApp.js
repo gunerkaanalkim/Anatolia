@@ -151,7 +151,7 @@ var App = (function () {
         }).setEventbus(eventbus).setEvent('tableResponsive');
 
         tableComponent = new Component('table', {
-            render: function (state) {  // TODO pass all states in boject or array
+            render: function (state) {
                 var styles = state.styleEvent;
                 var data = state.event1;
 
