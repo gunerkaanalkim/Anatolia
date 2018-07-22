@@ -25,18 +25,6 @@ Eventbus.prototype.clean = function () {
     this._eventbus = {};
 };
 
-Eventbus.prototype._fire = function (publisher) {
-    var event = publisher.event();
-
-    var subscribers = this._eventbus[event].subscribers;
-    var state = {};
-    state[event] = this._eventbus[event].state;
-
-    subscribers.forEach(function (subscriber) {
-        subscriber.callback()(state === undefined ? {} : state);
-    });
-};
-
 /**
  * Publisher Operation
  * **/
@@ -70,7 +58,7 @@ Eventbus.prototype._fillPublishers = function (publisher) {
         return;
     }
 
-    this._fire(publisher);
+    this._firePublisher(publisher);
 };
 
 Eventbus.prototype._firePublisher = function (publisher) {
@@ -87,6 +75,7 @@ Eventbus.prototype._firePublisher = function (publisher) {
         subscriber.callback()(state === undefined ? {} : state);
     });
 };
+
 
 /**
  * Subscriber Operation
