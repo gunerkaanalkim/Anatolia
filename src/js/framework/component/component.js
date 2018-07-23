@@ -1,15 +1,15 @@
 'use strict';
 // TODO : re-render containerless components when subscriber fired
 // TODO : Component.createElement("table.table.table-condensed.table-striped > thead - tbody")
-function Component(name, options) {
+function Component(options) {
     this._options = options;
-    this._name = name;
 
     this._initialize(options);
 }
 
 Component.prototype._initialize = function () {
     this._subscriber = null;
+    this._name = this._options.name;
     this._renderMethod = this._options.render;
     this._event = this._options.event;
     this._methods = this._options.methods;
@@ -35,7 +35,7 @@ Component.prototype._render = function () {
         el = context._renderedHTML(context, {});
     }
 
-    console.log(el);
+    // console.log(el);
     context._vDOM = Component.vDOM(el);
     // console.log(context._vDOM);
 

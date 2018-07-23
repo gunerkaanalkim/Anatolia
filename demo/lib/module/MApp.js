@@ -24,7 +24,8 @@ var App = (function () {
 
         eventbus.publisher().register(pub);
 
-        var component = new Component('myComponent', {
+        var component = new Component({
+            name: 'myComponent',
             event: 'event1',
             render: function (state) {
                 var ce = Component.createElement;
@@ -135,13 +136,14 @@ var App = (function () {
         sub = new Subscriber({
             event: ['event1', 'styleEvent'],
             callback: function (state) {
-                console.log(state);
+                // console.log(state);
             }
         });
 
         eventbus.subscriber().register(sub);
 
-        tableResponsiveComponent = new Component("tableResponsive", {
+        tableResponsiveComponent = new Component({
+            name: "tableResponsive",
             render: function (state) {
                 var responsiveContainer = document.createElement("template");
                 responsiveContainer.innerHTML = "<div class=" + state.tableResponsive.class + "></div>";
@@ -150,7 +152,8 @@ var App = (function () {
             }
         }).setEventbus(eventbus).setEvent('tableResponsive');
 
-        tableComponent = new Component('table', {
+        tableComponent = new Component({
+            name: 'table',
             render: function (state) {
                 var styles = state.styleEvent;
                 var data = state.event1;
@@ -173,7 +176,7 @@ var App = (function () {
                     }
                 }
 
-                console.log(styles.header);
+                // console.log(styles.header);
 
                 for (var i in data) {
                     if (data.hasOwnProperty(i)) {
@@ -188,12 +191,12 @@ var App = (function () {
                 }
 
 
-
                 return table;
             }
         });
 
-        tableFooterComponent = new Component("tfoot", {
+        tableFooterComponent = new Component({
+            name: "tfoot",
             render: function () {
                 var el = Component.createElementFromObject({
                     tagName: "tfoot",
@@ -228,7 +231,8 @@ var App = (function () {
             }
         });
 
-        component = new Component('myComponent', {
+        component = new Component({
+            name: 'myComponent',
             render: function () {
                 var tableResponsiveContainer = tableResponsiveComponent.render(this);
                 var table = tableComponent.setEventbus(eventbus).setEvent(["styleEvent", "event1"]).render(this);
