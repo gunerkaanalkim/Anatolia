@@ -1,19 +1,20 @@
 'use strict';
-//TODO re-render containerless components when subscriber fired
-// TODO  Component.createElement("table.table.table-condensed.table-striped > thead - tbody")
-function Component(name, options) {
+// TODO : re-render containerless components when subscriber fired
+// TODO : Component.createElement("table.table.table-condensed.table-striped > thead - tbody")
+function Component(options) {
     this._options = options;
-    this._name = name;
 
     this._initialize(options);
 }
 
 Component.prototype._initialize = function () {
     this._subscriber = null;
+    this._name = this._options.name;
     this._renderMethod = this._options.render;
     this._event = this._options.event;
     this._methods = this._options.methods;
-    this._parentContainers = [];
+    this._parentComponentContainer = [];
+    this._vDOM = {};
 };
 
 Component.prototype._render = function () {
@@ -22,84 +23,40 @@ Component.prototype._render = function () {
     var el = null;
 
     if (this._event) {
-
-        this._subscriber = new Subscriber(this._event, function (state) {
-            el = context._renderMethod(state);
-            el.setAttribute("anatolia-component", context._name);
-
-            if (context._methods) context._bindEventToTemplate(context._methods, el, state);
-
-            //Standalone components
-            if (context._container !== undefined) {
-                var container = document.querySelector(context._container);
-                context._toEmpty(container);
-                container.append(el);
-            }
-
-            //Sub-components
-            if (context._parentContainers) {
-                context._parentContainers.forEach(function (container) {
-                    var parentContainers = document.querySelectorAll(container);
-
-                    parentContainers.forEach(function (parentContainer) {
-                        var foundComponent = parentContainer.querySelectorAll("[anatolia-component=" + context._name + "]");
-                        if (foundComponent[0]) {
-                            foundComponent = foundComponent[0];
-                            foundComponent.parentNode.insertBefore(el, foundComponent.parentNode.firstChild);
-                            foundComponent.remove();
-                        }
-                    });
-                });
+        this._subscriber = new Subscriber({
+            event: this._event,
+            callback: function (state) {
+                el = context._renderedHTML(context, state);
             }
         });
 
         this._eventbus.subscriber().register(this._subscriber);
-
-        return el;
     } else {
-        var state = {};
-        el = context._renderMethod(state);
-        el.setAttribute("anatolia-component", context._name);
-
-        if (context._methods) context._bindEventToTemplate(context._methods, el, state);
-
-        if (context._container !== undefined) {
-            var container = document.querySelector(context._container);
-            context._toEmpty(container);
-            container.append(el);
-        }
-
-        //Sub-components
-        if (context._parentContainers) {
-            context._parentContainers.forEach(function (container) {
-                console.log(container);
-            });
-        }
-
-        return el;
+        el = context._renderedHTML(context, {});
     }
+
+    // console.log(el);
+    context._vDOM = Component.vDOM(el);
+    // console.log(context._vDOM);
+
+    return el;
+};
+
+Component.prototype._renderedHTML = function (context, state) {
+    var el = context._renderMethod(state);
+    if (context._methods) context._bindEventToTemplate(context._methods, el, state);
+
+    if (context._container !== undefined) {
+        var container = document.querySelector(context._container);
+        context._toEmpty(container);
+        container.append(el);
+    }
+
+    return el;
 };
 
 Component.prototype.fire = function () {
     this._eventbus.subscriber().fire(this._subscriber);
-};
-
-Component.prototype.setContainer = function (componentContainer) {
-    this._container = componentContainer;
-};
-
-Component.prototype.getContainer = function (componentContainer) {
-    return this._container;
-};
-
-Component.prototype.setEventbus = function (eventbus) {
-    this._eventbus = eventbus;
-
-    return this;
-};
-
-Component.prototype.setGlobalSetting = function (anatoliaGlobalSetting) {
-    this._globalSetting = anatoliaGlobalSetting;
 };
 
 Component.prototype._toEmpty = function (component) {
@@ -109,26 +66,9 @@ Component.prototype._toEmpty = function (component) {
 };
 
 Component.prototype.render = function (context) {
-    if (context) {
-        this._setParentContainers(context);
-        return this._render();
-    }
+    if (context) this._setParentContainer(context);
 
-    throw 'ERROR : Undefined parent context for child component.';
-};
-
-Component.prototype._setParentContainers = function (parentContext) {
-    this._parentContainers.push(parentContext.getContainer());
-};
-
-Component.prototype._getParentContainers = function () {
-    return this._parentContainers;
-};
-
-Component.prototype.setEvent = function (event) {
-    this._event = event;
-
-    return this;
+    return this._render();
 };
 
 Component.prototype._bindEventToTemplate = function (componentMethods, template, state) {
@@ -156,7 +96,56 @@ Component.prototype._bindEventToTemplate = function (componentMethods, template,
     }
 };
 
-//Static members
+/**
+ * Setters & Getters
+ * **/
+Component.prototype.setContainer = function (componentContainer) {
+    this._container = componentContainer;
+};
+
+Component.prototype.getContainer = function (componentContainer) {
+    return this._container;
+};
+
+Component.prototype.setEventbus = function (eventbus) {
+    this._eventbus = eventbus;
+
+    return this;
+};
+
+Component.prototype.getEventbus = function (eventbus) {
+    return this._eventbus;
+};
+
+Component.prototype.setGlobalSetting = function (anatoliaGlobalSetting) {
+    this._globalSetting = anatoliaGlobalSetting;
+};
+
+Component.prototype.getGlobalSetting = function (anatoliaGlobalSetting) {
+    return this._globalSetting;
+};
+
+Component.prototype.setEvent = function (event) {
+    this._event = event;
+
+    return this;
+};
+
+Component.prototype.getEvent = function (event) {
+    return this._event;
+};
+
+Component.prototype._setParentContainer = function (parentComponentContext) {
+    this._parentComponentContainer.push(parentComponentContext.getContainer());
+};
+
+Component.prototype._getParentContainer = function () {
+    return this._parentComponentContainer;
+};
+
+/**
+ * Static Members
+ * **/
 Component.createElement = function (tag, option) {
     var el = document.createElement(tag);
 
@@ -203,47 +192,36 @@ Component.on = function (event, fn) {
     return this;
 };
 
-Component.toJSON = function (htmlElements) {
-    console.log(htmlElements);
+Component.vDOM = function (templateContainerElement) {
+    if (!templateContainerElement) return;
 
+    var attributes = templateContainerElement.attributes;
+    var attributeObjects = [];
 
-    // console.log(htmlElements);
-    // if (htmlElements instanceof NodeList) {
-    //     htmlElements.forEach(function (element) {
-    //         var tagName = element.tagName;
-    //         var attributes = element.attributes;
-    //
-    //         if (htmlElementObject.hasOwnProperty("child")) {
-    //
-    //         }
-    //
-    //         var htmlElementObject = {
-    //             tagName: tagName,
-    //             attributes: attributes
-    //         };
-    //
-    //         console.log(htmlElementObject);
-    //
-    //         if (element.hasChildNodes()) {
-    //             Component.toJSON(element.childNodes)
-    //         }
-    //     });
-    // } else {
-    //     var tagName = htmlElements.tagName;
-    //     var attributes = htmlElements.attributes;
-    //
-    //     var htmlElementObject = {
-    //         tagName: tagName,
-    //         attributes: attributes
-    //     };
-    //
-    //     if (htmlElements.hasChildNodes()) {
-    //         htmlElementObject["child"] = null;
-    //         Component.toJSON(htmlElements.childNodes, htmlElementObject)
-    //     }
-    //
-    //     console.log(htmlElementObject);
-    //
-    // }
+    for (var prop in attributes) {
+        if (attributes.hasOwnProperty(prop)) {
+            attributeObjects.push({
+                name: attributes[prop].name,
+                value: attributes[prop].value
+            });
+        }
+    }
+
+    // TODO find bounded events || rebind methods after vDOM comparation
+    // TODO comparation method Intl.Collator().compare('','') || txt1.localeCompare(txt2)
+    var vDOM = {
+        tagName: templateContainerElement.tagName || "plainText",
+        originalElement: templateContainerElement.outerHTML || templateContainerElement.textContent,
+        attributes: attributeObjects,
+        child: []
+    };
+
+    if (templateContainerElement.hasChildNodes()) {
+        templateContainerElement.childNodes.forEach(function (childNode) {
+            vDOM.child.push(Component.vDOM(childNode));
+        });
+
+    }
+
+    return vDOM;
 };
-//Static members

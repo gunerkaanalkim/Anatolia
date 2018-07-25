@@ -3,5 +3,6 @@ $(document).ready(function () {
     // app.singleComponent();
 
     app.nestedComponents();
+    // new PubSub().usage();
 
 });
