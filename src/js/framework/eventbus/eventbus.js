@@ -28,6 +28,10 @@ Eventbus.prototype.clean = function () {
     this._eventbus = {};
 };
 
+Eventbus.prototype.getSubscriptionList = function () {
+    return Object.keys(this._eventbus);
+};
+
 /**
  * Publisher Operation
  * **/
