@@ -2,6 +2,7 @@
 
 function Eventbus() {
     this._eventbus = {};
+    this._mute = false;
 }
 
 /**
@@ -12,12 +13,14 @@ Eventbus.prototype.listen = function () {
 };
 
 Eventbus.prototype.mute = function () {
-    if (!arguments.length) {
-        for (var i in this._eventbus) {
-            var event = this._eventbus[i];
+    if (!this._mute) {
+        this._mute = true;
+    }
+};
 
-            event.subscribers = [];
-        }
+Eventbus.prototype.unmuted = function () {
+    if (this._mute) {
+        this._mute = false;
     }
 };
 
@@ -70,18 +73,38 @@ Eventbus.prototype._firePublisher = function (publisher) {
 
     var subscribers = this._eventbus[event].subscribers;
 
+    var toFired = {};
     var state = {};
     subscribers.forEach(function (subscriber) {
-        subscriber.event().forEach(function (event) {
+        if (Array.isArray(subscriber.event())) {
+            subscriber.event().forEach(function (event) {
+                state[event] = context._eventbus[event].state;
+                toFired[subscriber.getId()] = {
+                    state: state,
+                    callback: subscriber.callback()
+                };
+            });
+        } else {
             state[event] = context._eventbus[event].state;
-        });
+            toFired[subscriber.getId()] = {
+                state: state[event],
+                callback: subscriber.callback()
+            };
+        }
+
     });
 
-    subscribers.forEach(function (subscriber) {
-        subscriber.callback()(state === undefined ? {} : state);
-    });
+    for (var prop in toFired) {
+        if (toFired.hasOwnProperty(prop)) {
+            if (!this._mute) {
+                var _callback = toFired[prop].callback;
+                var _state = toFired[prop].state;
+
+                _callback(_state);
+            }
+        }
+    }
 };
-
 
 /**
  * Subscriber Operation
@@ -137,12 +160,14 @@ Eventbus.prototype._fillSubscribers = function (subscriber) {
 };
 
 Eventbus.prototype._fireSubscriber = function (subscriber) {
-    if (Array.isArray(subscriber.event())) {
-        subscriber.event().forEach(function (event) {
-            subscriber.callback()(this._eventbus[event].state);
-        });
-    } else {
-        subscriber.callback()(this._eventbus[subscriber.event()].state);
+    if (!this._mute) {
+        if (Array.isArray(subscriber.event())) {
+            subscriber.event().forEach(function (event) {
+                subscriber.callback()(this._eventbus[event].state);
+            });
+        } else {
+            subscriber.callback()(this._eventbus[subscriber.event()].state);
+        }
     }
 };
 
@@ -219,6 +244,7 @@ function Subscriber(options) {
 }
 
 Subscriber.prototype._init = function (options) {
+    this._id = options.id || null;
     this._event = options.event || null;
 
     if (options.callback instanceof Function) {
@@ -242,4 +268,12 @@ Subscriber.prototype.callback = function () {
     } else if (arguments[0] === undefined) {
         return this._callback;
     }
+};
+
+Subscriber.prototype.setId = function (id) {
+    this._id = id;
+};
+
+Subscriber.prototype.getId = function () {
+    return this._id;
 };
