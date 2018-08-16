@@ -14,13 +14,16 @@ var App = (function () {
     App.prototype.singleComponent = function () {
         eventbus = new Eventbus();
 
-        var pub = new Publisher('event1', [
-            {name: 'Sumer'},
-            {name: 'Hitit'},
-            {name: 'Hatti'},
-            {name: 'Hurri'},
-            {name: 'İskit'}
-        ]);
+        var pub = new Publisher({
+            event: 'event1',
+            state: [
+                {name: 'Sumer'},
+                {name: 'Hitit'},
+                {name: 'Hatti'},
+                {name: 'Hurri'},
+                {name: 'İskit'}
+            ]
+        });
 
         eventbus.publisher().register(pub);
 
@@ -28,6 +31,8 @@ var App = (function () {
             name: 'myComponent',
             event: 'event1',
             render: function (state) {
+                state = state.event1;
+
                 var ce = Component.createElement;
 
                 var ul = ce("ul", {class: "list-group"});
@@ -69,7 +74,56 @@ var App = (function () {
         // anatolia.listen();
     };
 
-    App.prototype.nestedComponents = function () {
+    App.prototype.parentChildDataTransfer = function () {
+        eventbus = new Eventbus();
+
+        var pub = new Publisher({
+            event: "e1",
+            state: {text: "Hello Anatolia!"}
+        });
+
+        eventbus.publisher().register(pub);
+
+        var myParagraph = new Component({
+            name: "myParagraph",
+            render: function (state) {
+                var myParagraph = document.createElement("p");
+                var myParagraphText = document.createTextNode(state.text);
+
+                myParagraph.append(myParagraphText);
+
+                return myParagraph;
+            }
+        });
+
+        var component = new Component({
+            name: "myDiv",
+            event: "e1",
+            render: function (state) {
+                var myDiv = document.createElement("div");
+
+                var myP = myParagraph.setState(state.e1).render();
+
+                myDiv.append(myP);
+
+                return myDiv;
+            }
+        });
+
+        //Routing
+        var anatolia = new Anatolia({
+            name: 'AnatoliaApp',
+            eventbus: eventbus,
+            components: {
+                '#component_1': component
+            }
+        });
+
+        anatolia.render();
+
+    };
+
+    App.prototype.nestedComponentsWithPublishers = function () {
         eventbus = new Eventbus();
 
         var pub = new Publisher({
@@ -83,21 +137,6 @@ var App = (function () {
             ]
         });
 
-        var state = {
-            class: "table table-condensed table-striped table-hover",
-            header: [
-                {text1: "Order"},
-                {text2: "Name"}
-            ],
-            otherProp: {asd: "asd"},
-            propA: "my",
-            propB: "Class"
-        };
-
-        Util.observer(state, function (key, oldValue, newValue) {
-            console.log("key : " + key + " oldValue : " + oldValue + " newValue :" + newValue);
-        });
-
         var stylePub = new Publisher({
             event: 'styleEvent',
             state: {
@@ -108,19 +147,6 @@ var App = (function () {
                 ],
                 propA: "my",
                 propB: "Class"
-            },
-            propertyHandler: { // for MVVM pattern
-                class: function (key, value) {
-                    // console.log(key);
-                },
-                header: function (key, value) {
-                    // console.log(value);
-                }
-            },
-            computedProperties: { // for new property
-                newProp: function (state) {
-                    return state.propA + state.propB;
-                }
             }
         });
 
@@ -132,15 +158,6 @@ var App = (function () {
         });
 
         eventbus.publisher().register(pub, stylePub, tableResponsivePub);
-
-        sub = new Subscriber({
-            event: ['event1', 'styleEvent'],
-            callback: function (state) {
-                // console.log(state);
-            }
-        });
-
-        eventbus.subscriber().register(sub);
 
         tableResponsiveComponent = new Component({
             name: "tableResponsive",
@@ -262,6 +279,40 @@ var App = (function () {
         });
 
         anatolia.render();
+    };
+
+    App.prototype.customButton = function () {
+        var AnatoliaButton = new Component({
+            container: '#component_1',
+            state: {
+                text: "My Button",
+                class: "btn btn-primary"
+            },
+            methods: {
+                'a': { // all selectors; (.), (#), (tag name)
+                    click: function (e) {
+                        console.log(this.targetElement);
+                    }
+                }
+            },
+            render: function (state) {
+                var button = document.createElement("a");
+                button.setAttribute("class", state.class);
+                button.textContent = state.text;
+
+                var foo = document.createElement("a");
+                foo.textContent = "bartarzar";
+                foo.setAttribute("style", "color: red;");
+
+                button.append(foo);
+
+                state["myProp"] = "asdasdasd";
+
+                return button;
+            }
+        }).render();
+
+        //TODO componentin metotları ve içindeki elementleri metotları farklı yerlerde deklare edilmelidir.
     };
 
     return App;

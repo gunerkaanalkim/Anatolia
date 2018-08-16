@@ -90,8 +90,11 @@ Eventbus.prototype._firePublisher = function (publisher) {
             });
         } else {
             state[event] = context._eventbus[event].state;
+            var stateObject = {};
+            stateObject[event] = state[event];
+
             toFired[subscriber.getId()] = {
-                state: state[event],
+                state: stateObject,
                 callback: subscriber.callback()
             };
         }

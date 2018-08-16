@@ -1,8 +1,9 @@
 $(document).ready(function () {
     var app = new App();
     // app.singleComponent();
-
     // app.nestedComponents();
-    new PubSub().usage();
+    // app.parentChildDataTransfer();
+    app.customButton();
+    // new PubSub().usage();
 
 });

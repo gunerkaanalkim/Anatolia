@@ -1,6 +1,4 @@
 'use strict';
-// TODO : re-render containerless components when subscriber fired
-// TODO : Component.createElement("table.table.table-condensed.table-striped > thead - tbody")
 function Component(options) {
     this._options = options;
 
@@ -10,6 +8,8 @@ function Component(options) {
 Component.prototype._initialize = function () {
     this._subscriber = null;
     this._name = this._options.name;
+    this._container = this._options.container;
+    this._state = this._options.state || {};
     this._renderMethod = this._options.render;
     this._event = this._options.event;
     this._methods = this._options.methods;
@@ -22,22 +22,33 @@ Component.prototype._render = function () {
     var context = this;
     var el = null;
 
+    /**
+     * for subscribe a publisher
+     * **/
     if (this._event) {
         this._subscriber = new Subscriber({
+            id: context._name,
             event: this._event,
             callback: function (state) {
+                context._state = state;
                 el = context._renderedHTML(context, state);
             }
         });
 
         this._eventbus.subscriber().register(this._subscriber);
-    } else {
+    }
+    /**
+     * parent child data transfer
+     * **/
+    else if (this._state) {
+        el = context._renderedHTML(context, this._state);
+    }
+    /**
+     * non-data components
+     * **/
+    else {
         el = context._renderedHTML(context, {});
     }
-
-    // console.log(el);
-    context._vDOM = Component.vDOM(el);
-    // console.log(context._vDOM);
 
     return el;
 };
@@ -101,6 +112,8 @@ Component.prototype._bindEventToTemplate = function (componentMethods, template,
  * **/
 Component.prototype.setContainer = function (componentContainer) {
     this._container = componentContainer;
+
+    return this;
 };
 
 Component.prototype.getContainer = function (componentContainer) {
@@ -141,6 +154,22 @@ Component.prototype._setParentContainer = function (parentComponentContext) {
 
 Component.prototype._getParentContainer = function () {
     return this._parentComponentContainer;
+};
+
+Component.prototype.setState = function (state) {
+    this._state = state;
+
+    return this;
+};
+
+Component.prototype.getState = function () {
+    return this._state;
+};
+
+Component.prototype.setMethods = function (methods) {
+    this._methods = methods;
+
+    return this;
 };
 
 /**
