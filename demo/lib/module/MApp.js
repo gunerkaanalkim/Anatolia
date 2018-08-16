@@ -289,9 +289,16 @@ var App = (function () {
                 class: "btn btn-primary"
             },
             methods: {
-                'a': { // all selectors; (.), (#), (tag name)
+                self: {
                     click: function (e) {
-                        console.log(this.targetElement);
+                        console.log("Clicked yourself!");
+                    }
+                },
+                querySelector: {
+                    'a': { // all selectors; (.), (#), (tag name)
+                        click: function (e) {
+                            console.log(this.targetElement);
+                        }
                     }
                 }
             },

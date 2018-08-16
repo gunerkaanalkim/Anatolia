@@ -83,28 +83,59 @@ Component.prototype.render = function (context) {
 };
 
 Component.prototype._bindEventToTemplate = function (componentMethods, template, state) {
-    for (var i in componentMethods) {
-        if (componentMethods.hasOwnProperty(i)) {
-            var selector = i;
-            var methods = componentMethods[i];
+    /**
+     * Methods for template itself
+     * **/
+    if (componentMethods.hasOwnProperty("self")) {
+        var methodsForSelf = componentMethods.self;
 
-            var elements = template.querySelectorAll(selector);
+        var bundle = {
+            state: state,
+            targetElement: template,
+            parentElement: template.parentElement
+        };
 
-            elements.forEach(function (element) {
-                var bundle = {
-                    state: state,
-                    targetElement: element,
-                    parentElement: element.parentElement
-                };
-
-                for (var i in methods) {
-                    if (methods.hasOwnProperty(i)) {
-                        element.addEventListener(i, methods[i].bind(bundle));
-                    }
-                }
-            });
+        for (var i in methodsForSelf) {
+            if (methodsForSelf.hasOwnProperty(i)) {
+                template.addEventListener(i, methodsForSelf[i].bind(bundle));
+            }
         }
     }
+
+    // TODO remove parent's event for duplicate binding
+    if (componentMethods.hasOwnProperty("querySelector")) {
+        /**
+         * Methods for template's inner html
+         * **/
+        var querySelectors = componentMethods.querySelector;
+
+        for (var i in querySelectors) {
+            if (querySelectors.hasOwnProperty(i)) {
+                var selector = i;
+                var methodsForInnerHtml = querySelectors[i];
+
+
+                var elements = template.querySelectorAll(selector);
+                console.log(elements);
+
+                elements.forEach(function (element) {
+                    var bundle = {
+                        state: state,
+                        targetElement: element,
+                        parentElement: element.parentElement
+                    };
+
+                    for (var i in methodsForInnerHtml) {
+                        if (methodsForInnerHtml.hasOwnProperty(i)) {
+                            element.addEventListener(i, methodsForInnerHtml[i].bind(bundle));
+                        }
+                    }
+                });
+
+            }
+        }
+    }
+
 };
 
 /**
