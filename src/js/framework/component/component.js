@@ -8,11 +8,12 @@ function Component(options) {
 Component.prototype._initialize = function () {
     this._subscriber = null;
     this._name = this._options.name;
+    this._container = this._options.container;
+    this._state = this._options.state || {};
     this._renderMethod = this._options.render;
     this._event = this._options.event;
     this._methods = this._options.methods;
     this._parentComponentContainer = [];
-    this._state = {};
     this._vDOM = {};
 };
 
@@ -111,6 +112,8 @@ Component.prototype._bindEventToTemplate = function (componentMethods, template,
  * **/
 Component.prototype.setContainer = function (componentContainer) {
     this._container = componentContainer;
+
+    return this;
 };
 
 Component.prototype.getContainer = function (componentContainer) {
@@ -161,6 +164,12 @@ Component.prototype.setState = function (state) {
 
 Component.prototype.getState = function () {
     return this._state;
+};
+
+Component.prototype.setMethods = function (methods) {
+    this._methods = methods;
+
+    return this;
 };
 
 /**

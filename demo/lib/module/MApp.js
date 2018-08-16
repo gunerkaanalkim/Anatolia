@@ -281,5 +281,39 @@ var App = (function () {
         anatolia.render();
     };
 
+    App.prototype.customButton = function () {
+        var AnatoliaButton = new Component({
+            container: '#component_1',
+            state: {
+                text: "My Button",
+                class: "btn btn-primary"
+            },
+            methods: {
+                'a': { // all selectors; (.), (#), (tag name)
+                    click: function (e) {
+                        console.log(this.targetElement);
+                    }
+                }
+            },
+            render: function (state) {
+                var button = document.createElement("a");
+                button.setAttribute("class", state.class);
+                button.textContent = state.text;
+
+                var foo = document.createElement("a");
+                foo.textContent = "bartarzar";
+                foo.setAttribute("style", "color: red;");
+
+                button.append(foo);
+
+                state["myProp"] = "asdasdasd";
+
+                return button;
+            }
+        }).render();
+
+        //TODO componentin metotları ve içindeki elementleri metotları farklı yerlerde deklare edilmelidir.
+    };
+
     return App;
 })();
