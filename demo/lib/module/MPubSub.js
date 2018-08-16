@@ -87,7 +87,22 @@ var PubSub = (function () {
 
         [subscriber_1, subscriber_2, subscriber_3, subscriber_4].forEach(function (subscriber) {
             eventbus.subscriber().register(subscriber);
-        })
+        });
+
+        var state = {
+            class: "table table-condensed table-striped table-hover",
+            header: [
+                {text1: "Order"},
+                {text2: "Name"}
+            ],
+            otherProp: {asd: "asd"},
+            propA: "my",
+            propB: "Class"
+        };
+
+        Util.observer(state, function (key, oldValue, newValue) {
+            console.log("key : " + key + " oldValue : " + oldValue + " newValue :" + newValue);
+        });
 
     };
 

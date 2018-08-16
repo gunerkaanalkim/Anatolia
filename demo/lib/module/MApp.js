@@ -137,21 +137,6 @@ var App = (function () {
             ]
         });
 
-        var state = {
-            class: "table table-condensed table-striped table-hover",
-            header: [
-                {text1: "Order"},
-                {text2: "Name"}
-            ],
-            otherProp: {asd: "asd"},
-            propA: "my",
-            propB: "Class"
-        };
-
-        Util.observer(state, function (key, oldValue, newValue) {
-            console.log("key : " + key + " oldValue : " + oldValue + " newValue :" + newValue);
-        });
-
         var stylePub = new Publisher({
             event: 'styleEvent',
             state: {
@@ -162,19 +147,6 @@ var App = (function () {
                 ],
                 propA: "my",
                 propB: "Class"
-            },
-            propertyHandler: { // for MVVM pattern
-                class: function (key, value) {
-                    // console.log(key);
-                },
-                header: function (key, value) {
-                    // console.log(value);
-                }
-            },
-            computedProperties: { // for new property
-                newProp: function (state) {
-                    return state.propA + state.propB;
-                }
             }
         });
 
@@ -186,15 +158,6 @@ var App = (function () {
         });
 
         eventbus.publisher().register(pub, stylePub, tableResponsivePub);
-
-        sub = new Subscriber({
-            event: ['event1', 'styleEvent'],
-            callback: function (state) {
-                // console.log(state);
-            }
-        });
-
-        eventbus.subscriber().register(sub);
 
         tableResponsiveComponent = new Component({
             name: "tableResponsive",

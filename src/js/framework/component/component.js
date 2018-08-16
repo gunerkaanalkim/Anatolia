@@ -33,7 +33,6 @@ Component.prototype._render = function () {
             callback: function (state) {
                 context._state = state;
                 el = context._renderedHTML(context, state);
-                console.log(el);
             }
         });
 
