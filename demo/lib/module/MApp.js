@@ -292,12 +292,14 @@ var App = (function () {
             container: '#component_1',
             state: {
                 text: "My Button",
-                class: "btn btn-primary"
+                class: "btn btn-primary",
+                data: []
             },
             methods: {
                 self: {
                     click: function (e) {
-                        console.log("Clicked yourself!");
+                        this.state.data.push(Math.random());
+                        console.log(this.state.data);
                     }
                 },
                 querySelector: {

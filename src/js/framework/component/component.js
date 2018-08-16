@@ -116,7 +116,6 @@ Component.prototype._bindEventToTemplate = function (componentMethods, template,
 
 
                 var elements = template.querySelectorAll(selector);
-                console.log(elements);
 
                 elements.forEach(function (element) {
                     var bundle = {
