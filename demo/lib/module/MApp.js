@@ -123,7 +123,7 @@ var App = (function () {
 
     };
 
-    App.prototype.nestedComponents = function () {
+    App.prototype.nestedComponentsWithPublishers = function () {
         eventbus = new Eventbus();
 
         var pub = new Publisher({
