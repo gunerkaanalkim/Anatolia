@@ -324,8 +324,6 @@ var App = (function () {
                 return button;
             }
         }).render();
-
-        //TODO componentin metotları ve içindeki elementleri metotları farklı yerlerde deklare edilmelidir.
     };
 
     return App;
