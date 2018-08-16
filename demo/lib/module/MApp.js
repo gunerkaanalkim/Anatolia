@@ -313,14 +313,6 @@ var App = (function () {
                 button.setAttribute("class", state.class);
                 button.textContent = state.text;
 
-                var foo = document.createElement("a");
-                foo.textContent = "bartarzar";
-                foo.setAttribute("style", "color: red;");
-
-                button.append(foo);
-
-                state["myProp"] = "asdasdasd";
-
                 return button;
             }
         }).render();
