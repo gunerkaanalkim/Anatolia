@@ -47,14 +47,16 @@ var App = (function () {
                 return ul;
             },
             methods: { // or Component.createElement 's on function
-                'li': { // all selectors; (.), (#), (tag name)
-                    click: function (e) {
-                        console.log(this.targetElement);
-                    }
-                },
-                '#myLi': {
-                    mouseenter: function (e) {
-                        console.log("mouse enter");
+                querySelector: {
+                    'li': { // all selectors; (.), (#), (tag name)
+                        click: function (e) {
+                            console.log(this.targetElement);
+                        }
+                    },
+                    '#myLi': {
+                        mouseenter: function (e) {
+                            console.log("mouse enter");
+                        }
                     }
                 }
             }
@@ -240,9 +242,11 @@ var App = (function () {
                 return el;
             },
             methods: {
-                'td': {
-                    click: function (e) {
-                        console.log(this);
+                querySelector: {
+                    'td': {
+                        click: function (e) {
+                            console.log(this);
+                        }
                     }
                 }
             }
@@ -261,9 +265,11 @@ var App = (function () {
                 return tableResponsiveContainer;
             },
             methods: { // or Component.createElement 's on function
-                // 'tr': { // all selectors; (.), (#), (tag name)
-                //     click: function (e) {
-                //         console.log(this.targetElement);
+                // querySelector:{
+                //     'tr': { // all selectors; (.), (#), (tag name)
+                //         click: function (e) {
+                //             console.log(this.targetElement);
+                //         }
                 //     }
                 // }
             }
