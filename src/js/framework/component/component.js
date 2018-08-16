@@ -14,6 +14,7 @@ Component.prototype._initialize = function () {
     this._event = this._options.event;
     this._methods = this._options.methods;
     this._parentComponentContainer = [];
+    this._state = {};
     this._vDOM = {};
 };
 
@@ -22,22 +23,34 @@ Component.prototype._render = function () {
     var context = this;
     var el = null;
 
+    /**
+     * for subscribe a publisher
+     * **/
     if (this._event) {
         this._subscriber = new Subscriber({
+            id: context._name,
             event: this._event,
             callback: function (state) {
+                context._state = state;
                 el = context._renderedHTML(context, state);
+                console.log(el);
             }
         });
 
         this._eventbus.subscriber().register(this._subscriber);
-    } else {
+    }
+    /**
+     * parent child data transfer
+     * **/
+    else if (this._state) {
+        el = context._renderedHTML(context, this._state);
+    }
+    /**
+     * non-data components
+     * **/
+    else {
         el = context._renderedHTML(context, {});
     }
-
-    // console.log(el);
-    context._vDOM = Component.vDOM(el);
-    // console.log(context._vDOM);
 
     return el;
 };
@@ -141,6 +154,16 @@ Component.prototype._setParentContainer = function (parentComponentContext) {
 
 Component.prototype._getParentContainer = function () {
     return this._parentComponentContainer;
+};
+
+Component.prototype.setState = function (state) {
+    this._state = state;
+
+    return this;
+};
+
+Component.prototype.getState = function () {
+    return this._state;
 };
 
 /**

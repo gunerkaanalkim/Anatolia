@@ -14,13 +14,16 @@ var App = (function () {
     App.prototype.singleComponent = function () {
         eventbus = new Eventbus();
 
-        var pub = new Publisher('event1', [
-            {name: 'Sumer'},
-            {name: 'Hitit'},
-            {name: 'Hatti'},
-            {name: 'Hurri'},
-            {name: 'İskit'}
-        ]);
+        var pub = new Publisher({
+            event: 'event1',
+            state: [
+                {name: 'Sumer'},
+                {name: 'Hitit'},
+                {name: 'Hatti'},
+                {name: 'Hurri'},
+                {name: 'İskit'}
+            ]
+        });
 
         eventbus.publisher().register(pub);
 
@@ -28,6 +31,8 @@ var App = (function () {
             name: 'myComponent',
             event: 'event1',
             render: function (state) {
+                state = state.event1;
+
                 var ce = Component.createElement;
 
                 var ul = ce("ul", {class: "list-group"});
@@ -67,6 +72,55 @@ var App = (function () {
         anatolia.render();
 
         // anatolia.listen();
+    };
+
+    App.prototype.parentChildDataTransfer = function () {
+        eventbus = new Eventbus();
+
+        var pub = new Publisher({
+            event: "e1",
+            state: {text: "Hello Anatolia!"}
+        });
+
+        eventbus.publisher().register(pub);
+
+        var myParagraph = new Component({
+            name: "myParagraph",
+            render: function (state) {
+                var myParagraph = document.createElement("p");
+                var myParagraphText = document.createTextNode(state.text);
+
+                myParagraph.append(myParagraphText);
+
+                return myParagraph;
+            }
+        });
+
+        var component = new Component({
+            name: "myDiv",
+            event: "e1",
+            render: function (state) {
+                var myDiv = document.createElement("div");
+
+                var myP = myParagraph.setState(state.e1).render();
+
+                myDiv.append(myP);
+
+                return myDiv;
+            }
+        });
+
+        //Routing
+        var anatolia = new Anatolia({
+            name: 'AnatoliaApp',
+            eventbus: eventbus,
+            components: {
+                '#component_1': component
+            }
+        });
+
+        anatolia.render();
+
     };
 
     App.prototype.nestedComponents = function () {
