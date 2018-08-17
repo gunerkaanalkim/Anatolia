@@ -15,6 +15,8 @@ Component.prototype._initialize = function () {
     this._methods = this._options.methods;
     this._parentComponentContainer = [];
     this._vDOM = {};
+
+    this._handleStateChanging();
 };
 
 Component.prototype._render = function () {
@@ -137,6 +139,15 @@ Component.prototype._bindEventToTemplate = function (componentMethods, template,
 
 };
 
+Component.prototype._handleStateChanging = function () {
+    var context = this;
+
+    Observer.watch(this._state, function (key, oldValue, newValue) {
+        // console.log("key : " + key + " oldValue : " + oldValue + " newValue :" + newValue);
+        context.render();
+    });
+};
+
 /**
  * Setters & Getters
  * **/
@@ -188,6 +199,7 @@ Component.prototype._getParentContainer = function () {
 
 Component.prototype.setState = function (state) {
     this._state = state;
+    this._handleStateChanging();
 
     return this;
 };

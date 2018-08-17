@@ -5,6 +5,9 @@ var tableFooterComponent;
 var component;
 var eventbus;
 var sub;
+var AnatoliaButton;
+var state;
+var arr;
 
 var App = (function () {
     function App() {
@@ -288,37 +291,156 @@ var App = (function () {
     };
 
     App.prototype.customButton = function () {
-        var AnatoliaButton = new Component({
+        AnatoliaButton = new Component({
             container: '#component_1',
             state: {
-                text: "My Button",
-                class: "btn btn-primary",
-                data: []
+                increaseButton: {
+                    text: "Increase",
+                    class: "btn btn-success"
+                },
+                decreaseButton: {
+                    text: "Decrease",
+                    class: "btn btn-danger"
+                },
+                counter: 0,
+                arr: []
             },
             methods: {
-                self: {
-                    click: function (e) {
-                        this.state.data.push(Math.random());
-                        console.log(this.state.data);
-                    }
-                },
                 querySelector: {
-                    'a': { // all selectors; (.), (#), (tag name)
+                    '.increaseButton': { // all selectors; (.), (#), (tag name)
                         click: function (e) {
-                            console.log(this.targetElement);
+                            this.state.counter += 1;
+                            this.state.arr.push(Math.random());
+                        }
+                    },
+                    '.decreaseButton': { // all selectors; (.), (#), (tag name)
+                        click: function (e) {
+                            this.state.counter -= 1;
+                            this.state.arr.pop();
                         }
                     }
                 }
             },
             render: function (state) {
-                var button = document.createElement("a");
-                button.setAttribute("class", state.class);
-                button.textContent = state.text;
+                var cc = Component.createElement;
 
-                return button;
+                var componentContainer = cc("div", {class: "row clearfix"});
+
+                var buttonGroupContainer = cc("div", {class: "btn-group btn-group-justified"});
+
+                var increaseButton = cc("a", {
+                    class: state.increaseButton.class + " increaseButton",
+                    text: state.increaseButton.text
+                });
+
+                var decreaseButton = cc("a", {
+                    class: state.decreaseButton.class + " decreaseButton",
+                    text: state.decreaseButton.text
+                });
+
+                buttonGroupContainer.append(increaseButton);
+                buttonGroupContainer.append(decreaseButton);
+
+                var resultElement = cc("p", {
+                    text: state.counter,
+                    style: "font-size: 50px; font-weight: bold; text-align: center;"
+                });
+
+                var arrayValueElement = cc("p", {class: "font-size: 50px; font-weight: bold; text-align: center;"});
+
+                var arrayValues = "";
+                state.arr.forEach(function (value) {
+                    arrayValues += value + " | ";
+                });
+
+                arrayValueElement.textContent = arrayValues;
+
+                componentContainer.append(buttonGroupContainer);
+                componentContainer.append(resultElement);
+                componentContainer.append(arrayValueElement);
+
+                return componentContainer;
             }
-        }).render();
+        });
+
+        AnatoliaButton.render();
+    };
+
+    App.prototype.todoApp = function () {
+        var todoApp = new Component({
+            container: "#component_1",
+            name: "MyTodoApp",
+            state: {
+                todoList: [
+                    {text: "Pasaport işlemlerini yap."},
+                    {text: "Uçak bileti satın al."},
+                    {text: "Otel rezervasyonu yaptır."},
+                    {text: "Avustralya 'ya git."}
+                ]
+            },
+            methods: {
+                querySelector: {
+                    '#addTodoItem': {
+                        click: function () {
+                            var todoText = document.querySelector(".todoText").value;
+
+                            if (todoText !== "") {
+                                this.state.todoList.push({
+                                    text: todoText
+                                })
+                            }
+                        }
+                    }
+                }
+            },
+            render: function (state) {
+                var cc = Component.createElement;
+
+                var todoContainer = cc("div");
+
+                /**
+                 * Entries
+                 * **/
+                var firstRow = cc("div", {class: "row clearfix"});
+                var input = cc("input", {
+                    class: "form-control input-sm todoText",
+                    placeholder: "Planladığınız bir iş yazınız...",
+                    style: "margin:10px 0 10px 0;"
+                });
+
+                var addTodoItem = cc("a", {
+                    id: "addTodoItem",
+                    class: "btn btn-primary pull-right",
+                    text: "Add",
+                    style: "margin:10px 0 10px 0;"
+                });
+
+                firstRow.append(input);
+                firstRow.append(addTodoItem);
+
+                /**
+                 * TodoItems
+                 * **/
+                var secondRow = cc("div", {class: "row clearfix"});
+                var listContainer = cc("ul", {class: "list-group"});
+
+                state.todoList.forEach(function (todoItem) {
+                    var listItem = cc("li", {class: "list-group-item", text: todoItem.text});
+                    listContainer.append(listItem);
+                });
+
+                secondRow.append(listContainer);
+                todoContainer.append(firstRow, secondRow);
+
+                return todoContainer;
+            }
+        });
+
+        todoApp.render();
     };
 
     return App;
 })();
+
+
+
