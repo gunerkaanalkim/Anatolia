@@ -3,7 +3,8 @@ $(document).ready(function () {
     // app.singleComponent();
     // app.nestedComponents();
     // app.parentChildDataTransfer();
-    app.customButton();
+    // app.customButton();
+    app.todoApp();
     // new PubSub().usage();
 
 });

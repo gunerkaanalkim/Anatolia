@@ -6,6 +6,10 @@ Observer.watch = function (object, handler) {
     for (var prop in object) {
         if (object.hasOwnProperty(prop)) {
             function _doObserver(object, prop, handler) {
+                if (Array.isArray(object[prop])) {
+                    Observer.listenArray(object[prop], handler);
+                }
+
                 Object.defineProperty(object, "_" + prop, {
                     value: object[prop],
                     enumerable: false,
@@ -18,8 +22,9 @@ Observer.watch = function (object, handler) {
                         return object["_" + prop];
                     },
                     set: function (newValue) {
-                        handler(prop, object["_" + prop], newValue);
+                        var oldValue = object["_" + prop];
                         object["_" + prop] = newValue;
+                        handler(prop, oldValue, newValue);
                     }
                 });
             }
@@ -31,4 +36,15 @@ Observer.watch = function (object, handler) {
             }
         }
     }
+};
+
+Observer.listenArray = function (arrayInstance, callback) {
+    // Add more methods here if you want to listen to them
+    ['pop', 'push', 'reverse', 'shift', 'unshift', 'splice', 'sort'].forEach(function (methods) {
+        arrayInstance[methods] = function () {
+            var res = Array.prototype[methods].apply(arrayInstance, arguments);  // call normal behaviour
+            callback.apply(arrayInstance, arguments);  // finally call the callback supplied
+            return res;
+        }
+    });
 };
