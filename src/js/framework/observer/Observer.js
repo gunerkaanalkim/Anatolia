@@ -39,11 +39,10 @@ Observer.watch = function (object, handler) {
 };
 
 Observer.listenArray = function (arrayInstance, callback) {
-    // Add more methods here if you want to listen to them
     ['pop', 'push', 'reverse', 'shift', 'unshift', 'splice', 'sort'].forEach(function (methods) {
         arrayInstance[methods] = function () {
-            var res = Array.prototype[methods].apply(arrayInstance, arguments);  // call normal behaviour
-            callback.apply(arrayInstance, arguments);  // finally call the callback supplied
+            var res = Array.prototype[methods].apply(arrayInstance, arguments);
+            callback.apply(arrayInstance, arguments);
             return res;
         }
     });
