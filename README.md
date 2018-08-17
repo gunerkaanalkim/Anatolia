@@ -22,8 +22,7 @@ var todoApp = new Component({
         todoList: [
             {text: "Pasaport işlemlerini yap."},
             {text: "Uçak bileti satın al."},
-            {text: "Otel rezervasyonu yaptır."},
-            {text: "Avustralya 'ya git."}
+            {text: "Otel rezervasyonu yaptır."}
         ]
     },
     methods: {
