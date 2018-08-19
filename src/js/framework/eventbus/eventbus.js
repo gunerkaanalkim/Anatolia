@@ -82,16 +82,28 @@ Eventbus.prototype._firePublisher = function (publisher) {
     subscribers.forEach(function (subscriber) {
         if (Array.isArray(subscriber.event())) {
             subscriber.event().forEach(function (event) {
-                state[event] = context._eventbus[event].state;
+                if (context._eventbus.hasOwnProperty(event)) {
+                    state = context._eventbus[event].state;
+                } else {
+                    state[event] = context._eventbus[event].state;
+                }
+
                 toFired[subscriber.getId()] = {
                     state: state,
                     callback: subscriber.callback()
                 };
             });
         } else {
-            state[event] = context._eventbus[event].state;
+            if (context._eventbus.hasOwnProperty(event)) {
+                state = context._eventbus[event].state;
+            } else {
+                state[event] = context._eventbus[event].state;
+            }
+
+            console.log(state);
+
             var stateObject = {};
-            stateObject[event] = state[event];
+            stateObject[event] = state;
 
             toFired[subscriber.getId()] = {
                 state: stateObject,
@@ -137,15 +149,19 @@ Eventbus.prototype._fillSubscribers = function (subscriber) {
 
     if (Array.isArray(subscriber.event())) {
         subscriber.event().forEach(function (event, index) {
-            states[event] = context._eventbus[event].state;
+            if (context._isEvent(event)) {
+                states[event] = context._eventbus[event].state;
 
-            if (index === (subscriber.event().length - 1)) { // one time fire
-                _action(context, subscriber.event(), states);
+                if (index === (subscriber.event().length - 1)) { // one time fire
+                    _action(context, subscriber.event(), states);
+                }
             }
         });
     } else {
-        states[subscriber.event()] = context._eventbus[subscriber.event()].state;
-        _action(context, [subscriber.event()], states);
+        if (context._isEvent(subscriber.event())) {
+            states[subscriber.event()] = context._eventbus[subscriber.event()].state;
+            _action(context, [subscriber.event()], states);
+        }
     }
 
     function _action(context, events, states) {
@@ -283,4 +299,16 @@ Subscriber.prototype.setId = function (id) {
 
 Subscriber.prototype.getId = function () {
     return this._id;
+};
+
+/**
+ * Utility
+ * **/
+
+Eventbus.prototype._isEvent = function (eventName) {
+    if (this._eventbus.hasOwnProperty(eventName)) {
+        return true;
+    }
+
+    throw "Anatolia Error : Unknown event!"
 };

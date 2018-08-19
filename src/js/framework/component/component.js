@@ -1,4 +1,5 @@
 'use strict';
+
 function Component(options) {
     this._options = options;
 
@@ -85,6 +86,8 @@ Component.prototype.render = function (context) {
 };
 
 Component.prototype._bindEventToTemplate = function (componentMethods, template, state) {
+    var context = this;
+
     /**
      * Methods for template itself
      * **/
@@ -94,7 +97,8 @@ Component.prototype._bindEventToTemplate = function (componentMethods, template,
         var bundle = {
             state: state,
             targetElement: template,
-            parentElement: template.parentElement
+            parentElement: template.parentElement,
+            publish: context._publisToEventbus.bind(context)
         };
 
         for (var i in methodsForSelf) {
@@ -123,7 +127,8 @@ Component.prototype._bindEventToTemplate = function (componentMethods, template,
                     var bundle = {
                         state: state,
                         targetElement: element,
-                        parentElement: element.parentElement
+                        parentElement: element.parentElement,
+                        publish: context._publisToEventbus.bind(context)
                     };
 
                     for (var i in methodsForInnerHtml) {
@@ -146,6 +151,15 @@ Component.prototype._handleStateChanging = function () {
         // console.log("key : " + key + " oldValue : " + oldValue + " newValue :" + newValue);
         context.render();
     });
+};
+
+Component.prototype._publisToEventbus = function (state) {
+    var publisherOfComponent = new Publisher({
+        event: this._event,
+        state: state
+    });
+
+    this._eventbus.publisher().register(publisherOfComponent);
 };
 
 /**

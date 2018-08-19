@@ -8,6 +8,8 @@ var sub;
 var AnatoliaButton;
 var state;
 var arr;
+var todoItemPublisher;
+var eventbus;
 
 var App = (function () {
     function App() {
@@ -439,12 +441,12 @@ var App = (function () {
     };
 
     App.prototype.todoAppWithPublisher = function () {
-        var eventbus = new Eventbus();
+        eventbus = new Eventbus();
 
-        var todoItemPublisher = new Publisher({
-            event: "todoItems",
+        todoItemPublisher = new Publisher({
+            event: "todo",
             state: {
-                todoList: [
+                list: [
                     {text: "Pasaport işlemlerini yap."},
                     {text: "Uçak bileti satın al."},
                     {text: "Otel rezervasyonu yaptır."}
@@ -457,7 +459,7 @@ var App = (function () {
         var todoApp = new Component({
             container: "#component_1",
             name: "MyTodoApp",
-            event: "todoItems",
+            event: "todo",
             actions: {
                 querySelector: {
                     '#addTodoItem': {
@@ -465,11 +467,10 @@ var App = (function () {
                             var todoText = document.querySelector(".todoText").value;
 
                             if (todoText !== "") {
-                                todoItemPublisher.state().todoList.push({
+                                this.state.todo.list.push({
                                     text: todoText
                                 });
-
-                                eventbus.publisher().fire(todoItemPublisher);
+                                this.publish(this.state.todo); // publish a event with event name
                             }
                         }
                     }
@@ -506,7 +507,7 @@ var App = (function () {
                 var secondRow = cc("div", {class: "row clearfix"});
                 var listContainer = cc("ul", {class: "list-group"});
 
-                state.todoItems.todoList.forEach(function (todoItem) {
+                state.todo.list.forEach(function (todoItem) {
                     var listItem = cc("li", {class: "list-group-item", text: todoItem.text});
                     listContainer.append(listItem);
                 });
