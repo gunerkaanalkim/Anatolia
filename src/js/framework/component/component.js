@@ -12,7 +12,7 @@ Component.prototype._initialize = function () {
     this._state = this._options.state || {};
     this._renderMethod = this._options.render;
     this._event = this._options.event;
-    this._methods = this._options.methods;
+    this._actions = this._options.actions;
     this._parentComponentContainer = [];
     this._vDOM = {};
 
@@ -57,7 +57,7 @@ Component.prototype._render = function () {
 
 Component.prototype._renderedHTML = function (context, state) {
     var el = context._renderMethod(state);
-    if (context._methods) context._bindEventToTemplate(context._methods, el, state);
+    if (context._actions) context._bindEventToTemplate(context._actions, el, state);
 
     if (context._container !== undefined) {
         var container = document.querySelector(context._container);
@@ -209,7 +209,7 @@ Component.prototype.getState = function () {
 };
 
 Component.prototype.setMethods = function (methods) {
-    this._methods = methods;
+    this._actions = methods;
 
     return this;
 };

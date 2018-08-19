@@ -4,7 +4,8 @@ $(document).ready(function () {
     // app.nestedComponents();
     // app.parentChildDataTransfer();
     // app.customButton();
-    app.todoApp();
+    // app.todoApp();
+    app.todoAppWithPublisher();
     // new PubSub().usage();
 
 });
