@@ -100,8 +100,10 @@ Eventbus.prototype._firePublisher = function (publisher) {
                 state[event] = context._eventbus[event].state;
             }
 
+            console.log(state);
+
             var stateObject = {};
-            stateObject[event] = state[event];
+            stateObject[event] = state;
 
             toFired[subscriber.getId()] = {
                 state: stateObject,

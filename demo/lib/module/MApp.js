@@ -9,6 +9,7 @@ var AnatoliaButton;
 var state;
 var arr;
 var todoItemPublisher;
+var eventbus;
 
 var App = (function () {
     function App() {
@@ -440,7 +441,7 @@ var App = (function () {
     };
 
     App.prototype.todoAppWithPublisher = function () {
-        var eventbus = new Eventbus();
+        eventbus = new Eventbus();
 
         todoItemPublisher = new Publisher({
             event: "todo",
@@ -469,7 +470,7 @@ var App = (function () {
                                 this.state.todo.list.push({
                                     text: todoText
                                 });
-                                this.publish(this.state);
+                                this.publish(this.state.todo); // publish a event with event name
                             }
                         }
                     }
