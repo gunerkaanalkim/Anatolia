@@ -438,6 +438,90 @@ var App = (function () {
         todoApp.render();
     };
 
+    App.prototype.todoAppWithPublisher = function () {
+        var eventbus = new Eventbus();
+
+        var todoItemPublisher = new Publisher({
+            event: "todoItems",
+            state: {
+                todoList: [
+                    {text: "Pasaport işlemlerini yap."},
+                    {text: "Uçak bileti satın al."},
+                    {text: "Otel rezervasyonu yaptır."}
+                ]
+            }
+        });
+
+        eventbus.publisher().register(todoItemPublisher);
+
+        var todoApp = new Component({
+            container: "#component_1",
+            name: "MyTodoApp",
+            event: "todoItems",
+            actions: {
+                querySelector: {
+                    '#addTodoItem': {
+                        click: function () {
+                            var todoText = document.querySelector(".todoText").value;
+
+                            if (todoText !== "") {
+                                todoItemPublisher.state().todoList.push({
+                                    text: todoText
+                                });
+
+                                eventbus.publisher().fire(todoItemPublisher);
+                            }
+                        }
+                    }
+                }
+            },
+            render: function (state) {
+                var cc = Component.createElement;
+
+                var todoContainer = cc("div");
+
+                /**
+                 * Entries
+                 * **/
+                var firstRow = cc("div", {class: "row clearfix"});
+                var input = cc("input", {
+                    class: "form-control input-sm todoText",
+                    placeholder: "Planladığınız bir iş yazınız...",
+                    style: "margin:10px 0 10px 0;"
+                });
+
+                var addTodoItem = cc("a", {
+                    id: "addTodoItem",
+                    class: "btn btn-primary pull-right",
+                    text: "Add",
+                    style: "margin:10px 0 10px 0;"
+                });
+
+                firstRow.append(input);
+                firstRow.append(addTodoItem);
+
+                /**
+                 * TodoItems
+                 * **/
+                var secondRow = cc("div", {class: "row clearfix"});
+                var listContainer = cc("ul", {class: "list-group"});
+
+                state.todoItems.todoList.forEach(function (todoItem) {
+                    var listItem = cc("li", {class: "list-group-item", text: todoItem.text});
+                    listContainer.append(listItem);
+                });
+
+                secondRow.append(listContainer);
+                todoContainer.append(firstRow, secondRow);
+
+                return todoContainer;
+            }
+        });
+
+        todoApp.setEventbus(eventbus).render();
+
+    };
+
     return App;
 })();
 
