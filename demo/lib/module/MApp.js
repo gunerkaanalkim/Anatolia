@@ -10,6 +10,8 @@ var state;
 var arr;
 var todoItemPublisher;
 var eventbus;
+var todoItemOrderPublisher;
+var todoApp;
 
 var App = (function () {
     function App() {
@@ -521,6 +523,108 @@ var App = (function () {
 
         todoApp.setEventbus(eventbus).render();
 
+    };
+
+    App.prototype.todoAppWithMultiplePublisher = function () {
+        eventbus = new Eventbus();
+
+        todoItemPublisher = new Publisher({
+            event: "todo",
+            state: {
+                list: [
+                    {text: "Pasaport işlemlerini yap."},
+                    {text: "Uçak bileti satın al."},
+                    {text: "Otel rezervasyonu yaptır."}
+                ]
+            }
+        });
+
+        todoItemOrderPublisher = new Publisher({
+            event: "todoOrders",
+            state: {
+                list: [
+                    {order: "1"},
+                    {order: "2"},
+                    {order: "3"}
+                ]
+            }
+        });
+
+        eventbus.publisher().register(todoItemPublisher, todoItemOrderPublisher);
+
+        todoApp = new Component({
+            container: "#component_1",
+            name: "MyTodoApp",
+            event: ["todo", "todoOrders"],
+            actions: {
+                querySelector: {
+                    '#addTodoItem': {
+                        click: function () {
+                            var todoText = document.querySelector(".todoText").value;
+
+                            if (todoText !== "") {
+                                var order = this.state.todo.list.push({
+                                    text: todoText
+                                });
+
+                                this.state.todoOrders.list.push({
+                                    order: order
+                                });
+
+                                this.publish("todo", this.state.todo); // publish a event with event name
+                                this.publish("todoOrders", this.state.todoOrders); // publish a event with event name
+                            }
+                        }
+                    }
+                }
+            },
+            render: function (state) {
+                var cc = Component.createElement;
+
+                var todoContainer = cc("div");
+
+                /**
+                 * Entries
+                 * **/
+                var firstRow = cc("div", {class: "row clearfix"});
+                var input = cc("input", {
+                    class: "form-control input-sm todoText",
+                    placeholder: "Planladığınız bir iş yazınız...",
+                    style: "margin:10px 0 10px 0;"
+                });
+
+                var addTodoItem = cc("a", {
+                    id: "addTodoItem",
+                    class: "btn btn-primary pull-right",
+                    text: "Add",
+                    style: "margin:10px 0 10px 0;"
+                });
+
+                firstRow.append(input);
+                firstRow.append(addTodoItem);
+
+                /**
+                 * TodoItems
+                 * **/
+                var secondRow = cc("div", {class: "row clearfix"});
+                var listContainer = cc("ul", {class: "list-group"});
+
+                state.todo.list.forEach(function (todoItem, index) {
+                    var listItem = cc("li", {
+                        class: "list-group-item",
+                        text: state.todoOrders.list[index].order + " - " + todoItem.text
+                    });
+                    listContainer.append(listItem);
+                });
+
+                secondRow.append(listContainer);
+                todoContainer.append(firstRow, secondRow);
+
+                return todoContainer;
+            }
+        });
+
+        todoApp.setEventbus(eventbus).render();
     };
 
     return App;
