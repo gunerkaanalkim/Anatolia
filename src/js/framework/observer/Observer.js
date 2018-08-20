@@ -38,12 +38,14 @@ Observer.watch = function (object, handler) {
     }
 };
 
-Observer.listenArray = function (arrayInstance, callback) {
-    ['pop', 'push', 'reverse', 'shift', 'unshift', 'splice', 'sort'].forEach(function (methods) {
+Observer.listenArray = function (arrayInstance, handler) {
+    var methodsOfArray = ['pop', 'push', 'reverse', 'shift', 'unshift', 'splice', 'sort'];
+
+    methodsOfArray.forEach(function (methods) {
         arrayInstance[methods] = function () {
-            var res = Array.prototype[methods].apply(arrayInstance, arguments);
-            callback.apply(arrayInstance, arguments);
-            return res;
+            var val = Array.prototype[methods].apply(arrayInstance, arguments);
+            handler.apply(arrayInstance, arguments);
+            return val;
         }
     });
 };

@@ -5,7 +5,8 @@ $(document).ready(function () {
     // app.parentChildDataTransfer();
     // app.customButton();
     // app.todoApp();
-    app.todoAppWithPublisher();
+    // app.todoAppWithPublisher();
+    app.todoAppWithMultiplePublisher();
     // new PubSub().usage();
 
 });

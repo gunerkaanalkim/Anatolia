@@ -153,9 +153,9 @@ Component.prototype._handleStateChanging = function () {
     });
 };
 
-Component.prototype._publisToEventbus = function (state) {
+Component.prototype._publisToEventbus = function (event, state) {
     var publisherOfComponent = new Publisher({
-        event: this._event,
+        event: event,
         state: state
     });
 
