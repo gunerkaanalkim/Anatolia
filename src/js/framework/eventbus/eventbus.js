@@ -70,59 +70,41 @@ Eventbus.prototype._fillPublishers = function (publisher) {
 
 Eventbus.prototype._firePublisher = function (publisher) {
     var context = this;
+
     var event = publisher.event();
 
-    if (!this._eventbus[event])
-        throw 'Error : Event not found.';
+    var subscribers = context._eventbus[event].subscribers;
 
-    var subscribers = this._eventbus[event].subscribers;
+    var toFireds = [];
+    var state = null;
 
-    var toFired = {};
-    var state = {};
     subscribers.forEach(function (subscriber) {
-        if (Array.isArray(subscriber.event())) {
-            subscriber.event().forEach(function (event) {
-                if (context._eventbus.hasOwnProperty(event)) {
-                    state = context._eventbus[event].state;
-                } else {
-                    state[event] = context._eventbus[event].state;
-                }
+        var events = subscriber.event();
 
-                toFired[subscriber.getId()] = {
-                    state: state,
-                    callback: subscriber.callback()
-                };
+        if (Array.isArray(events)) {
+            state = {};
+
+            events.forEach(function (event) {
+                state[event] = context._eventbus[event].state;
+            });
+
+            toFireds.push({
+                state: state,
+                callback: subscriber.callback()
             });
         } else {
-            if (context._eventbus.hasOwnProperty(event)) {
-                state = context._eventbus[event].state;
-            } else {
-                state[event] = context._eventbus[event].state;
-            }
-
-            console.log(state);
-
-            var stateObject = {};
-            stateObject[event] = state;
-
-            toFired[subscriber.getId()] = {
-                state: stateObject,
+            state = context._eventbus[events].state;
+            toFireds.push({
+                state: state,
                 callback: subscriber.callback()
-            };
+            });
         }
 
     });
 
-    for (var prop in toFired) {
-        if (toFired.hasOwnProperty(prop)) {
-            if (!this._mute) {
-                var _callback = toFired[prop].callback;
-                var _state = toFired[prop].state;
-
-                _callback(_state);
-            }
-        }
-    }
+    toFireds.forEach(function (toFired) {
+        toFired.callback(toFired.state);
+    });
 };
 
 /**
@@ -184,13 +166,35 @@ Eventbus.prototype._fillSubscribers = function (subscriber) {
 
 Eventbus.prototype._fireSubscriber = function (subscriber) {
     if (!this._mute) {
-        if (Array.isArray(subscriber.event())) {
-            subscriber.event().forEach(function (event) {
-                subscriber.callback()(this._eventbus[event].state);
+        var context = this;
+
+        var toFireds = [];
+        var state = null;
+
+        var events = subscriber.event();
+
+        if (Array.isArray(events)) {
+            state = {};
+
+            events.forEach(function (event) {
+                state[event] = context._eventbus[event].state;
+            });
+
+            toFireds.push({
+                state: state,
+                callback: subscriber.callback()
             });
         } else {
-            subscriber.callback()(this._eventbus[subscriber.event()].state);
+            state = context._eventbus[events].state;
+            toFireds.push({
+                state: state,
+                callback: subscriber.callback()
+            });
         }
+
+        toFireds.forEach(function (toFired) {
+            toFired.callback(toFired.state);
+        });
     }
 };
 
