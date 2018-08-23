@@ -6,6 +6,8 @@ function Component(options) {
     this._initialize(options);
 }
 
+Component.prototype.constructor = Component;
+
 Component.prototype._initialize = function () {
     this._subscriber = null;
     this._name = this._options.name;
@@ -15,16 +17,15 @@ Component.prototype._initialize = function () {
     this._event = this._options.event;
     this._actions = this._options.actions;
     this._parentComponentContainer = [];
+    this._template = null;
     this._vDOM = {};
 
-    this._handleStateChanging();
+    this._handleStateChanging(this._state);
 };
 
 Component.prototype._render = function () {
     //Component's context binding
     var context = this;
-    var el = null;
-
     /**
      * for subscribe a publisher
      * **/
@@ -34,7 +35,7 @@ Component.prototype._render = function () {
             event: this._event,
             callback: function (state) {
                 context._state = state;
-                el = context._renderedHTML(context, state);
+                this._template = context._renderedHTML(context, state);
             }
         });
 
@@ -44,29 +45,29 @@ Component.prototype._render = function () {
      * parent child data transfer
      * **/
     else if (this._state) {
-        el = context._renderedHTML(context, this._state);
+        this._template = context._renderedHTML(context, this._state);
     }
     /**
      * non-data components
      * **/
     else {
-        el = context._renderedHTML(context, {});
+        this._template = context._renderedHTML(context, {});
     }
 
-    return el;
+    return this._template;
 };
 
 Component.prototype._renderedHTML = function (context, state) {
-    var el = context._renderMethod(state);
-    if (context._actions) context._bindEventToTemplate(context._actions, el, state);
+    this._template = context._renderMethod(state);
+    if (context._actions) context._bindEventToTemplate(context._actions, this._template, state);
 
     if (context._container !== undefined) {
         var container = document.querySelector(context._container);
         context._toEmpty(container);
-        container.append(el);
+        container.append(this._template);
     }
 
-    return el;
+    return this._template;
 };
 
 Component.prototype.fire = function () {
@@ -85,14 +86,14 @@ Component.prototype.render = function (context) {
     return this._render();
 };
 
-Component.prototype._bindEventToTemplate = function (componentMethods, template, state) {
+Component.prototype._bindEventToTemplate = function (componentActions, template, state) {
     var context = this;
 
     /**
      * Methods for template itself
      * **/
-    if (componentMethods.hasOwnProperty("self")) {
-        var methodsForSelf = componentMethods.self;
+    if (componentActions.hasOwnProperty("self")) {
+        var methodsForSelf = componentActions.self;
 
         var bundle = {
             state: state,
@@ -109,11 +110,11 @@ Component.prototype._bindEventToTemplate = function (componentMethods, template,
     }
 
     // TODO remove parent's event for duplicate binding
-    if (componentMethods.hasOwnProperty("querySelector")) {
+    if (componentActions.hasOwnProperty("querySelector")) {
         /**
          * Methods for template's inner html
          * **/
-        var querySelectors = componentMethods.querySelector;
+        var querySelectors = componentActions.querySelector;
 
         for (var i in querySelectors) {
             if (querySelectors.hasOwnProperty(i)) {
@@ -147,8 +148,7 @@ Component.prototype._bindEventToTemplate = function (componentMethods, template,
 Component.prototype._handleStateChanging = function () {
     var context = this;
 
-    Observer.watch(this._state, function (key, oldValue, newValue) {
-        // console.log("key : " + key + " oldValue : " + oldValue + " newValue :" + newValue);
+    Observer.watch(context._state, function (key, oldValue, newValue) {
         context.render();
     });
 };
@@ -160,6 +160,14 @@ Component.prototype._publisToEventbus = function (event, state) {
     });
 
     this._eventbus.publisher().register(publisherOfComponent);
+};
+
+Component.prototype.addActions = function (componentActions) {
+    if (this._actions) {
+        this._bindEventToTemplate(componentActions, this._template, this._state);
+    } else {
+        this._actions = componentActions;
+    }
 };
 
 /**
@@ -213,7 +221,8 @@ Component.prototype._getParentContainer = function () {
 
 Component.prototype.setState = function (state) {
     this._state = state;
-    this._handleStateChanging();
+    this._handleStateChanging(state);
+    this.render();
 
     return this;
 };

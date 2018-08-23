@@ -53,7 +53,7 @@ var App = (function () {
 
                 return ul;
             },
-            methods: { // or Component.createElement 's on function
+            actions: { // or Component.createElement 's on function
                 querySelector: {
                     'li': { // all selectors; (.), (#), (tag name)
                         click: function (e) {
@@ -248,7 +248,7 @@ var App = (function () {
 
                 return el;
             },
-            methods: {
+            actions: {
                 querySelector: {
                     'td': {
                         click: function (e) {
@@ -271,7 +271,7 @@ var App = (function () {
 
                 return tableResponsiveContainer;
             },
-            methods: { // or Component.createElement 's on function
+            actions: { // or Component.createElement 's on function
                 // querySelector:{
                 //     'tr': { // all selectors; (.), (#), (tag name)
                 //         click: function (e) {
@@ -309,7 +309,7 @@ var App = (function () {
                 counter: 0,
                 arr: []
             },
-            methods: {
+            actions: {
                 querySelector: {
                     '.increaseButton': { // all selectors; (.), (#), (tag name)
                         click: function (e) {
@@ -381,7 +381,7 @@ var App = (function () {
                     {text: "Otel rezervasyonu yaptır."}
                 ]
             },
-            methods: {
+            actions: {
                 querySelector: {
                     '#addTodoItem': {
                         click: function () {
@@ -625,6 +625,54 @@ var App = (function () {
         });
 
         todoApp.setEventbus(eventbus).render();
+    };
+
+    App.prototype.button = function () {
+        state = {
+            props: {
+                buttonText: "Click",
+                paragraphText: "Test Text"
+            }
+        };
+
+        AnatoliaButton = new Component({
+            container: "#component_1",
+            state: {
+                props: {
+                    buttonText: "",
+                    paragraphText: ""
+                }
+            },
+            name: "AnatoliaButton",
+            render: function (state) {
+                var cc = Component.createElement;
+
+                var button = cc("a", {
+                    class: "btn btn-primary btn-sm",
+                    text: state.props.buttonText
+                });
+
+                var paragraph = cc("p", {
+                    text: " " + state.props.paragraphText
+                });
+
+                button.append(paragraph);
+
+                return button;
+            }
+        });
+
+        AnatoliaButton.setState(state).addActions({
+            self: {
+                click: function () {
+                    this.state.props.buttonText = "123123123";
+                    // console.log("Second!");
+                }
+            }
+        });
+
+        AnatoliaButton.render();
+
     };
 
     return App;

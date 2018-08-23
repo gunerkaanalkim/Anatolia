@@ -32,7 +32,7 @@ Observer.watch = function (object, handler) {
             _doObserver(object, prop, handler);
 
             if (typeof object[prop] === "object") {
-                Util.observer(object[prop], handler);
+                Observer.watch(object[prop], handler);
             }
         }
     }
