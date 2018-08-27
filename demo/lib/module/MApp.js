@@ -5,7 +5,6 @@ var tableFooterComponent;
 var component;
 var eventbus;
 var sub;
-var AnatoliaButton;
 var state;
 var arr;
 var todoItemPublisher;
@@ -627,52 +626,49 @@ var App = (function () {
         todoApp.setEventbus(eventbus).render();
     };
 
+    /**
+     * Sample reusable component
+     * **/
     App.prototype.button = function () {
-        state = {
-            props: {
-                buttonText: "Click",
-                paragraphText: "Test Text"
-            }
-        };
+        var button1 = new Component(AnatoliaButton);
+        var button2 = new Component(AnatoliaButton);
 
-        AnatoliaButton = new Component({
-            container: "#component_1",
-            state: {
+        button1
+            .setContainer("#component_1")
+            .setState({
                 props: {
-                    buttonText: "",
-                    paragraphText: ""
+                    buttonText: "Click",
+                    counter: 0,
+                    class: "btn btn-default btn-sm"
                 }
-            },
-            name: "AnatoliaButton",
-            render: function (state) {
-                var cc = Component.createElement;
-
-                var button = cc("a", {
-                    class: "btn btn-primary btn-sm",
-                    text: state.props.buttonText
-                });
-
-                var paragraph = cc("p", {
-                    text: " " + state.props.paragraphText
-                });
-
-                button.append(paragraph);
-
-                return button;
-            }
-        });
-
-        AnatoliaButton.setState(state).addActions({
+            }).addActions({
             self: {
                 click: function () {
-                    this.state.props.buttonText = "123123123";
-                    // console.log("Second!");
+                    this.state.props.buttonText = Math.random();
+                    this.state.props.counter += 1;
                 }
             }
         });
 
-        AnatoliaButton.render();
+        button2
+            .setContainer("#component_2")
+            .setState({
+                props: {
+                    buttonText: "Tıkla",
+                    counter: 0,
+                    class: "btn btn-warning btn-sm"
+                }
+            }).addActions({
+            self: {
+                click: function () {
+                    this.state.props.buttonText = Math.random();
+                    this.state.props.counter += 1;
+                }
+            }
+        });
 
+        button1.render();
+        button2.render();
     };
 
     return App;

@@ -9,6 +9,9 @@ function Component(options) {
 Component.prototype.constructor = Component;
 
 Component.prototype._initialize = function () {
+    this.createElement = Component.createElement;
+    this.createElementFromObject = Component.createElementFromObject;
+    this.vDOM = Component.vDOM;
     this._subscriber = null;
     this._name = this._options.name;
     this._container = this._options.container;
@@ -222,7 +225,6 @@ Component.prototype._getParentContainer = function () {
 Component.prototype.setState = function (state) {
     this._state = state;
     this._handleStateChanging(state);
-    this.render();
 
     return this;
 };
@@ -235,6 +237,10 @@ Component.prototype.setMethods = function (methods) {
     this._actions = methods;
 
     return this;
+};
+
+Component.prototype.prepare = function () {
+
 };
 
 /**
