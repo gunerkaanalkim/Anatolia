@@ -100,7 +100,7 @@ var PubSub = (function () {
             propB: "Class"
         };
 
-        Util.observer(state, function (key, oldValue, newValue) {
+        Observer.watch(state, function (key, oldValue, newValue) {
             console.log("key : " + key + " oldValue : " + oldValue + " newValue :" + newValue);
         });
 
