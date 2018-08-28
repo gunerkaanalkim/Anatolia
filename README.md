@@ -1,12 +1,11 @@
 # Anatolia 
-Understandable and human-readable JavaScript framework for amazing UI/UX
+Understandable and human-readable JavaScript framework for elegant UI/UX
 
 **Dev Installation** 
 
 ```
 git clone https://github.com/gunerkaanalkim/Anatolia.git
 cd Anatolia
-rm -rf .git
 bower install
 //foo
 //bar
@@ -85,3 +84,8 @@ var todoApp = new Component({
 
 todoApp.render();
 ```
+
+**Road Map** 
+1.  A new **HyperScript** Dialect
+2.  Component's **.prepare()** method with accessor methods
+3.  **vDOM** implementation with HyperScript function
