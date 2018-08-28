@@ -84,8 +84,3 @@ var todoApp = new Component({
 
 todoApp.render();
 ```
-
-**Road Map** 
-1.  A new **HyperScript** Dialect
-2.  Component's **.prepare()** method with accessor methods
-3.  **vDOM** implementation with HyperScript function
