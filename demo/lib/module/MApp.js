@@ -471,7 +471,7 @@ var App = (function () {
                                 this.state.todo.list.push({
                                     text: todoText
                                 });
-                                this.publish(this.state.todo); // publish a event with event name
+                                this.publish("todo", this.state); // publish a event with event name
                             }
                         }
                     }
