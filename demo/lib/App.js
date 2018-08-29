@@ -6,7 +6,7 @@ $(document).ready(function () {
     // app.todoApp();
     // app.todoAppWithPublisher();
     // app.todoAppWithMultiplePublisher();
-    // app.button();
-    new PubSub().usage();
+    app.button();
+    // new PubSub().usage();
 
 });

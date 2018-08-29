@@ -52,6 +52,8 @@ Component.prototype._render = function () {
         this._template = context._renderedHTML(context, {});
     }
 
+    console.log(Component.vDOM(this._template));
+
     return this._template;
 };
 
@@ -298,11 +300,10 @@ Component.vDOM = function (templateContainerElement) {
         }
     }
 
-    // TODO find bounded events || rebind methods after vDOM comparation
-    // TODO comparation method Intl.Collator().compare('','') || txt1.localeCompare(txt2)
     var vDOM = {
-        tagName: templateContainerElement.tagName || "plainText",
-        originalElement: templateContainerElement.outerHTML || templateContainerElement.textContent,
+        nodeName: templateContainerElement.nodeName,
+        nodeType: templateContainerElement.nodeType,
+        nodeValue: templateContainerElement.nodeValue,
         attributes: attributeObjects,
         child: []
     };
@@ -311,7 +312,6 @@ Component.vDOM = function (templateContainerElement) {
         templateContainerElement.childNodes.forEach(function (childNode) {
             vDOM.child.push(Component.vDOM(childNode));
         });
-
     }
 
     return vDOM;
