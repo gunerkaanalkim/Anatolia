@@ -16,7 +16,7 @@ Component.prototype._initialize = function () {
     this._actions = this._options.actions;
     this._parentComponentContainer = [];
     this._template = null;
-    this._vDOM = {};
+    this._vDOM = null;
 
     this._handleStateChanging(this._state);
 };
@@ -33,7 +33,9 @@ Component.prototype._render = function () {
             event: this._event,
             callback: function (state) {
                 context._state = state;
+
                 this._template = context._renderedHTML(context, state);
+                VirtualDOM.vDOM(this._template);
             }
         });
 
@@ -52,7 +54,11 @@ Component.prototype._render = function () {
         this._template = context._renderedHTML(context, {});
     }
 
-    console.log(Component.vDOM(this._template));
+    var dirtyVDOM = VirtualDOM.vDOM(this._template);
+
+    VirtualDOM.compare(this._vDOM, dirtyVDOM);
+
+    this._vDOM = dirtyVDOM;
 
     return this._template;
 };
@@ -283,36 +289,4 @@ Component.on = function (event, fn) {
     this.addEventListener(event, fn);
 
     return this;
-};
-
-Component.vDOM = function (templateContainerElement) {
-    if (!templateContainerElement) return;
-
-    var attributes = templateContainerElement.attributes;
-    var attributeObjects = [];
-
-    for (var prop in attributes) {
-        if (attributes.hasOwnProperty(prop)) {
-            attributeObjects.push({
-                name: attributes[prop].name,
-                value: attributes[prop].value
-            });
-        }
-    }
-
-    var vDOM = {
-        nodeName: templateContainerElement.nodeName,
-        nodeType: templateContainerElement.nodeType,
-        nodeValue: templateContainerElement.nodeValue,
-        attributes: attributeObjects,
-        child: []
-    };
-
-    if (templateContainerElement.hasChildNodes()) {
-        templateContainerElement.childNodes.forEach(function (childNode) {
-            vDOM.child.push(Component.vDOM(childNode));
-        });
-    }
-
-    return vDOM;
 };

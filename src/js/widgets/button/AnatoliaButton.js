@@ -1,12 +1,5 @@
 var AnatoliaButton = {
     name: "AnatoliaButton",
-    state: {
-        props: {
-            buttonText: "",
-            paragraphText: "",
-            class: ""
-        }
-    },
     render: function (state) {
         var cc = Component.createElement;
 

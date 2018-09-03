@@ -11,6 +11,8 @@ var todoItemPublisher;
 var eventbus;
 var todoItemOrderPublisher;
 var todoApp;
+var button1;
+var button2;
 
 var App = (function () {
     function App() {
@@ -630,8 +632,8 @@ var App = (function () {
      * Sample reusable component
      * **/
     App.prototype.button = function () {
-        var button1 = new Component(AnatoliaButton);
-        var button2 = new Component(AnatoliaButton);
+        button1 = new Component(AnatoliaButton);
+        button2 = new Component(AnatoliaButton);
 
         button1
             .setContainer("#component_1")
