@@ -80,7 +80,8 @@ VirtualDOM.compare = function (originalVDOM, dirtyVDOM) {
         } else {
             // TODO : re-render component
             console.log("re-render component");
-            nodeComparator.getChanges();
+            var resultSet = nodeComparator.getChanges();
+            console.log(resultSet);
         }
     }
 };
