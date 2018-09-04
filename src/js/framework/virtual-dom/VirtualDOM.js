@@ -59,9 +59,9 @@ VirtualDOM.toHTML = function (vDOM) {
 
 VirtualDOM.compare = function (originalVDOM, dirtyVDOM) {
     if (originalVDOM) {
-        var nodeComparison = VirtualNode.nodeComparison(originalVDOM, dirtyVDOM);
+        var nodeComparator = VirtualNode.nodeComparator(originalVDOM, dirtyVDOM);
 
-        if (!nodeComparison.hasChanges()) {
+        if (!nodeComparator.hasChanges()) {
             // element create, update, delete
             if (VirtualNode.hasChild(dirtyVDOM) && VirtualNode.hasChild(originalVDOM)) {
                 var dirtyVDOMChildNodes = VirtualNode.childNodes(dirtyVDOM);
@@ -80,7 +80,7 @@ VirtualDOM.compare = function (originalVDOM, dirtyVDOM) {
         } else {
             // TODO : re-render component
             console.log("re-render component");
-            nodeComparison.getChanges();
+            nodeComparator.getChanges();
         }
     }
 };
@@ -91,7 +91,7 @@ VirtualDOM.compare = function (originalVDOM, dirtyVDOM) {
 function VirtualNode() {
 }
 
-VirtualNode.nodeComparison = function isEqual(originalVDOM, dirtyVDOM) {
+VirtualNode.nodeComparator = function isEqual(originalVDOM, dirtyVDOM) {
     var changing;
 
     var changeList = [];
