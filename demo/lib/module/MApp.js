@@ -13,6 +13,7 @@ var todoItemOrderPublisher;
 var todoApp;
 var button1;
 var button2;
+var list;
 
 var App = (function () {
     function App() {
@@ -669,8 +670,38 @@ var App = (function () {
             }
         });
 
-        button1.render();
-        button2.render();
+        // button1.render();
+        // button2.render();
+
+        list = new Component(AnatoliaList);
+
+        list
+            .setContainer("#component_3")
+            .setState({
+                list: [
+                    {text: "List Item 1"},
+                    {text: "List Item 2"},
+                    {text: "List Item 3"}
+                ]
+            })
+            .addActions({
+                querySelector: {
+                    "#pushButton": {
+                        click: function () {
+                            this.state.list.push({
+                                text: Math.random()
+                            });
+                        }
+                    },
+                    "#popButton": {
+                        click: function () {
+                            this.state.list.pop();
+                        }
+                    }
+                }
+            });
+
+        list.render();
     };
 
     return App;
