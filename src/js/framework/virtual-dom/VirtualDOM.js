@@ -58,31 +58,42 @@ VirtualDOM.toHTML = function (vDOM) {
 };
 
 VirtualDOM.compare = function (originalVDOM, dirtyVDOM) {
-    if (originalVDOM) { // TODO : append child node to DOM
-        var nodeComparator = VirtualNode.nodeComparator(originalVDOM, dirtyVDOM);
+    var has = VirtualNode.has;
+    var is = VirtualNode.is;
 
-        if (!nodeComparator.hasChanges()) {
-            // element create, update, delete
-            if (VirtualNode.hasChild(dirtyVDOM) && VirtualNode.hasChild(originalVDOM)) {
-                var dirtyVDOMChildNodes = VirtualNode.childNodes(dirtyVDOM);
-                var originalVDOMChildNodes = VirtualNode.childNodes(originalVDOM);
+    var nodeComparator = VirtualNode.nodeComparator(originalVDOM, dirtyVDOM);
 
-                for (var i = 0; i < dirtyVDOMChildNodes.length; i++) {
-                    var dirtyVDOMChildNode = dirtyVDOMChildNodes[i];
-                    var originalVDOMChildNode = originalVDOMChildNodes[i];
+    if (!nodeComparator.hasChanges()) {
+        if (has.child(dirtyVDOM) && has.child(originalVDOM)) {
+            var dirtyVDOMChildNodes = VirtualNode.childNodes(dirtyVDOM);
+            var originalVDOMChildNodes = VirtualNode.childNodes(originalVDOM);
 
-                    VirtualDOM.compare(originalVDOMChildNode, dirtyVDOMChildNode);
-                }
+            var masterNode = null;
+
+            if (is.greaterThen(dirtyVDOMChildNodes.length, originalVDOMChildNodes.length)) {
+                masterNode = dirtyVDOMChildNodes;
+            } else if (is.lowerThen(dirtyVDOMChildNodes.length, originalVDOMChildNodes.length)) {
+                masterNode = originalVDOMChildNodes;
             } else {
-                // TODO : append child node to DOM
-                // console.log("append child node to DOM");
+                masterNode = dirtyVDOMChildNodes;
+            }
+
+            for (var i = 0; i < masterNode.length; i++) {
+                var dirtyVDOMChildNode = dirtyVDOMChildNodes[i];
+                var originalVDOMChildNode = originalVDOMChildNodes[i];
+
+                VirtualDOM.compare(originalVDOMChildNode, dirtyVDOMChildNode);
             }
         } else {
-            // TODO : re-render component
-            // console.log("re-render component");
-            var resultSet = nodeComparator.getChanges();
-            console.log(resultSet);
+            // TODO : append child node to DOM
+            // console.log("append child node to DOM");
         }
+    } else {
+        // TODO : re-render component
+        // console.log("re-render component");
+        nodeComparator.getChanges().forEach(function (change) {
+            console.table(change.change);
+        });
     }
 };
 
@@ -92,56 +103,68 @@ VirtualDOM.compare = function (originalVDOM, dirtyVDOM) {
 function VirtualNode() {
 }
 
-VirtualNode.nodeComparator = function isEqual(originalVDOM, dirtyVDOM) {
-    var changing;
+VirtualNode.nodeComparator = function (originalVDOM, dirtyVDOM) {
+    var has = VirtualNode.has;
+    var is = VirtualNode.is;
 
+    var change;
     var changeList = [];
 
-    /**
-     * Node Type Comparison
-     * **/
-    if (!VirtualNode.isEqual(dirtyVDOM.nodeType, originalVDOM.nodeType)) {
-        changing = VirtualNode.setCause(originalVDOM, "nodeType", originalVDOM.nodeType, dirtyVDOM.nodeType);
+    if (is.undefined(originalVDOM) && is.defined(dirtyVDOM)) {
+        change = VirtualNode.setChange(originalVDOM, "addNode", null, dirtyVDOM);
 
-        changeList.push(changing);
-    }
+        changeList.push(change);
+    } else if (is.defined(originalVDOM) && is.undefined(dirtyVDOM)) {
+        change = VirtualNode.setChange(originalVDOM, "removeNode", originalVDOM, null);
 
-    /**
-     * Node Name Comparison
-     * **/
-    if (!VirtualNode.isEqual(dirtyVDOM.nodeName, originalVDOM.nodeName)) {
-        changing = VirtualNode.setCause(originalVDOM, "nodeName", originalVDOM.nodeName, dirtyVDOM.nodeName);
+        changeList.push(change);
+    } else if (is.definedAndNotNull(originalVDOM) && is.definedAndNotNull(dirtyVDOM)) {
+        /**
+         * Node Type Comparison
+         * **/
+        if (is.notEqual(dirtyVDOM.nodeType, originalVDOM.nodeType)) {
+            change = VirtualNode.setChange(originalVDOM, "nodeType", originalVDOM.nodeType, dirtyVDOM.nodeType);
 
-        changeList.push(changing);
-    }
-
-    /**
-     * Node value Comparison
-     * **/
-    if (VirtualNode.isEqual(dirtyVDOM.nodeType, 3)) {
-        if (!VirtualNode.isEqual(dirtyVDOM.nodeValue, originalVDOM.nodeValue)) {
-            changing = VirtualNode.setCause(originalVDOM, "nodeValue", originalVDOM.nodeValue, dirtyVDOM.nodeValue);
-
-            changeList.push(changing);
+            changeList.push(change);
         }
-    }
 
-    /**
-     * Attributes Comparison
-     * **/
-    var dirtyVDOMAttributes = dirtyVDOM.attributes;
-    var originalVDOMAttributes = originalVDOM.attributes;
+        /**
+         * Node Name Comparison
+         * **/
+        if (is.notEqual(dirtyVDOM.nodeName, originalVDOM.nodeName)) {
+            change = VirtualNode.setChange(originalVDOM, "nodeName", originalVDOM.nodeName, dirtyVDOM.nodeName);
 
-    for (var attr in dirtyVDOMAttributes) {
-        if (!originalVDOMAttributes.hasOwnProperty(attr) && !VirtualNode.isEqual(originalVDOMAttributes[attr], dirtyVDOMAttributes[attr])) {
-            changing = VirtualNode.setCause(originalVDOM, "attributes", originalVDOMAttributes, dirtyVDOMAttributes);
+            changeList.push(change);
+        }
 
-            changeList.push(changing);
+        /**
+         * Node value Comparison
+         * **/
+        if (is.equal(dirtyVDOM.nodeType, 3)) {
+            if (is.notEqual(dirtyVDOM.nodeValue, originalVDOM.nodeValue)) {
+                change = VirtualNode.setChange(originalVDOM, "nodeValue", originalVDOM.nodeValue, dirtyVDOM.nodeValue);
+
+                changeList.push(change);
+            }
+        }
+
+        /**
+         * Attributes Comparison
+         * **/
+        var dirtyVDOMAttributes = dirtyVDOM.attributes;
+        var originalVDOMAttributes = originalVDOM.attributes;
+
+        for (var attr in dirtyVDOMAttributes) {
+            if (!originalVDOMAttributes.hasOwnProperty(attr) && is.notEqual(originalVDOMAttributes[attr], dirtyVDOMAttributes[attr])) {
+                change = VirtualNode.setChange(originalVDOM, "attributes", originalVDOMAttributes, dirtyVDOMAttributes);
+
+                changeList.push(change);
+            }
         }
     }
 
     function hasChanges() {
-        return changeList.length > 0;
+        return is.greaterThen(changeList.length, 0);
     }
 
     function getChanges() {
@@ -166,13 +189,51 @@ VirtualNode.isEqual = function (val1, val2) {
     return val1 === val2;
 };
 
-VirtualNode.setCause = function (originalVNode, cause, from, to) {
+VirtualNode.setChange = function (vNode, cause, from, to) {
     return {
-        vNode: originalVNode,
-        changing: {
+        vNode: vNode,
+        change: {
             cause: cause,
             from: from,
             to: to
         }
     };
+};
+
+VirtualNode.is = {
+    defined: function (value) {
+        return typeof value !== "undefined"
+    },
+    undefined: function (value) {
+        return typeof value === 'undefined';
+    },
+    null: function (value) {
+        return value === null;
+    },
+    notNull: function (value) {
+        return value !== null;
+    },
+    equal: function (val1, val2) {
+        return val1 === val2;
+    },
+    notEqual: function (val1, val2) {
+        return val1 !== val2;
+    },
+    greaterThen: function (value, criteria) {
+        return value > criteria;
+    },
+    lowerThen: function (value, criteria) {
+        return value < criteria;
+    },
+    definedAndNotNull: function (value) {
+        return (typeof value !== "undefined" && value !== null);
+    }
+};
+
+VirtualNode.has = {
+    child: function (vNode) {
+        if (VirtualNode.is.definedAndNotNull(vNode)) {
+            return VirtualNode.is.greaterThen(vNode.child.length, 0);
+        }
+    }
 };
