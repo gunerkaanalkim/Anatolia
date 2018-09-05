@@ -5,6 +5,8 @@ function VirtualDOM() {
 }
 
 VirtualDOM.vDOM = function (templateContainerElement) {
+    var is = VirtualNode.is;
+
     if (!templateContainerElement) return;
 
     var attributes = templateContainerElement.attributes;
@@ -16,6 +18,8 @@ VirtualDOM.vDOM = function (templateContainerElement) {
         }
     }
 
+    var vuid = VirtualNode.vuid();
+
     var vDOM = {
         nodeName: templateContainerElement.nodeName,
         nodeType: templateContainerElement.nodeType,
@@ -23,6 +27,11 @@ VirtualDOM.vDOM = function (templateContainerElement) {
         attributes: attributeObjects,
         child: []
     };
+
+    if (is.notEqual(templateContainerElement.nodeType, 3) && is.undefinedOrNull(templateContainerElement.getAttribute("vuid"))) {
+        templateContainerElement.setAttribute("vuid", vuid);
+        vDOM["vuid"] = vuid;
+    }
 
     if (templateContainerElement.hasChildNodes()) {
         templateContainerElement.childNodes.forEach(function (childNode) {
@@ -44,10 +53,12 @@ VirtualDOM.toHTML = function (vDOM) {
         element = document.createTextNode(vDOM.nodeValue);
     }
 
-    for (var i in vDOM.attributes) {
-        var attribute = attributes[i];
+    var attributes = vDOM.attributes;
 
-        element.setAttribute(attribute.name, attribute.value);
+    for (var attr in attributes) {
+        var value = attributes[attr];
+
+        element.setAttribute(attr, value);
     }
 
     if (vDOM.child.length !== 0) {
@@ -93,9 +104,7 @@ VirtualDOM.compare = function (originalVDOM, dirtyVDOM) {
     } else {
         // TODO : re-render component
         // console.log("re-render component");
-        nodeComparator.getChanges().forEach(function (change) {
-            console.table(change.change);
-        });
+        DOMProcessor.applyChanging(nodeComparator.getChanges());
     }
 };
 
@@ -158,7 +167,7 @@ VirtualNode.nodeComparator = function (originalVDOM, dirtyVDOM) {
 
         for (var attr in dirtyVDOMAttributes) {
             if (!originalVDOMAttributes.hasOwnProperty(attr) && is.notEqual(originalVDOMAttributes[attr], dirtyVDOMAttributes[attr])) {
-                change = VirtualNode.setChange(originalVDOM, "attributes", originalVDOMAttributes, dirtyVDOMAttributes);
+                change = VirtualNode.setChange(originalVDOM, "updateAttribute", originalVDOMAttributes, dirtyVDOMAttributes);
 
                 changeList.push(change);
             }
@@ -229,6 +238,9 @@ VirtualNode.is = {
     },
     definedAndNotNull: function (value) {
         return (typeof value !== "undefined" && value !== null);
+    },
+    undefinedOrNull: function (value) {
+        return (typeof value === "undefined" || value === null);
     }
 };
 
@@ -238,4 +250,61 @@ VirtualNode.has = {
             return VirtualNode.is.greaterThen(vNode.child.length, 0);
         }
     }
+};
+
+VirtualNode.vuid = function () {
+    return Math.random().toString(36).substr(2, 9);
+};
+
+/**
+ * DOM Processor
+ * **/
+function DOMProcessor() {
+
+}
+
+DOMProcessor.applyChanging = function (changes) {
+    var is = VirtualNode.is;
+
+    changes.forEach(function (change) {
+        if (is.equal(change.change.cause, "addNode")) {
+            DOMProcessor.addNode(change);
+        } else if (is.equal(change.change.cause, "removeNode")) {
+            DOMProcessor.removeNode(change);
+        } else if (is.equal(change.change.cause, "nodeType") || is.equal(change.cause, "nodeName")) {
+            DOMProcessor.replaceNodeName(change);
+        } else if (is.equal(change.change.cause, "nodeValue")) {
+            DOMProcessor.replaceNodeValue(change);
+        } else if (is.equal(change.change.cause, "updateAttribute")) {
+            DOMProcessor.replaceNodeAttribute(change);
+        }
+    });
+};
+
+DOMProcessor.getByVuid = function (vuid) {
+    return document.querySelector("[vuid='" + vuid + "']");
+};
+
+DOMProcessor.addNode = function (change) {
+    var DOMNode = VirtualDOM.toHTML(change.to);
+
+    console.log(DOMNode);
+};
+
+DOMProcessor.removeNode = function (change) {
+    console.log("remove");
+};
+
+DOMProcessor.replaceNodeName = function (change) {
+    console.log("replace");
+};
+
+DOMProcessor.replaceNodeValue = function (change) {
+    var DOMNode = DOMProcessor.getByVuid(change.vNode.vuid);
+    console.log(DOMNode);
+
+};
+
+DOMProcessor.replaceNodeAttribute = function (change) {
+    console.log("attribute");
 };
