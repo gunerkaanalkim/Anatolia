@@ -44,9 +44,11 @@ VirtualDOM.toHTML = function (vDOM) {
         element = document.createTextNode(vDOM.nodeValue);
     }
 
-    vDOM.attributes.forEach(function (attribute) {
+    for (var i in vDOM.attributes) {
+        var attribute = attributes[i];
+
         element.setAttribute(attribute.name, attribute.value);
-    });
+    }
 
     if (vDOM.child.length !== 0) {
         vDOM.child.forEach(function (vNode) {
