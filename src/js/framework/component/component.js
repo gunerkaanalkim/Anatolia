@@ -34,8 +34,7 @@ Component.prototype._render = function () {
             callback: function (state) {
                 context._state = state;
 
-                this._template = context._renderedHTML(context, state);
-                VirtualDOM.vDOM(this._template);
+                context._template = context._renderedHTML(context, state);
             }
         });
 
@@ -54,17 +53,20 @@ Component.prototype._render = function () {
         this._template = context._renderedHTML(context, {});
     }
 
-    var dirtyVDOM = VirtualDOM.vDOM(this._template);
-
-    VirtualDOM.compare(this._vDOM, dirtyVDOM);
-
-    this._vDOM = dirtyVDOM;
-
     return this._template;
 };
 
 Component.prototype._renderedHTML = function (context, state) {
     this._template = context._renderMethod(state);
+
+    // VDOM Operations
+    var dirtyVDOM = VirtualDOM.vDOM(this._template);
+
+    VirtualDOM.compare(this._vDOM, dirtyVDOM);
+
+    this._vDOM = dirtyVDOM;
+    // VDOM Operations
+
     if (context._actions) context._bindEventToTemplate(context._actions, this._template, state);
 
     if (context._container !== undefined) {
@@ -155,7 +157,7 @@ Component.prototype._handleStateChanging = function () {
     var context = this;
 
     Observer.watch(context._state, function (key, oldValue, newValue) {
-        context.render();
+        context._render();
     });
 };
 
