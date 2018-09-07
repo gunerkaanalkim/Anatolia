@@ -17,6 +17,7 @@ Component.prototype._initialize = function () {
     this._parentComponentContainer = [];
     this._template = null;
     this._vDOM = null;
+    this.__firstRender__ = true;
 
     this._handleStateChanging(this._state);
 };
@@ -58,22 +59,24 @@ Component.prototype._render = function () {
 
 Component.prototype._renderedHTML = function (context, state) {
     this._template = context._renderMethod(state);
+    var vDOM = VirtualDOM.vDOM(this._template);
 
-    // VDOM Operations
-    var dirtyVDOM = VirtualDOM.vDOM(this._template);
+    if (this.__firstRender__ && (context._container !== undefined)) {
+        this._vDOM = vDOM;
 
-    VirtualDOM.compare(this._vDOM, dirtyVDOM);
-
-    this._vDOM = dirtyVDOM;
-    // VDOM Operations
-
-    if (context._actions) context._bindEventToTemplate(context._actions, this._template, state);
-
-    if (context._container !== undefined) {
         var container = document.querySelector(context._container);
         context._toEmpty(container);
         container.append(this._template);
+
+        this.__firstRender__ = false;
+    } else {
+        VirtualDOM.compare(this._vDOM, vDOM);
+
+        this._vDOM = vDOM;
     }
+
+    //TODO event binding
+    if (context._actions) context._bindEventToTemplate(context._actions, this._template, state);
 
     return this._template;
 };
