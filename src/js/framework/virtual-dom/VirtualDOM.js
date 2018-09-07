@@ -286,13 +286,15 @@ DOMProcessor.getByVuid = function (vuid) {
 };
 
 DOMProcessor.addNode = function (change) {
-    var DOMNode = VirtualDOM.toHTML(change.to);
+    var DOMNode = VirtualDOM.toHTML(change.change.to);
 
     console.log(DOMNode);
 };
 
 DOMProcessor.removeNode = function (change) {
-    console.log("remove");
+    var DOMNode = VirtualDOM.toHTML(change.change.from);
+
+    console.log(DOMNode);
 };
 
 DOMProcessor.replaceNodeName = function (change) {
