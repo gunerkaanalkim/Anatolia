@@ -2,7 +2,6 @@ var AnatoliaList = {
     render: function (state) {
         var cc = Component.createElement;
 
-        console.log(state.containerElementName);
         var container = cc(state.containerElementName);
         var firstRow = cc("div", {class: "row clearfix"});
 
