@@ -2,10 +2,11 @@ var AnatoliaList = {
     render: function (state) {
         var cc = Component.createElement;
 
-        var container = cc("div");
+        console.log(state.containerElementName);
+        var container = cc(state.containerElementName);
         var firstRow = cc("div", {class: "row clearfix"});
 
-        var ul = cc("ul", {class: "list-group"});
+        var ul = cc("ul", {class: state.class});
 
         state.list.forEach(function (listItem) {
             var li = cc("li", {class: "list-group-item", text: listItem.text});

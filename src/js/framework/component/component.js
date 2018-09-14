@@ -70,9 +70,7 @@ Component.prototype._renderedHTML = function (context, state) {
 
         this.__firstRender__ = false;
     } else {
-        VirtualDOM.compare(this._vDOM, vDOM);
-
-        this._vDOM = vDOM;
+        VirtualDOM.compare(this._vDOM, vDOM, this._vDOM);
     }
 
     //TODO event binding

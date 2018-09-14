@@ -28,7 +28,9 @@ VirtualDOM.vDOM = function (templateContainerElement) {
         child: []
     };
 
-    if (is.notEqual(templateContainerElement.nodeType, 3) && is.undefinedOrNull(templateContainerElement.getAttribute("vuid"))) {
+    if (is.notEqual(templateContainerElement.nodeType, 3)) {
+        vuid = templateContainerElement.getAttribute("vuid") || vuid;
+
         templateContainerElement.setAttribute("vuid", vuid);
         vDOM["vuid"] = vuid;
     }
@@ -45,15 +47,17 @@ VirtualDOM.vDOM = function (templateContainerElement) {
 VirtualDOM.toHTML = function (vDOM) {
     if (!vDOM) return;
 
+    var attributes = vDOM.attributes;
     var element = null;
 
     if (vDOM.nodeType === 1) {
         element = document.createElement(vDOM.nodeName);
+        if (!attributes.hasOwnProperty("vuid")) {
+            element.setAttribute("vuid", VirtualNode.vuid());
+        }
     } else if (vDOM.nodeType === 3) {
         element = document.createTextNode(vDOM.nodeValue);
     }
-
-    var attributes = vDOM.attributes;
 
     for (var attr in attributes) {
         var value = attributes[attr];
@@ -70,11 +74,11 @@ VirtualDOM.toHTML = function (vDOM) {
     return element;
 };
 
-VirtualDOM.compare = function (originalVDOM, dirtyVDOM) {
+VirtualDOM.compare = function (originalVDOM, dirtyVDOM, index, originalVDOMCollections, parentNode) {
     var has = VirtualNode.has;
     var is = VirtualNode.is;
 
-    var nodeComparator = VirtualNode.nodeComparator(originalVDOM, dirtyVDOM);
+    var nodeComparator = VirtualNode.nodeComparator(originalVDOM, dirtyVDOM, index, originalVDOMCollections, parentNode);
 
     if (!nodeComparator.hasChanges()) {
         if (has.child(dirtyVDOM) && has.child(originalVDOM)) {
@@ -95,7 +99,7 @@ VirtualDOM.compare = function (originalVDOM, dirtyVDOM) {
                 var dirtyVDOMChildNode = dirtyVDOMChildNodes[i];
                 var originalVDOMChildNode = originalVDOMChildNodes[i];
 
-                VirtualDOM.compare(originalVDOMChildNode, dirtyVDOMChildNode);
+                VirtualDOM.compare(originalVDOMChildNode, dirtyVDOMChildNode, i, originalVDOMChildNodes, originalVDOM);
             }
         } else {
             // TODO : append child node to DOM
@@ -114,7 +118,7 @@ VirtualDOM.compare = function (originalVDOM, dirtyVDOM) {
 function VirtualNode() {
 }
 
-VirtualNode.nodeComparator = function (originalVDOM, dirtyVDOM) {
+VirtualNode.nodeComparator = function (originalVDOM, dirtyVDOM, index, originalVDOMCollections, parentNode) {
     var has = VirtualNode.has;
     var is = VirtualNode.is;
 
@@ -122,19 +126,22 @@ VirtualNode.nodeComparator = function (originalVDOM, dirtyVDOM) {
     var changeList = [];
 
     if (is.undefined(originalVDOM) && is.defined(dirtyVDOM)) {
-        change = VirtualNode.setChange(originalVDOM, "addNode", null, dirtyVDOM);
+        change = VirtualNode.setChange(originalVDOM, "addNode", null, dirtyVDOM, index, originalVDOMCollections, parentNode);
 
         changeList.push(change);
     } else if (is.defined(originalVDOM) && is.undefined(dirtyVDOM)) {
-        change = VirtualNode.setChange(originalVDOM, "removeNode", originalVDOM, null);
+        change = VirtualNode.setChange(originalVDOM, "removeNode", originalVDOM, null, index, originalVDOMCollections, parentNode);
 
         changeList.push(change);
     } else if (is.definedAndNotNull(originalVDOM) && is.definedAndNotNull(dirtyVDOM)) {
         /**
          * Node Type Comparison
          * **/
+        if (originalVDOM.nodeName === "DIV") {
+            debugger;
+        }
         if (is.notEqual(dirtyVDOM.nodeType, originalVDOM.nodeType)) {
-            change = VirtualNode.setChange(originalVDOM, "nodeType", originalVDOM.nodeType, dirtyVDOM.nodeType);
+            change = VirtualNode.setChange(originalVDOM, "nodeType", originalVDOM.nodeType, dirtyVDOM.nodeType, index, originalVDOMCollections, parentNode);
 
             changeList.push(change);
         }
@@ -143,7 +150,7 @@ VirtualNode.nodeComparator = function (originalVDOM, dirtyVDOM) {
          * Node Name Comparison
          * **/
         if (is.notEqual(dirtyVDOM.nodeName, originalVDOM.nodeName)) {
-            change = VirtualNode.setChange(originalVDOM, "nodeName", originalVDOM.nodeName, dirtyVDOM.nodeName);
+            change = VirtualNode.setChange(originalVDOM, "nodeName", originalVDOM.nodeName, dirtyVDOM.nodeName, index, originalVDOMCollections, parentNode);
 
             changeList.push(change);
         }
@@ -153,7 +160,7 @@ VirtualNode.nodeComparator = function (originalVDOM, dirtyVDOM) {
          * **/
         if (is.equal(dirtyVDOM.nodeType, 3)) {
             if (is.notEqual(dirtyVDOM.nodeValue, originalVDOM.nodeValue)) {
-                change = VirtualNode.setChange(originalVDOM, "nodeValue", originalVDOM.nodeValue, dirtyVDOM.nodeValue);
+                change = VirtualNode.setChange(originalVDOM, "nodeValue", originalVDOM.nodeValue, dirtyVDOM.nodeValue, index, originalVDOMCollections, parentNode);
 
                 changeList.push(change);
             }
@@ -166,8 +173,8 @@ VirtualNode.nodeComparator = function (originalVDOM, dirtyVDOM) {
         var originalVDOMAttributes = originalVDOM.attributes;
 
         for (var attr in dirtyVDOMAttributes) {
-            if (!originalVDOMAttributes.hasOwnProperty(attr) && is.notEqual(originalVDOMAttributes[attr], dirtyVDOMAttributes[attr])) {
-                change = VirtualNode.setChange(originalVDOM, "updateAttribute", originalVDOMAttributes, dirtyVDOMAttributes);
+            if (originalVDOMAttributes.hasOwnProperty(attr) && is.notEqual(originalVDOMAttributes[attr], dirtyVDOMAttributes[attr])) {
+                change = VirtualNode.setChange(originalVDOM, "updateAttribute", originalVDOMAttributes, dirtyVDOMAttributes, index, originalVDOMCollections, parentNode);
 
                 changeList.push(change);
             }
@@ -200,13 +207,21 @@ VirtualNode.isEqual = function (val1, val2) {
     return val1 === val2;
 };
 
-VirtualNode.setChange = function (vNode, cause, from, to) {
+VirtualNode.setChange = function (vNode, cause, from, to, index, originalVDOMCollections, parentNode) {
+    var is = VirtualNode.is;
+
     return {
+        parentNode: parentNode,
+        originalVDOMCollections: originalVDOMCollections,
+        index: index,
         vNode: vNode,
         change: {
             cause: cause,
             from: from,
             to: to
+        },
+        findLocation: function () {
+            return this.originalVDOMCollections[this.index];
         }
     };
 };
@@ -285,16 +300,28 @@ DOMProcessor.getByVuid = function (vuid) {
     return document.querySelector("[vuid='" + vuid + "']");
 };
 
-DOMProcessor.addNode = function (change) {
-    var DOMNode = VirtualDOM.toHTML(change.change.to);
+DOMProcessor.getByVuidInVDOM = function (vuid) {
+    return document.querySelector("[vuid='" + vuid + "']");
+};
 
-    console.log(DOMNode);
+DOMProcessor.addNode = function (change) {
+    var is = VirtualNode.is;
+
+    var location = change.findLocation();
+
+    if (is.undefinedOrNull(location)) {
+        var newNode = VirtualDOM.toHTML(change.change.to);
+
+        change.originalVDOMCollections[change.index] = VirtualDOM.vDOM(newNode);
+
+        var referenceNode = DOMProcessor.getByVuid(change.originalVDOMCollections[change.index - 1].vuid);
+        var parentNode = referenceNode.parentNode;
+        parentNode.insertBefore(newNode, referenceNode.nextSibling);
+
+    }
 };
 
 DOMProcessor.removeNode = function (change) {
-    var DOMNode = VirtualDOM.toHTML(change.change.from);
-
-    console.log(DOMNode);
 };
 
 DOMProcessor.replaceNodeName = function (change) {
@@ -302,11 +329,19 @@ DOMProcessor.replaceNodeName = function (change) {
 };
 
 DOMProcessor.replaceNodeValue = function (change) {
-    var DOMNode = DOMProcessor.getByVuid(change.vNode.vuid);
-    console.log(DOMNode);
-
+    var oldNode = DOMProcessor.getByVuid(change.parentNode.vuid);
+    oldNode.textContent = change.change.to;
+    change.vNode.nodeValue = change.change.to;
 };
 
 DOMProcessor.replaceNodeAttribute = function (change) {
-    console.log("attribute");
+    var oldNode = DOMProcessor.getByVuid(change.vNode.vuid);
+
+    for (var i in change.change.to) {
+        var attributeName = i;
+        var attributeValue = change.change.to[i];
+        oldNode.setAttribute(attributeName, attributeValue);
+
+        change.vNode.attributes[attributeName] = attributeValue;
+    }
 };
