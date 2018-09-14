@@ -52,9 +52,6 @@ VirtualDOM.toHTML = function (vDOM) {
 
     if (vDOM.nodeType === 1) {
         element = document.createElement(vDOM.nodeName);
-        if (!attributes.hasOwnProperty("vuid")) {
-            element.setAttribute("vuid", VirtualNode.vuid());
-        }
     } else if (vDOM.nodeType === 3) {
         element = document.createTextNode(vDOM.nodeValue);
     }
@@ -63,6 +60,10 @@ VirtualDOM.toHTML = function (vDOM) {
         var value = attributes[attr];
 
         element.setAttribute(attr, value);
+    }
+
+    if (vDOM.nodeType === 1 && !attributes.hasOwnProperty("vuid")) {
+        element.setAttribute("vuid", VirtualNode.vuid());
     }
 
     if (vDOM.child.length !== 0) {
@@ -137,9 +138,6 @@ VirtualNode.nodeComparator = function (originalVDOM, dirtyVDOM, index, originalV
         /**
          * Node Type Comparison
          * **/
-        if (originalVDOM.nodeName === "DIV") {
-            debugger;
-        }
         if (is.notEqual(dirtyVDOM.nodeType, originalVDOM.nodeType)) {
             change = VirtualNode.setChange(originalVDOM, "nodeType", originalVDOM.nodeType, dirtyVDOM.nodeType, index, originalVDOMCollections, parentNode);
 
@@ -286,7 +284,7 @@ DOMProcessor.applyChanging = function (changes) {
             DOMProcessor.addNode(change);
         } else if (is.equal(change.change.cause, "removeNode")) {
             DOMProcessor.removeNode(change);
-        } else if (is.equal(change.change.cause, "nodeType") || is.equal(change.cause, "nodeName")) {
+        } else if (is.equal(change.change.cause, "nodeType") || is.equal(change.change.cause, "nodeName")) {
             DOMProcessor.replaceNodeName(change);
         } else if (is.equal(change.change.cause, "nodeValue")) {
             DOMProcessor.replaceNodeValue(change);
@@ -297,10 +295,6 @@ DOMProcessor.applyChanging = function (changes) {
 };
 
 DOMProcessor.getByVuid = function (vuid) {
-    return document.querySelector("[vuid='" + vuid + "']");
-};
-
-DOMProcessor.getByVuidInVDOM = function (vuid) {
     return document.querySelector("[vuid='" + vuid + "']");
 };
 
@@ -322,10 +316,24 @@ DOMProcessor.addNode = function (change) {
 };
 
 DOMProcessor.removeNode = function (change) {
+    DOMProcessor.getByVuid(change.vNode.vuid).remove();
+    change.parentNode.child.splice(change.index, 1);
 };
 
 DOMProcessor.replaceNodeName = function (change) {
-    console.log("replace");
+    var oldNode = DOMProcessor.getByVuid(change.vNode.vuid);
+    var newNode = VirtualDOM.toHTML(change.vNode);
+
+    oldNode.replaceWith(newNode);
+
+    var newNodeVDOM = VirtualDOM.vDOM(newNode);
+
+    change.vNode.attributes = newNodeVDOM.attributes;
+    change.vNode.child = newNodeVDOM.child;
+    change.vNode.nodeName = newNodeVDOM.nodeName;
+    change.vNode.nodeType = newNodeVDOM.nodeType;
+    change.vNode.nodeValue = newNodeVDOM.nodeValue;
+    change.vNode.vuid = newNodeVDOM.vuid;
 };
 
 DOMProcessor.replaceNodeValue = function (change) {
