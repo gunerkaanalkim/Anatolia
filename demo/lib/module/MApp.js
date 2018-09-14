@@ -670,8 +670,8 @@ var App = (function () {
             }
         });
 
-        // button1.render();
-        // button2.render();
+        button1.render();
+        button2.render();
 
         list = new Component(AnatoliaList);
 
@@ -713,7 +713,7 @@ var App = (function () {
                 }
             });
 
-        list.render();
+        // list.render();
     };
 
     return App;
