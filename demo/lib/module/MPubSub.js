@@ -42,6 +42,7 @@ var PubSub = (function () {
             }
         });
 
+
         // eventbus.publisher().register(publisher_1); // register single publisher
         // eventbus.publisher().register(publisher_1, publisher_2); // register multiple publisher
 

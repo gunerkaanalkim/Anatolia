@@ -2,6 +2,7 @@ function Observer() {
 
 }
 
+
 Observer.watch = function (object, handler) {
     for (var prop in object) {
         if (object.hasOwnProperty(prop)) {
