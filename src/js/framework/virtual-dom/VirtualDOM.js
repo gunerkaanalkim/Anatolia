@@ -82,29 +82,24 @@ VirtualDOM.compare = function (originalVDOM, dirtyVDOM, index, originalVDOMColle
     var nodeComparator = VirtualNode.nodeComparator(originalVDOM, dirtyVDOM, index, originalVDOMCollections, parentNode);
 
     if (!nodeComparator.hasChanges()) {
-        if (has.child(dirtyVDOM) && has.child(originalVDOM)) {
-            var dirtyVDOMChildNodes = VirtualNode.childNodes(dirtyVDOM);
-            var originalVDOMChildNodes = VirtualNode.childNodes(originalVDOM);
+        var dirtyVDOMChildNodes = VirtualNode.childNodes(dirtyVDOM);
+        var originalVDOMChildNodes = VirtualNode.childNodes(originalVDOM);
 
-            var masterNode = null;
+        var masterNode = null;
 
-            if (is.greaterThen(dirtyVDOMChildNodes.length, originalVDOMChildNodes.length)) {
-                masterNode = dirtyVDOMChildNodes;
-            } else if (is.lowerThen(dirtyVDOMChildNodes.length, originalVDOMChildNodes.length)) {
-                masterNode = originalVDOMChildNodes;
-            } else {
-                masterNode = dirtyVDOMChildNodes;
-            }
-
-            for (var i = 0; i < masterNode.length; i++) {
-                var dirtyVDOMChildNode = dirtyVDOMChildNodes[i];
-                var originalVDOMChildNode = originalVDOMChildNodes[i];
-
-                VirtualDOM.compare(originalVDOMChildNode, dirtyVDOMChildNode, i, originalVDOMChildNodes, originalVDOM);
-            }
+        if (is.greaterThen(dirtyVDOMChildNodes.length, originalVDOMChildNodes.length)) {
+            masterNode = dirtyVDOMChildNodes;
+        } else if (is.lowerThen(dirtyVDOMChildNodes.length, originalVDOMChildNodes.length)) {
+            masterNode = originalVDOMChildNodes;
         } else {
-            // TODO : append child node to DOM
-            // console.log("append child node to DOM");
+            masterNode = dirtyVDOMChildNodes;
+        }
+
+        for (var i = 0; i < masterNode.length; i++) {
+            var dirtyVDOMChildNode = dirtyVDOMChildNodes[i];
+            var originalVDOMChildNode = originalVDOMChildNodes[i];
+
+            VirtualDOM.compare(originalVDOMChildNode, dirtyVDOMChildNode, i, originalVDOMChildNodes, originalVDOM);
         }
     } else {
         // TODO : re-render component
@@ -217,9 +212,6 @@ VirtualNode.setChange = function (vNode, cause, from, to, index, originalVDOMCol
             cause: cause,
             from: from,
             to: to
-        },
-        findLocation: function () {
-            return this.originalVDOMCollections[this.index];
         }
     };
 };
@@ -299,19 +291,19 @@ DOMProcessor.getByVuid = function (vuid) {
 };
 
 DOMProcessor.addNode = function (change) {
-    var is = VirtualNode.is;
+    var newNode = VirtualDOM.toHTML(change.change.to);
 
-    var location = change.findLocation();
+    change.originalVDOMCollections[change.index] = VirtualDOM.vDOM(newNode);
 
-    if (is.undefinedOrNull(location)) {
-        var newNode = VirtualDOM.toHTML(change.change.to);
+    var referenceNode = null;
 
-        change.originalVDOMCollections[change.index] = VirtualDOM.vDOM(newNode);
-
-        var referenceNode = DOMProcessor.getByVuid(change.originalVDOMCollections[change.index - 1].vuid);
+    if (change.index === 0) { // insert first node to emtpy parent node
+        parentNode = DOMProcessor.getByVuid(change.parentNode.vuid);
+        parentNode.append(newNode);
+    } else {
+        referenceNode = DOMProcessor.getByVuid(change.originalVDOMCollections[change.index - 1].vuid);
         var parentNode = referenceNode.parentNode;
         parentNode.insertBefore(newNode, referenceNode.nextSibling);
-
     }
 };
 
