@@ -338,7 +338,7 @@ DOMProcessor.replaceNodeName = function (change) {
 
 DOMProcessor.replaceNodeValue = function (change) {
     var oldNode = DOMProcessor.getByVuid(change.parentNode.vuid);
-    oldNode.textContent = change.change.to;
+    oldNode.firstChild.nodeValue = change.change.to;
     change.vNode.nodeValue = change.change.to;
 };
 

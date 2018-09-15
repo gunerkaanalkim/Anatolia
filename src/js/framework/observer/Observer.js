@@ -25,6 +25,7 @@ Observer.watch = function (object, handler) {
                     set: function (newValue) {
                         var oldValue = object["_" + prop];
                         object["_" + prop] = newValue;
+                        Observer.watch(object, handler); // re-observer all object
                         handler(prop, oldValue, newValue);
                     }
                 });
