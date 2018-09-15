@@ -6,8 +6,13 @@ $(document).ready(function () {
     // app.todoApp();
     // app.todoAppWithPublisher();
     // app.todoAppWithMultiplePublisher();
-    app.button();
+    // app.button();
     // new PubSub().usage();
+
+    //  Widgets
+    var widgets = new Widget();
+
+    widgets.button();
 
 });
 
