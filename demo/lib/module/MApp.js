@@ -670,8 +670,8 @@ var App = (function () {
             }
         });
 
-        button1.render();
-        button2.render();
+        // button1.render();
+        // button2.render();
 
         list = new Component(AnatoliaList);
 
@@ -690,16 +690,16 @@ var App = (function () {
                 querySelector: {
                     "#pushButton": {
                         click: function () {
-                            this.state.list.push({
-                                text: Math.random()
-                            });
+                            // this.state.list.push({
+                            //     text: Math.random()
+                            // });
 
-                            // this.state.list = [
-                            //     {text: "List Item 1"},
-                            //     {text: "List Item 2"},
-                            //     {text: "New Node"},
-                            //     {text: "List Item 3"}
-                            // ];
+                            this.state.list = [
+                                {text: "List Item 1"},
+                                {text: "List Item 2"},
+                                {text: "New Node"},
+                                {text: "List Item 3"}
+                            ];
 
                             // this.state.class = "list-group myClass";
                             // this.state.containerElementName = "section";
@@ -713,7 +713,7 @@ var App = (function () {
                 }
             });
 
-        // list.render();
+        list.render();
     };
 
     return App;
