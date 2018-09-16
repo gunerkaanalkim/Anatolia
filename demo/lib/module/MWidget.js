@@ -34,6 +34,9 @@ var Widget = (function () {
         button.render();
     };
 
+    /**
+     * @summary Anatolia button group (1.0.0) example usage
+     * **/
     Widget.prototype.buttonGroup = function () {
         buttonGroup = new Component({
             container: "#component_1",
