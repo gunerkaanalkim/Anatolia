@@ -140,5 +140,38 @@ var Widget = (function () {
 
     };
 
+    /**
+     * @summary Anatolia list(1.0.0) example usage
+     * **/
+    Widget.prototype.list = function () {
+        var anatoliaList = new Component({
+            container: "#component_1",
+            render: Anatolia.Widgets.List,
+            state: {
+                attributes: {
+                    parent: {
+                        class: "list-group"
+                    },
+                    item: {
+                        class: "list-group-item"
+                    }
+                },
+                items: [
+                    {
+                        text: "List item 1"
+                    },
+                    {
+                        text: "List item 2"
+                    },
+                    {
+                        text: "List item 3"
+                    }
+                ]
+            }
+        });
+
+        anatoliaList.render();
+    };
+
     return Widget;
 })();
