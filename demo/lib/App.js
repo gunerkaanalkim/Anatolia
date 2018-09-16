@@ -12,7 +12,8 @@ $(document).ready(function () {
     //  Widgets
     var widgets = new Widget();
 
-    widgets.button();
+    // widgets.button();
+    widgets.buttonGroup();
 
 });
 
