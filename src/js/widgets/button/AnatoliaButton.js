@@ -4,7 +4,7 @@
  *
  * @summary creates a <button> element
  * @author Güner Kaan ALKIM <g.kaanalkim@gmail.com>
- * @version 1.0.1
+ * @version 1.1.0
  *
  * @param {object}  state               - Attributes are define <button> element 's attribute. Ex; class, id or custom attribute
  * @param {object}  state.attributes    - Attributes are define <button> element 's attribute. Ex; class, id or custom attribute
@@ -14,7 +14,7 @@
 
 'use strict';
 
-var AnatoliaButton = Component.setRenderMethod(function (state) {
+var AnatoliaButton = function (state) {
     //  Toolkit declarations
     var create = Component.createElement;
     var is = Util.is;
@@ -49,7 +49,7 @@ var AnatoliaButton = Component.setRenderMethod(function (state) {
     }
 
     return button;
-});
+};
 
 
 
