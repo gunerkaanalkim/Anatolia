@@ -39,5 +39,6 @@ Anatolia.prototype.render = function () {
 
 
 Anatolia.Widgets = {
-    Button: AnatoliaButton
+    Button: AnatoliaButton,
+    ButtonGroup: AnatoliaButtonGroup
 };

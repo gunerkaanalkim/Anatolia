@@ -4,7 +4,7 @@
  *
  * @summary creates a component
  * @author Güner Kaan ALKIM <g.kaanalkim@gmail.com>
- * @version 1.1.0
+ * @version 1.1.1
  *
  * @param {object}      options                             -   Component 's html container, state etc...
  * @param {string}      options.container                   -   Knowledge of where to append. Ex; #myContainer, .myContainer
@@ -77,9 +77,11 @@ Component.prototype._render = function () {
 
 Component.prototype._renderedHTML = function (context, state) {
     this._template = context._renderMethod(state);
-    var vDOM = VirtualDOM.vDOM(this._template);
+    var vDOM = null;
 
     if (this.__firstRender__ && (context._container !== undefined)) {
+        vDOM = VirtualDOM.vDOM(this._template);
+
         this._vDOM = vDOM;
 
         var container = document.querySelector(context._container);
@@ -87,7 +89,9 @@ Component.prototype._renderedHTML = function (context, state) {
         container.append(this._template);
 
         this.__firstRender__ = false;
-    } else {
+    } else if (context._container !== undefined) {
+        vDOM = VirtualDOM.vDOM(this._template);
+
         VirtualDOM.compare(this._vDOM, vDOM, this._vDOM);
     }
 
@@ -106,9 +110,7 @@ Component.prototype._toEmpty = function (component) {
     }
 };
 
-Component.prototype.render = function (context) {
-    if (context) this._setParentContainer(context);
-
+Component.prototype.render = function () {
     return this._render();
 };
 
