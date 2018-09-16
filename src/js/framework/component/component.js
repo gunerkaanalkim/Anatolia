@@ -1,3 +1,23 @@
+/**
+ * Anatolia Component Class
+ * Returns a html collection.
+ *
+ * @summary creates a component
+ * @author Güner Kaan ALKIM <g.kaanalkim@gmail.com>
+ * @version 1.0.0
+ *
+ * @param {object}      options                             -   Component 's html container, state etc...
+ * @param {string}      options.container                   -   Knowledge of where to append. Ex; #myContainer, .myContainer
+ * @param {string}      options.state                       -   Data source object
+ * @param {function}    options.render                      -   Render function
+ * @param {string}      options.event                       -   If using pub/sub, component subscribe an event via the attribute
+ * @param {object}      options.actions                     -   Component's and child element's JS events
+ * @param {object}      options.actions.self                -   Component's own events
+ * @param {string}      options.actions.self.*              -   JS event name. Ex: click, dblclick, mouseenter etc...
+ * @param {object}      options.actions.querySelector       -   Component's child element's events
+ * @param {object}      options.actions.querySelector.*     -   JS event name. Ex: click, dblclick, mouseenter etc...
+ * **/
+
 'use strict';
 
 function Component(options) {
@@ -8,13 +28,11 @@ function Component(options) {
 
 Component.prototype._initialize = function () {
     this._subscriber = null;
-    this._name = this._options.name;
     this._container = this._options.container;
     this._state = this._options.state || {};
-    this._renderMethod = this._options.render;
+    this._renderMethod = Component._renderMethod || this._options.render;
     this._event = this._options.event;
     this._actions = this._options.actions;
-    this._parentComponentContainer = [];
     this._template = null;
     this._vDOM = null;
     this.__firstRender__ = true;
@@ -73,7 +91,6 @@ Component.prototype._renderedHTML = function (context, state) {
         VirtualDOM.compare(this._vDOM, vDOM, this._vDOM);
     }
 
-    //TODO event binding
     if (context._actions) context._bindEventToTemplate(context._actions, this._template, state);
 
     return this._template;
@@ -220,14 +237,6 @@ Component.prototype.getEvent = function (event) {
     return this._event;
 };
 
-Component.prototype._setParentContainer = function (parentComponentContext) {
-    this._parentComponentContainer.push(parentComponentContext.getContainer());
-};
-
-Component.prototype._getParentContainer = function () {
-    return this._parentComponentContainer;
-};
-
 Component.prototype.setState = function (state) {
     this._state = state;
     this._handleStateChanging();
@@ -290,6 +299,14 @@ Component.createElementFromObject = function (element) {
 
 Component.on = function (event, fn) {
     this.addEventListener(event, fn);
+
+    return this;
+};
+
+Component._renderMethod = null;
+
+Component.setRenderMethod = function (renderMethod) {
+    Component._renderMethod = renderMethod;
 
     return this;
 };

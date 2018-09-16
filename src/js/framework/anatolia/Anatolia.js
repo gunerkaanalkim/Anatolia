@@ -36,3 +36,8 @@ Anatolia.prototype.render = function () {
 
     return this;
 };
+
+
+Anatolia.Widgets = {
+    Button: AnatoliaButton
+};
