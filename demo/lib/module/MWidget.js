@@ -4,11 +4,12 @@ var Widget = (function () {
     }
 
     /**
-     * @summary Anatolia button(1.0.1) example usage
+     * @summary Anatolia button(1.1.0) example usage
      * **/
     Widget.prototype.button = function () {
-        new AnatoliaButton({
+        var button = new Component({
             container: "#component_1",
+            render: Anatolia.Widgets.Button,
             state: {
                 attributes: {
                     class: "btn btn-default",
@@ -25,27 +26,9 @@ var Widget = (function () {
                     }
                 }
             }
-        }).render();
+        });
 
-        new Anatolia.Widgets.Button({
-            container: "#component_2",
-            state: {
-                attributes: {
-                    class: "btn btn-success",
-                    id: "myButton",
-                    customAttribute: "customAttribute"
-                },
-                text: 0,
-                fontIcon: "fa fa-home"
-            },
-            actions: {
-                self: {
-                    click: function () {
-                        this.state.text += 1;
-                    }
-                }
-            }
-        }).render();
+        button.render();
     };
 
     return Widget;
