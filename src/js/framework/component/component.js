@@ -4,7 +4,7 @@
  *
  * @summary creates a component
  * @author Güner Kaan ALKIM <g.kaanalkim@gmail.com>
- * @version 1.0.0
+ * @version 1.1.0
  *
  * @param {object}      options                             -   Component 's html container, state etc...
  * @param {string}      options.container                   -   Knowledge of where to append. Ex; #myContainer, .myContainer
@@ -30,7 +30,7 @@ Component.prototype._initialize = function () {
     this._subscriber = null;
     this._container = this._options.container;
     this._state = this._options.state || {};
-    this._renderMethod = Component._renderMethod || this._options.render;
+    this._renderMethod = this._options.render;
     this._event = this._options.event;
     this._actions = this._options.actions;
     this._template = null;
@@ -299,14 +299,6 @@ Component.createElementFromObject = function (element) {
 
 Component.on = function (event, fn) {
     this.addEventListener(event, fn);
-
-    return this;
-};
-
-Component._renderMethod = null;
-
-Component.setRenderMethod = function (renderMethod) {
-    Component._renderMethod = renderMethod;
 
     return this;
 };
