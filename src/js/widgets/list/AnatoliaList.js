@@ -1,31 +1,62 @@
-var AnatoliaList = {
-    render: function (state) {
-        var cc = Component.createElement;
+/**
+ * Anatolia List Component.
+ * Returns <ul> instance.
+ *
+ * @summary creates a <ul> element
+ * @author Güner Kaan ALKIM <g.kaanalkim@gmail.com>
+ * @version 1.0.0
+ *
+ * @param {object}  state                           - Contains list 's items and class attribute
+ * @param {string}  state.class                     - List container(ul) class attribute
+ * @param {array}   state.items                     - Defines list items
+ * @param {string}  state.items[0].class            - List item class
+ * @param {string}  state.items[0].text             - List item text content
+ * **/
 
-        var container = cc(state.containerElementName);
-        var firstRow = cc("div", {class: "row clearfix"});
+'use strict';
 
-        var ul = cc("ul", {class: state.class});
+var AnatoliaList = function (state) {
+    //  Toolkit declarations
+    var create = Component.createElement;
+    var is = Util.is;
 
-        state.list.forEach(function (listItem) {
-            var li = cc("li", {class: "list-group-item", text: listItem.text});
+    //  Attributes declarations
+    var parentAttributes = state.attributes.parent;
+    var itemAttributes = state.attributes.item;
 
-            ul.append(li);
-        });
+    //  List container declaration
+    var listContainer = create("ul");
 
-        firstRow.append(ul);
-
-        var secondRow = cc("div", {class: "row clearfix", style: "margin-top: 30px;"});
-        var pushButton = cc("a", {class: "btn btn-success", text: "PUSH", id: "pushButton"});
-        var popButton = cc("a", {class: "btn btn-danger", text: "POP", id: "popButton"});
-
-        secondRow.append(pushButton);
-        secondRow.append(popButton);
-
-        container.append(secondRow);
-        container.append(firstRow);
-
-        return container;
+    //  Attribute assignment
+    if (is.defined(parentAttributes) && is.not.null(parentAttributes) && is.object(parentAttributes)) {
+        for (var name in parentAttributes) {
+            listContainer.setAttribute(name, parentAttributes[name]);
+        }
     }
+
+
+    //  List items declarations
+    var listItems = state.items;
+
+    if (is.defined(listItems) && is.not.null(listItems) && is.array(listItems)) {
+        listItems.forEach(function (listItem) {
+            var listItemElement = create("li", {
+                text: listItem.text
+            });
+
+            //  Attribute assignment
+            if (is.defined(itemAttributes) && is.not.null(itemAttributes) && is.object(itemAttributes)) {
+                for (var name in itemAttributes) {
+                    listItemElement.setAttribute(name, itemAttributes[name]);
+                }
+            }
+
+            listContainer.append(listItemElement);
+        });
+    }
+
+
+    return listContainer;
 };
+
 
