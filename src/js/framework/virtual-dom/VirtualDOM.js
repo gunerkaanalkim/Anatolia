@@ -1,9 +1,23 @@
 /**
- * Virtual DOM
+ * Anatolia Virtual DOM class.
+ *
+ * @summary A new implementation for Virtual DOM
+ * @author Güner Kaan ALKIM <g.kaanalkim@gmail.com>
+ * @version 1.0.0
+ *
  * **/
 function VirtualDOM() {
 }
 
+/**
+ * @summary Creates a vNode from given HTML template
+ *
+ * @function vDOM
+ *
+ * @param {object}  templateContainerElement -  HTML template
+ *
+ * @return {object} vDOM
+ * **/
 VirtualDOM.vDOM = function (templateContainerElement) {
     var is = VirtualNode.is;
 
@@ -44,16 +58,25 @@ VirtualDOM.vDOM = function (templateContainerElement) {
     return vDOM;
 };
 
-VirtualDOM.toHTML = function (vDOM) {
-    if (!vDOM) return;
+/**
+ * @summary Creates a HTML Element from given vNODE
+ *
+ * @function toHTML
+ *
+ * @param {object}  vNODE
+ *
+ * @return {object} HTML Element
+ * **/
+VirtualDOM.toHTML = function (vNODE) {
+    if (!vNODE) return;
 
-    var attributes = vDOM.attributes;
+    var attributes = vNODE.attributes;
     var element = null;
 
-    if (vDOM.nodeType === 1) {
-        element = document.createElement(vDOM.nodeName);
-    } else if (vDOM.nodeType === 3) {
-        element = document.createTextNode(vDOM.nodeValue);
+    if (vNODE.nodeType === 1) {
+        element = document.createElement(vNODE.nodeName);
+    } else if (vNODE.nodeType === 3) {
+        element = document.createTextNode(vNODE.nodeValue);
     }
 
     for (var attr in attributes) {
@@ -62,12 +85,12 @@ VirtualDOM.toHTML = function (vDOM) {
         element.setAttribute(attr, value);
     }
 
-    if (vDOM.nodeType === 1 && !attributes.hasOwnProperty("vuid")) {
+    if (vNODE.nodeType === 1 && !attributes.hasOwnProperty("vuid")) {
         element.setAttribute("vuid", VirtualNode.vuid());
     }
 
-    if (vDOM.child.length !== 0) {
-        vDOM.child.forEach(function (vNode) {
+    if (vNODE.child.length !== 0) {
+        vNODE.child.forEach(function (vNode) {
             element.append(VirtualDOM.toHTML(vNode));
         });
     }
@@ -75,8 +98,20 @@ VirtualDOM.toHTML = function (vDOM) {
     return element;
 };
 
+/**
+ * @summary Compares two vNODE by node name, attribute and node value
+ *
+ * @function compare
+ *
+ * @param {object}  originalVDOM
+ * @param {object}  dirtyVDOM
+ * @param {number}  index
+ * @param {array}   originalVDOMCollections
+ * @param {object}  parentNode
+ *
+ * @return nothing
+ * **/
 VirtualDOM.compare = function (originalVDOM, dirtyVDOM, index, originalVDOMCollections, parentNode) {
-    var has = VirtualNode.has;
     var is = VirtualNode.is;
 
     var nodeComparator = VirtualNode.nodeComparator(originalVDOM, dirtyVDOM, index, originalVDOMCollections, parentNode);
@@ -109,13 +144,31 @@ VirtualDOM.compare = function (originalVDOM, dirtyVDOM, index, originalVDOMColle
 };
 
 /**
- * Virtual Node
+ * Anatolia Virtual NODE class.
+ *
+ * @summary A new implementation for Virtual Node
+ * @author Güner Kaan ALKIM <g.kaanalkim@gmail.com>
+ *
  * **/
 function VirtualNode() {
 }
 
+/**
+ * @summary Compares two vNODE by node name, attribute and node value.
+ *
+ * @function nodeComparator
+ *
+ * @param {object}  originalVDOM
+ * @param {object}  dirtyVDOM
+ * @param {number}  index
+ * @param {array}   originalVDOMCollections
+ * @param {object}  parentNode
+ *
+ * @return {object} Return value contains two method, hasChange and getChanges.
+ * <pre> <code>hasChanges</code> method returns true if passed two vNode is different.</pre>
+ * <pre> <code>getChanges</code> method returns object with changes if passed two vNode is different.</pre>
+ * **/
 VirtualNode.nodeComparator = function (originalVDOM, dirtyVDOM, index, originalVDOMCollections, parentNode) {
-    var has = VirtualNode.has;
     var is = VirtualNode.is;
 
     var change;
@@ -188,18 +241,47 @@ VirtualNode.nodeComparator = function (originalVDOM, dirtyVDOM, index, originalV
     };
 };
 
+/**
+ * @summary Compares two vNODE by node name, attribute and node value.
+ *
+ * @function hasChild
+ *
+ * @param {object}  vNode
+ *
+ * @return {boolean} Returns true if vNODE has child node
+ * **/
 VirtualNode.hasChild = function (vNode) {
     return vNode.child.length > 0;
 };
 
+/**
+ * @summary Returns child nodes array
+ *
+ * @function hasChild
+ *
+ * @param {object}  vNode
+ *
+ * @return {array}
+ * **/
 VirtualNode.childNodes = function (vNode) {
     return vNode.child;
 };
 
-VirtualNode.isEqual = function (val1, val2) {
-    return val1 === val2;
-};
-
+/**
+ * @summary Returns vNode changes
+ *
+ * @function setChange
+ *
+ * @param {object}  vNode
+ * @param {string}  cause
+ * @param {string}  from
+ * @param {string}  to
+ * @param {number}  index
+ * @param {array}  originalVDOMCollections
+ * @param {object}  parentNode
+ *
+ * @return {object}
+ * **/
 VirtualNode.setChange = function (vNode, cause, from, to, index, originalVDOMCollections, parentNode) {
     var is = VirtualNode.is;
 
@@ -216,6 +298,9 @@ VirtualNode.setChange = function (vNode, cause, from, to, index, originalVDOMCol
     };
 };
 
+/**
+ * See {@link Util}
+ * **/
 VirtualNode.is = {
     defined: function (value) {
         return typeof value !== "undefined"
@@ -249,25 +334,34 @@ VirtualNode.is = {
     }
 };
 
-VirtualNode.has = {
-    child: function (vNode) {
-        if (VirtualNode.is.definedAndNotNull(vNode)) {
-            return VirtualNode.is.greaterThen(vNode.child.length, 0);
-        }
-    }
-};
-
+/**
+ * @summary virtual unique id
+ *
+ * @function vuid
+ *
+ * @return {string}
+ * **/
 VirtualNode.vuid = function () {
     return Math.random().toString(36).substr(2, 9);
 };
 
 /**
- * DOM Processor
+ * @summary Anatolia DOMProcessor for DOM and vDOM manipulation
+ * @author Güner Kaan ALKIM <g.kaanalkim@gmail.com>
+ *
  * **/
 function DOMProcessor() {
 
 }
 
+/**
+ * @summary virtual unique id
+ *
+ * @function vuid
+ * @param {object}  changes - nodeComparator function return value
+ *
+ * @return nothing
+ * **/
 DOMProcessor.applyChanging = function (changes) {
     var is = VirtualNode.is;
 
@@ -286,10 +380,26 @@ DOMProcessor.applyChanging = function (changes) {
     });
 };
 
+/**
+ * @summary finds element by vuid
+ *
+ * @function getByVuid
+ * @param {string}  vuid
+ *
+ * @return {object} HTMLElement
+ * **/
 DOMProcessor.getByVuid = function (vuid) {
     return document.querySelector("[vuid='" + vuid + "']");
 };
 
+/**
+ * @summary adds new node to DOM and component's vDOM
+ *
+ * @function addNode
+ * @param {object}  change
+ *
+ * @return nothing
+ * **/
 DOMProcessor.addNode = function (change) {
     var newNode = VirtualDOM.toHTML(change.change.to);
 
@@ -307,11 +417,27 @@ DOMProcessor.addNode = function (change) {
     }
 };
 
+/**
+ * @summary removes existing node from DOM and component's vDOM
+ *
+ * @function removeNode
+ * @param {object}  change
+ *
+ * @return nothing
+ * **/
 DOMProcessor.removeNode = function (change) {
     DOMProcessor.getByVuid(change.vNode.vuid).remove();
     change.parentNode.child.splice(change.index, 1);
 };
 
+/**
+ * @summary re-creates DOM and vDOM object
+ *
+ * @function replaceNodeName
+ * @param {object}  change
+ *
+ * @return nothing
+ * **/
 DOMProcessor.replaceNodeName = function (change) {
     var oldNode = DOMProcessor.getByVuid(change.vNode.vuid);
     var newNode = VirtualDOM.toHTML(change.vNode);
@@ -328,12 +454,28 @@ DOMProcessor.replaceNodeName = function (change) {
     change.vNode.vuid = newNodeVDOM.vuid;
 };
 
+/**
+ * @summary resets existing node value on DOM and component's vDOM
+ *
+ * @function replaceNodeValue
+ * @param {object}  change
+ *
+ * @return nothing
+ * **/
 DOMProcessor.replaceNodeValue = function (change) {
     var oldNode = DOMProcessor.getByVuid(change.parentNode.vuid);
     oldNode.firstChild.nodeValue = change.change.to;
     change.vNode.nodeValue = change.change.to;
 };
 
+/**
+ * @summary resets existing node attribute on DOM and component's vDOM
+ *
+ * @function replaceNodeAttribute
+ * @param {object}  change
+ *
+ * @return nothing
+ * **/
 DOMProcessor.replaceNodeAttribute = function (change) {
     var oldNode = DOMProcessor.getByVuid(change.vNode.vuid);
 
