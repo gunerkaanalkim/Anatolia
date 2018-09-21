@@ -103,7 +103,7 @@ var publisher_3 = new Publisher({
     event: "e3",
     state: {number: "three"},
     propertyHandler: {
-        key: function (key, value) {
+        number: function (key, value) {
             // console.log(key);
         }
     },
