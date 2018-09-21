@@ -84,3 +84,74 @@ var todoApp = new Component({
 
 todoApp.render();
 ```
+
+**Pub/Sub Design Pattern Based State Manager**
+```js
+var eventbus = new Eventbus();
+
+var publisher_1 = new Publisher({
+    event: "e1",
+    state: {number: "one"}
+});
+
+var publisher_2 = new Publisher({
+    event: "e2",
+    state: {number: "two"}
+});
+
+var publisher_3 = new Publisher({
+    event: "e3",
+    state: {number: "three"},
+    propertyHandler: {
+        key: function (key, value) {
+            // console.log(key);
+        }
+    },
+    computedProperties: {
+        newNumber: function (state) {
+            return "four";
+        }
+    }
+});
+
+[publisher_1, publisher_2, publisher_3].forEach(function (publisher) {
+    eventbus.publisher().register(publisher);
+});
+
+var subscriber_1 = new Subscriber({
+    id: "sub1",
+    event: "e1",
+    callback: function (state) {
+        console.log(state);
+    }
+});
+
+var subscriber_2 = new Subscriber({
+    id: "sub2",
+    event: "e2",
+    callback: function (state) {
+        console.log(state);
+    }
+});
+
+var subscriber_3 = new Subscriber({
+    id: "sub3",
+    event: "e3",
+    callback: function (state) {
+        console.log(state);
+    }
+});
+
+var subscriber_4 = new Subscriber({
+    id: "sub4",
+    event: ['e1', 'e2', 'e3'],
+    callback: function (state) {
+        console.log(state);
+    }
+});
+
+[subscriber_1, subscriber_2, subscriber_3, subscriber_4].forEach(function (subscriber) {
+    eventbus.subscriber().register(subscriber);
+});
+
+```
