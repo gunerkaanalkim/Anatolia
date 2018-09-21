@@ -141,3 +141,5 @@ Util.is = {
         }
     }
 };
+
+module.exports = Util;
