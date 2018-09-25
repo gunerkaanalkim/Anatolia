@@ -292,7 +292,10 @@ Eventbus.prototype._fireSubscriber = function (subscriber) {
                 callback: subscriber.callback()
             });
         } else {
-            state = context._eventbus[events].state;
+            state = {};
+
+            state[events] = context._eventbus[events].state;
+
             toFireds.push({
                 state: state,
                 callback: subscriber.callback()
