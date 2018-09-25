@@ -168,7 +168,10 @@ Eventbus.prototype._firePublisher = function (publisher) {
                 callback: subscriber.callback()
             });
         } else {
-            state = context._eventbus[events].state;
+            state = {};
+
+            state[events] = context._eventbus[events].state;
+
             toFireds.push({
                 state: state,
                 callback: subscriber.callback()
@@ -289,7 +292,10 @@ Eventbus.prototype._fireSubscriber = function (subscriber) {
                 callback: subscriber.callback()
             });
         } else {
-            state = context._eventbus[events].state;
+            state = {};
+
+            state[events] = context._eventbus[events].state;
+
             toFireds.push({
                 state: state,
                 callback: subscriber.callback()
@@ -319,211 +325,4 @@ Eventbus.prototype._isEvent = function (eventName) {
     throw "Anatolia Error : Unknown event!"
 };
 
-/**
- *  @constructor
- *
- *  @function   Publisher
- *
- *  @param  {object}    options
- *  @return {object}    Publisher instance
- *
- * **/
-function Publisher(options) {
-    this._init(options);
-}
-
-/**
- *  @summary    private constructor's member
- *
- *
- *  @function   _init
- *
- *  @param      {object}    options
- *  @param      {string}    options.event               -   Knowledge where to publish state object
- *  @param      {string}    options.state               -   Pure JS object
- *  @param      {function}  options.propertyHandler     -   Handler method runs after property setting
- *  @param      {function}  options.computedProperties  -   New property method
- *
- * **/
-Publisher.prototype._init = function (options) {
-    this._event = options.event || null;
-    this._state = options.state || null;
-    this._propertyHandler = options.propertyHandler || null;
-    this._computedProperties = options.computedProperties || null;
-
-    //Property handler
-    this.propertyHandlerMethod();
-
-    //New computed property
-    this.computedPropertiesMethod();
-};
-
-/**
- *  @summary    Handler method runs after property setting
- *
- *  @public
- *  @function   propertyHandlerMethod
- *
- * **/
-Publisher.prototype.propertyHandlerMethod = function () {
-    var bundle = {context: this, state: this._state};
-
-    if (this._propertyHandler && this._state) {
-        for (var property in this._state) {
-            if (this._state.hasOwnProperty(property) && this._propertyHandler.hasOwnProperty(property)) {
-                this._propertyHandler[property].call(bundle, property, this._state[property]);
-            }
-        }
-    }
-};
-
-/**
- *  @summary    New property method
- *
- *  @public
- *  @function   computedPropertiesMethod
- *
- * **/
-Publisher.prototype.computedPropertiesMethod = function () {
-    var bundle = {context: this, state: this._state};
-
-    if (this._computedProperties && this._state) {
-        for (var newProperty in this._computedProperties) {
-            if (this._computedProperties.hasOwnProperty(newProperty)) {
-
-                this._state[newProperty] = this._computedProperties[newProperty].call(bundle, this._state);
-            }
-        }
-    }
-};
-
-/**
- *  @summary    Publisher's event name set/get accessor
- *
- *  @public
- *  @function   event
- *
- * **/
-Publisher.prototype.event = function () {
-    if (arguments.length) {
-        this._event = arguments[0];
-    }
-
-    return this._event;
-};
-
-/**
- *  @summary    Publisher's state set/get accessor
- *
- *  @public
- *  @function   state
- *
- * **/
-Publisher.prototype.state = function () {
-    if (arguments[0] instanceof Object) {
-        this._state = arguments[0];
-    } else if (arguments[0] === undefined) {
-        return this._state;
-    }
-};
-
-/**
- *  @summary    toString
- *
- *  @public
- *  @override
- *  @function   toString
- *
- *  @return {object}
- * **/
-Publisher.prototype.toString = function () {
-    return "Event : " + this._event + " " + " State : " + this._state;
-};
-
-/**
- *  @constructor
- *
- *  @function   Subscriber
- *
- *  @param  {object}    options
- *  @return {object}    Subscriber instance
- *
- * **/
-function Subscriber(options) {
-    this._init(options);
-}
-
-/**
- *  @summary    private constructor's member
- *
- *
- *  @function   _init
- *
- *  @param      {object}    options
- *  @param      {string}    options.id                  -   Unique subscriber identity
- *  @param      {string}    options.event               -   Eventbus's event name
- *  @param      {function}  options.callback            -   Calls after publisher' state set
- *
- * **/
-Subscriber.prototype._init = function (options) {
-    this._id = options.id || null;
-    this._event = options.event || null;
-
-    if (options.callback instanceof Function) {
-        this._callback = options.callback || null;
-    } else {
-        throw 'Contructor should take a callback function.'
-    }
-};
-
-/**
- *  @summary    Subsciber's event name set/get accessor
- *
- *  @public
- *  @function   event
- *
- * **/
-Subscriber.prototype.event = function () {
-    if (arguments.length) {
-        this._event = arguments[0];
-    }
-
-    return this._event;
-};
-
-/**
- *  @summary    Calls after publisher' state set
- *
- *  @public
- *  @function   callback
- *
- * **/
-Subscriber.prototype.callback = function () {
-    if (arguments[0] instanceof Function) {
-        this._callback = arguments[0];
-    } else if (arguments[0] === undefined) {
-        return this._callback;
-    }
-};
-
-/**
- *  @summary    Subsciber's identity set accessor
- *
- *  @public
- *  @function   setId
- *
- * **/
-Subscriber.prototype.setId = function (id) {
-    this._id = id;
-};
-
-/**
- *  @summary    Subsciber's identity get accessor
- *
- *  @public
- *  @function   getId
- *
- * **/
-Subscriber.prototype.getId = function () {
-    return this._id;
-};
+module.exports = Eventbus;

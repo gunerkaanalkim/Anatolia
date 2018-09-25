@@ -1,5 +1,5 @@
 var assert = require('assert');
-var Util = require('../../js/framework/util/Util');
+var Util = require('../../../js/framework/util/Util');
 
 describe('Util', function () {
 
