@@ -17,21 +17,20 @@ describe('Component', function () {
 
             assert.equal(component.getContainer(), "#element");
         });
-    });
 
-    it('takes render method', function () {
-        var component = new Component({
-            container: "#element",
-            state: {
-                foo: "bar"
-            },
-            render: function (state) {
-                return state || true;
+        it('takes a state object', function () {
+            var component = new Component({
+                container: "#element",
+                state: {
+                    foo: "bar"
+                },
+                render: function (state) {
+                    return state || true;
 
-            }
+                }
+            });
+
+            assert.equal(component.getState().foo, "bar");
         });
-
-        assert.equal(component.render(), "bar");
     });
-
 });
