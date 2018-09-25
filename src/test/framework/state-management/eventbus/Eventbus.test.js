@@ -39,4 +39,29 @@ describe('Eventbus', function () {
             assert.equal(eventbus.getSubscriptionList()[1], "event_2");
         });
     });
+
+    describe('subscriber()#register-single', function () {
+        it('Eventbus registers a subscriber', function () {
+            var eventbus = new Eventbus();
+
+            var publisher_1 = new Publisher({
+                event: "event_1",
+                state: {foo: "bar"}
+            });
+
+            eventbus.publisher().register(publisher_1);
+
+            var subscriber = new Subscriber({
+                id: "sub1",
+                event: "event_1",
+                callback: function (state) {
+                    assert.equal(state.event_1.foo, "bar");
+                }
+            });
+
+            eventbus.subscriber().register(subscriber);
+
+
+        });
+    });
 });
