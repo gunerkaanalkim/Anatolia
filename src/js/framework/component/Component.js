@@ -475,3 +475,5 @@ Component.on = function (event, fn) {
 
     return this;
 };
+
+module.exports = Component;
