@@ -18,4 +18,16 @@ describe('Observer', function () {
             obj.name = "Güner Kaan ALKIM";
         });
     });
+
+    describe('Array watching', function () {
+        it('Handler method gives key, old value and new value.', function () {
+            var obj = ["Güner", "Kaan"];
+
+            Observer.watch(obj, function (value) {
+                assert.equal(value, "Alkım");
+            });
+
+            obj.push("Alkım");
+        });
+    });
 });
