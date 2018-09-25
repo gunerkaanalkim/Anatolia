@@ -58,6 +58,4 @@ describe('Subscriber', function () {
             assert.equal(subscriber.callback()(), true);
         });
     });
-
-
 });
