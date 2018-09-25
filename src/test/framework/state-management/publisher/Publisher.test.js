@@ -1,5 +1,4 @@
 var assert = require("assert");
-var Eventbus = require("../../../../js/framework/state-management/eventbus/Eventbus");
 var Publisher = require("../../../../js/framework/state-management/publisher/Publisher");
 
 describe('Publisher', function () {
