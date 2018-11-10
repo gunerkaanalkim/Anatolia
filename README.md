@@ -1,5 +1,5 @@
 # Anatolia 
-Understandable and human-readable JavaScript framework for elegant UI/UX
+Understandable and human-readable JavaScript framework for elegant JavaScript Apps
 
 **Dev Installation** 
 
