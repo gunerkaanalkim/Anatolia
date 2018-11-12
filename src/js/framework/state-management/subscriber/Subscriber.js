@@ -85,5 +85,3 @@ Subscriber.prototype.setId = function (id) {
 Subscriber.prototype.getId = function () {
     return this._id;
 };
-
-module.exports = Subscriber;

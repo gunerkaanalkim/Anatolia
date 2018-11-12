@@ -487,5 +487,3 @@ DOMProcessor.replaceNodeAttribute = function (change) {
         change.vNode.attributes[attributeName] = attributeValue;
     }
 };
-
-module.exports = VirtualDOM;

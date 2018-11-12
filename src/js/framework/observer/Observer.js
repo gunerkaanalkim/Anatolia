@@ -84,5 +84,3 @@ Observer.listenArray = function (arrayInstance, handler) {
         }
     });
 };
-
-module.exports = Observer;
