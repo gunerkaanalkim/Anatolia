@@ -43,5 +43,3 @@ Anatolia.Widgets = {
     ButtonGroup: AnatoliaButtonGroup,
     List: AnatoliaList
 };
-
-module.exports = Anatolia;

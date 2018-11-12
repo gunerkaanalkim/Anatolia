@@ -18,9 +18,6 @@
  * @param {object}      options.actions.querySelector.*     -   JS event name. Ex: click, dblclick, mouseenter etc...
  * **/
 
-var Observer = require("../observer/Observer");
-var VirtualDOM = require("../virtual-dom/VirtualDOM");
-
 'use strict';
 
 /**
@@ -478,5 +475,3 @@ Component.on = function (event, fn) {
 
     return this;
 };
-
-module.exports = Component;

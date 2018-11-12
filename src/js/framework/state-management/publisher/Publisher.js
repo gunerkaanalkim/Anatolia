@@ -118,5 +118,3 @@ Publisher.prototype.state = function () {
 Publisher.prototype.toString = function () {
     return "Event : " + this._event + " " + " State : " + this._state;
 };
-
-module.exports = Publisher;

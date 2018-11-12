@@ -324,5 +324,3 @@ Eventbus.prototype._isEvent = function (eventName) {
 
     throw "Anatolia Error : Unknown event!"
 };
-
-module.exports = Eventbus;
