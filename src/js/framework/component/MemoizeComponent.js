@@ -64,34 +64,34 @@ MemoizeComponent.prototype._initialize = function () {
 MemoizeComponent.prototype._render = function () {
     //Component's context binding
     var context = this;
-    // /**
-    //  * for subscribe a publisher
-    //  * **/
-    // if (this._event) {
-    //     this._subscriber = new Subscriber({
-    //         id: context._name,
-    //         event: this._event,
-    //         callback: function (state) {
-    //             context._state = state;
-    //
-    //             context._template = context._renderedHTML(context, state);
-    //         }
-    //     });
-    //
-    //     this._eventbus.subscriber().register(this._subscriber);
-    // }
-    // /**
-    //  * parent child data transfer
-    //  * **/
-    // else if (this._state) {
-    //     this._template = context._renderedHTML(context, this._state);
-    // }
-    // /**
-    //  * non-data components
-    //  * **/
-    // else {
+    /**
+     * for subscribe a publisher
+     * **/
+    if (this._event) {
+        this._subscriber = new Subscriber({
+            id: context._name,
+            event: this._event,
+            callback: function (state) {
+                context._state = state;
+
+                context._template = context._renderedHTML(context, state);
+            }
+        });
+
+        this._eventbus.subscriber().register(this._subscriber);
+    }
+    /**
+     * parent child data transfer
+     * **/
+    else if (this._state) {
         this._template = context._renderedHTML(context, this._state);
-    // }
+    }
+    /**
+     * non-data components
+     * **/
+    else {
+        this._template = context._renderedHTML(context, this._state);
+    }
 
     return this._template;
 };
