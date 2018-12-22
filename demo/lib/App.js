@@ -5,7 +5,7 @@ $(document).ready(function () {
     // app.customButton();
     // app.todoApp();
     // app.todoAppWithPublisher();
-    // app.todoAppWithMultiplePublisher();
+    app.todoAppWithMultiplePublisher();
     // app.button();
     // new PubSub().usage();
 
@@ -14,7 +14,7 @@ $(document).ready(function () {
 
     // widgets.button();
     // widgets.buttonGroup();
-    widgets.list();
+    // widgets.list();
 
 });
 
