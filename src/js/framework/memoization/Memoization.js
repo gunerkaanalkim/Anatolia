@@ -14,7 +14,11 @@ Memoization.arityControl = function (options) {
 Memoization.monadic = function (fn, cache, args) {
     var cacheKey = Memoization.serializer(args);
 
-    var computedValue;
+    var computedValue = cache.get(cacheKey);
+    if(typeof computedValue !== "undefined") {
+        console.info("FROM CACHE");
+    }
+
     if (!cache.has(cacheKey)) {
         computedValue = fn.call(this, args);
         cache.set(cacheKey, computedValue)
@@ -27,7 +31,11 @@ Memoization.variadic = function (fn, cache) {
     var args = Array.prototype.slice.call(arguments, 2);
     var cacheKey = Memoization.serializer(args);
 
-    var computedValue;
+    var computedValue = cache.get(cacheKey);
+    if(typeof computedValue !== "undefined") {
+        console.info("FROM CACHE");
+    }
+
     if (!cache.has(cacheKey)) {
         computedValue = fn.apply(this, args);
         cache.set(cacheKey, computedValue)
@@ -45,7 +53,6 @@ function MemoizationCache() {
 }
 
 MemoizationCache.prototype.has = function (key) {
-    console.log(this.cache);
     return (key in this.cache)
 };
 

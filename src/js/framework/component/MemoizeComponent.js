@@ -45,11 +45,10 @@ MemoizeComponent.prototype._initialize = function () {
     this._subscriber = null;
     this._container = this._options.container;
     this._state = this._options.state || {};
-    this._renderMethod = this._options.render;
+    this._renderMethod = Memoization(this._options.render);
     this._event = this._options.event;
     this._actions = this._options.actions;
     this._template = null;
-    this._element = element;
 
     this._handleStateChanging(this._state);
 };
@@ -107,12 +106,7 @@ MemoizeComponent.prototype._render = function () {
  * @return HTML template
  * **/
 MemoizeComponent.prototype._renderedHTML = function (context, state) {
-    var renderMethodBundle = {
-        state: state,
-        element: context._element
-    };
-
-    this._template = context._renderMethod.call(renderMethodBundle);
+    this._template = context._renderMethod(state);
 
     if (context._container !== undefined) {
 
