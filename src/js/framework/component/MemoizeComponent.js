@@ -45,12 +45,10 @@ MemoizeComponent.prototype._initialize = function () {
     this._subscriber = null;
     this._container = this._options.container;
     this._state = this._options.state || {};
-    this._renderMethod = Memoization(this._options.render);
+    this._renderMethod = this._options.render;
     this._event = this._options.event;
     this._actions = this._options.actions;
     this._template = null;
-
-    this._handleStateChanging(this._state);
 };
 
 /**
@@ -152,7 +150,8 @@ MemoizeComponent.prototype._toEmpty = function (component) {
  * @return HTML template
  * **/
 MemoizeComponent.prototype.render = function () {
-    return this._render();
+    this._render()
+    return this;
 };
 
 /**
@@ -219,21 +218,6 @@ MemoizeComponent.prototype._bindEventToTemplate = function (componentActions, te
         }
     }
 
-};
-
-/**
- * @summary Apply observer pattern to component's state
- *
- * @function _handleStateChanging
- *
- * @return nothing
- * **/
-MemoizeComponent.prototype._handleStateChanging = function () {
-    var context = this;
-
-    Observer.watch(context._state, function (key, oldValue, newValue) {
-        context._render();
-    });
 };
 
 /**
@@ -360,7 +344,6 @@ MemoizeComponent.prototype.getEvent = function () {
  * **/
 MemoizeComponent.prototype.setState = function (state) {
     this._state = state;
-    this._handleStateChanging();
 
     return this;
 };
