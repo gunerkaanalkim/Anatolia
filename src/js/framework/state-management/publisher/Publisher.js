@@ -29,6 +29,7 @@ Publisher.prototype._init = function (options) {
     this._state = options.state || null;
     this._propertyHandler = options.propertyHandler || null;
     this._computedProperties = options.computedProperties || null;
+    this._mutations = options.mutations || null;
 
     //Property handler
     this.propertyHandlerMethod();
@@ -117,4 +118,10 @@ Publisher.prototype.state = function () {
  * **/
 Publisher.prototype.toString = function () {
     return "Event : " + this._event + " " + " State : " + this._state;
+};
+
+Publisher.prototype.mutate = function (mutationName) {
+    if (this._mutations.hasOwnProperty(mutationName)) {
+        this._mutations[mutationName].call(this, this._state);
+    }
 };

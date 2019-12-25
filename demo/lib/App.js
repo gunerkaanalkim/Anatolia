@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var app = new App();
+    // var app = new App();
     // app.singleComponent();
     // app.parentChildDataTransfer();
     // app.customButton();
@@ -7,14 +7,14 @@ $(document).ready(function () {
     // app.todoAppWithPublisher();
     // app.todoAppWithMultiplePublisher();
     // app.button();
-    // new PubSub().usage();
+    new PubSub().usage();
 
     //  Widgets
-    var widgets = new Widget();
+    // var widgets = new Widget();
 
     // widgets.button();
     // widgets.buttonGroup();
-    widgets.list();
+    // widgets.list();
 
 });
 

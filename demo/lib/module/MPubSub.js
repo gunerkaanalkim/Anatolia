@@ -10,6 +10,8 @@ var subscriber_3 = null;
 var subscriber_4 = null;
 var subscriber_5 = null;
 
+var mutations = null;
+
 var PubSub = (function () {
     function PubSub() {
     }
@@ -27,6 +29,14 @@ var PubSub = (function () {
             state: {number: "two"}
         });
 
+        mutations = new Mutation({
+            "one": function (state) {
+                console.log(state);
+                var newState = state;
+                newState.number = "two";
+            }
+        });
+
         publisher_3 = new Publisher({
             event: "e3",
             state: {number: "three"},
@@ -39,8 +49,12 @@ var PubSub = (function () {
                 newNumber: function (state) {
                     return "four";
                 }
-            }
+            },
+            mutations: mutations.get()
         });
+
+        publisher_3.mutate("one");
+        console.log(publisher_3.state());
 
 
         // eventbus.publisher().register(publisher_1); // register single publisher
@@ -104,6 +118,7 @@ var PubSub = (function () {
         Observer.watch(state, function (key, oldValue, newValue) {
             console.log("key : " + key + " oldValue : " + oldValue + " newValue :" + newValue);
         });
+
 
     };
 
