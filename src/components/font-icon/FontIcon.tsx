@@ -10,3 +10,5 @@ export const FontIcon = (props: FontIconProps) => {
     <i className={props.name}/>
   );
 };
+
+export default FontIcon;

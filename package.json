@@ -1,6 +1,6 @@
 {
   "name": "anatolia-1",
-  "version": "0.0.2",
+  "version": "0.1.3",
   "main": "index.js",
   "repository": "https://github.com/gunerkaanalkim/Anatolia.git",
   "author": "Kaan Alkim <g.kaanalkim@gmail.com>",
@@ -17,6 +17,10 @@
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags"
   },
+  "files": [
+    "dist/**/*"
+  ],
+  "types": "dist/**/*.d.ts",
   "devDependencies": {
     "@types/jest": "^25.1.3",
     "@types/react": "^16.9.22",
